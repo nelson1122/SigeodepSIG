@@ -1,0 +1,532 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    <ui:composition template="../templates/layoutTemplate.xhtml">
+        <!--==================================================================-->
+        <!--========================CABECERA SCRIPTS==========================-->                    
+        <ui:define name="head">
+            <link href="../../resources/css/style.css" rel="stylesheet" type="text/css" />               
+            <script type="text/javascript">                  
+            </script> 
+        </ui:define>
+        <!--=================================================================-->
+        <!--================================TITULOS==========================-->
+        <ui:define name="titlePage">
+            SIGEODEP -  GESTION DE USUSARIOS
+        </ui:define>
+        <ui:define name="title">
+            SIGEODEP -  GESTION DE USUARIOS
+        </ui:define>
+        <!--=================================================================-->
+        <!--==============================CONTENIDO==========================-->
+        <ui:define name="content">
+            <h:outputText 
+                value="No se puede mostrar esta sección por que no cuenta con los permisos suficientes"
+                style=" color: red;"
+                rendered="#{!loginMB.permissionAdministrator}"/> 
+            <h:form enctype="multipart/form-data" id="IdForm1" rendered="#{loginMB.permissionAdministrator}">
+                <p:growl id="message"  showDetail="true" sticky="true" autoUpdate="true" life="1000"  />
+                <!--===================================================================================-->
+                <br/>
+                <p:panelGrid id="IdPanel1" style="position: absolute;  width: 750px;  margin-left: -375px; left: 50%;" >                            
+                    <p:row>  
+                        <p:column styleClass="ui-widget-header" style="text-align: center;">
+                            <h:outputLabel value="OBSERVATORIO DEL DELITO - ALCALDA DE PASTO"/><br/>  
+                            <h:outputLabel value="GESTION DE USUARIOS"/>  
+                        </p:column>                                       
+                    </p:row>
+                    <p:row>  
+                        <p:column>
+                            <br/>
+                            <p:panelGrid style="width: 730px;">
+                                <p:row>  
+                                    <p:column styleClass="ui-widget-header" colspan="5">
+                                        <h:outputLabel value="FILTRAR DATOS"/>
+                                    </p:column>                            
+                                </p:row>
+                                <p:row>  
+                                    <p:column styleClass="ui-widget-header ui-state-focus" colspan="1">
+                                        <h:outputLabel value="Variable"/>
+                                    </p:column>
+                                    <p:column colspan="1">
+                                        <p:selectOneMenu id="IdSearchCriteria" value="#{usersMB.currentSearchCriteria}" > 
+                                            <f:selectItem itemLabel="NOMBRE" itemValue="1" />                                            
+                                            <f:selectItem itemLabel="LOGIN" itemValue="2" />
+                                            <f:selectItem itemLabel="CARGO" itemValue="3" />
+                                        </p:selectOneMenu>
+                                    </p:column>                                                                        
+                                    <p:column styleClass="ui-widget-header ui-state-focus" colspan="1">
+                                        <h:outputLabel value="Valor"/>
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText 
+                                            id="IdSearcValue"
+                                            value="#{usersMB.currentSearchValue}"/>
+                                    </p:column>
+                                    <p:column colspan="1" styleClass="ui-widget-header ui-state-focus">
+                                        <p:commandButton 
+                                            value="Buscar" 
+                                            icon="ui-icon-search"                                                
+                                            actionListener="#{usersMB.createDynamicTable}"
+                                            update="IdSearchTable :IdForm1:message"/>                                                                        
+                                    </p:column>
+                                </p:row>                        
+                            </p:panelGrid>
+                            <br/>
+                            <p:dataTable 
+                                id="IdSearchTable" var="rowX" 
+                                value="#{usersMB.rowDataTableList}" 
+                                rowKey="#{rowX.column1}"  
+                                selection="#{usersMB.selectedRowDataTable}" 
+                                paginator="true"
+                                rows="10"                                    
+                                paginatorPosition="bottom"                                
+                                emptyMessage="Vacio"
+                                scrollable="true"
+                                scrollWidth="730"                                    
+                                paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                rowsPerPageTemplate="5,10,15"
+                                pageLinks="5"
+                                selectionMode="single"
+                                resizableColumns="true">                                
+                                <p:ajax
+                                    event="rowSelect"
+                                    listener="#{usersMB.load}"                                    
+                                    update=":IdForm1:IdControls :IdForm2:IdDialogEdit :IdForm2:display :IdForm1:message" />
+                                <p:column headerText="ID" width="50" style="display: none;">  
+                                    #{rowX.column1}  
+                                </p:column>  
+                                <p:column headerText="ESTADO" width="50">  
+                                    #{rowX.column2}  
+                                </p:column>  
+                                <p:column headerText="LOGIN" width="100">  
+                                    #{rowX.column3}  
+                                </p:column>
+                                <p:column headerText="NOMBRE" width="200">  
+                                    #{rowX.column4}  
+                                </p:column>                                  
+                                <p:column headerText="CARGO" width="100">  
+                                    #{rowX.column5}  
+                                </p:column>
+                                <p:column headerText="INSTITUCION" width="200">  
+                                    #{rowX.column6}  
+                                </p:column>
+                                <p:column headerText="TELEFONO" width="100">  
+                                    #{rowX.column7}  
+                                </p:column>
+                                <p:column headerText="CORREO" width="200">  
+                                    #{rowX.column8}  
+                                </p:column>
+                                <p:column headerText="DIRECCION" width="200">  
+                                    #{rowX.column9}  
+                                </p:column>
+                            </p:dataTable>                            
+                            <br/>
+                            <p:panelGrid id="IdControls" style="width: 730px;">
+                                <p:row>  
+                                    <p:column styleClass="ui-widget-header" colspan="5">
+                                        <p:commandButton 
+                                            id="IdEdit"
+                                            disabled="#{usersMB.btnEditDisabled}"
+                                            value="Editar"                                 
+                                            icon="ui-icon-pencil"                                            
+                                            oncomplete="dialogEdit.show()"                                            
+                                            update=":IdForm2:IdDialogEdit :IdForm2:display :IdForm1:message"/>
+                                        <p:commandButton 
+                                            id="IdRemove" 
+                                            disabled="#{usersMB.btnRemoveDisabled}"
+                                            value="Eliminar" 
+                                            icon="ui-icon-close"
+                                            oncomplete="dialogDelete.show()"                                            
+                                            update=":IdForm2:IdDialogDelete :IdForm2:displayDelete :IdForm1:message"/>
+                                        <p:commandButton 
+                                            id="IdNew" 
+                                            value="Nuevo" 
+                                            icon="ui-icon-document"
+                                            actionListener="#{usersMB.newRegistry}"
+                                            oncomplete="dialogNew.show()"                                            
+                                            update=":IdForm2:IdDialogNew :IdForm2:displayNew :IdForm1:message"/>
+                                    </p:column>                            
+                                </p:row>
+                            </p:panelGrid>
+                            <br/>
+                        </p:column>                                       
+                    </p:row>
+                </p:panelGrid>
+            </h:form>
+        </ui:define>
+        <ui:define name="dialogs">
+            <h:form id="IdForm2">
+                <!--   DIALOGO EDITAR -->
+                <p:dialog id="IdDialogEdit" header="EDICION DE USUARIO" widgetVar="dialogEdit" resizable="false" modal="true">  
+                    <p:panelGrid id="display">                          
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="LOGIN" />  
+                            </p:column>
+                            <p:column>
+                                <p:inputText size="40" value="#{usersMB.login}" /> 
+                            </p:column>
+                        </p:row>                        
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="CLAVE" />  
+                            </p:column>
+                            <p:column>
+                                <p:password value="#{usersMB.password}"/> 
+                            </p:column>
+                        </p:row>                        
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="CONFIRMACION CLAVE" />  
+                            </p:column>
+                            <p:column>
+                                <p:password value="#{usersMB.confirmPassword}" /> 
+                            </p:column>
+                        </p:row>       
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="NOMBRES" />  
+                            </p:column>
+                            <p:column>
+                                <p:inputText size="40" value="#{usersMB.name}" /> 
+                            </p:column>
+                        </p:row>                        
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="CARGO" />  
+                            </p:column>
+                            <p:column>
+                                <p:inputText size="40" value="#{usersMB.job}"/>
+                            </p:column>
+                        </p:row>                        
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="INSTITUCION" />  
+                            </p:column>
+                            <p:column>
+                                <p:inputText size="40" value="#{usersMB.institution}" /> 
+                            </p:column>
+                        </p:row>                        
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="TELEFONO" />  
+                            </p:column>
+                            <p:column>
+                                <p:inputText size="40" value="#{usersMB.telephone}" /> 
+                            </p:column>
+                        </p:row>                        
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="CORREO" />  
+                            </p:column>
+                            <p:column>
+                                <p:inputText size="40" value="#{usersMB.email}" /> 
+                            </p:column>
+                        </p:row>                        
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="DIRECCION" />  
+                            </p:column>
+                            <p:column>
+                                <p:inputText size="40" value="#{usersMB.address}" /> 
+                            </p:column>
+                        </p:row>                        
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="ESTADO DE CUENTA " />                                  
+                            </p:column>
+                            <p:column >
+                                <p:selectOneRadio id="options" value="#{usersMB.stateUser}">  
+                                    <f:selectItem itemLabel="Activa" itemValue="Activa" />  
+                                    <f:selectItem itemLabel="Inactiva" itemValue="Inactiva" />  
+                                </p:selectOneRadio>
+                            </p:column>
+                        </p:row>                        
+
+                        <p:row>
+                            <p:column colspan="2" styleClass="ui-widget-header">
+                                PERMISOS
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:selectBooleanCheckbox id="IdPermission1" value="#{usersMB.permission1}">                                            
+                                    <f:ajax 
+                                        event="change"
+                                        listener="#{usersMB.changePermission1}"
+                                        render="IdPermission1 IdPermission2 IdPermission3 IdPermission4 IdPermission5"/>
+                                </h:selectBooleanCheckbox>
+                            </p:column>
+                            <p:column>
+                                Gestionar formularios de lesiones fatales
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:selectBooleanCheckbox id="IdPermission2" value="#{usersMB.permission2}">                                            
+                                    <f:ajax 
+                                        event="change"
+                                        listener="#{usersMB.changePermission2}"
+                                        render="IdPermission1 IdPermission2 IdPermission3 IdPermission4 IdPermission5"/>
+                                </h:selectBooleanCheckbox>
+                            </p:column>
+                            <p:column>
+                                Gestionar formularios de lesiones no fatales
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:selectBooleanCheckbox id="IdPermission3" value="#{usersMB.permission3}">                                            
+                                    <f:ajax 
+                                        event="change"
+                                        listener="#{usersMB.changePermission3}"
+                                        render="IdPermission1 IdPermission2 IdPermission3 IdPermission4 IdPermission5"/>
+                                </h:selectBooleanCheckbox>
+                            </p:column>
+                            <p:column>
+                                Gestionar formularios VIF
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:selectBooleanCheckbox id="IdPermission4" value="#{usersMB.permission4}">                                            
+                                    <f:ajax 
+                                        event="change"
+                                        listener="#{usersMB.changePermission4}"
+                                        render="IdPermission1 IdPermission2 IdPermission3 IdPermission4 IdPermission5"/>
+                                </h:selectBooleanCheckbox>
+                            </p:column>
+                            <p:column>
+                                Analizar datos
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:selectBooleanCheckbox id="IdPermission5" value="#{usersMB.permission5}">                                            
+                                    <f:ajax 
+                                        event="change"
+                                        listener="#{usersMB.changePermission5}"
+                                        render="IdPermission1 IdPermission2 IdPermission3 IdPermission4 IdPermission5"/>
+                                </h:selectBooleanCheckbox>
+                            </p:column>
+                            <p:column>
+                                Administrador
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="2" styleClass="ui-widget-header">
+                                <p:commandButton 
+                                    value="Actualizar" 
+                                    icon="ui-icon-disk"
+                                    actionListener="#{usersMB.updateRegistry}"
+                                    update=":IdForm1:IdSearchTable :IdForm1:IdControls :IdForm1:message"/>                                
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>  
+                </p:dialog> 
+                <!--   DIALOGO NUEVO -->
+                <p:dialog id="IdDialogNew" header="NUEVO USUARIO" widgetVar="dialogNew" resizable="false" modal="true">  
+                    <p:panelGrid id="displayNew">                          
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="LOGIN" />  
+                            </p:column>
+                            <p:column>
+                                <p:inputText size="40" value="#{usersMB.newLogin}" /> 
+                            </p:column>
+                        </p:row>                        
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="CLAVE" />  
+                            </p:column>
+                            <p:column>                                
+                                <p:password  value="#{usersMB.newPasword}"/> 
+                            </p:column>
+                        </p:row>                        
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="CONFIRMAR CLAVE" />  
+                            </p:column>
+                            <p:column>
+                                <p:password value="#{usersMB.newConfirmPasword}"/> 
+                            </p:column>
+                        </p:row>                        
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="NOMBRES" />  
+                            </p:column>
+                            <p:column>
+                                <p:inputText size="40" value="#{usersMB.newName}" /> 
+                            </p:column>
+                        </p:row>                        
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="CARGO" />  
+                            </p:column>
+                            <p:column>
+                                <p:inputText size="40" value="#{usersMB.newJob}"/>
+                            </p:column>
+                        </p:row>                        
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="INSTITUCION" />  
+                            </p:column>
+                            <p:column>
+                                <p:inputText size="40" value="#{usersMB.newInstitution}" /> 
+                            </p:column>
+                        </p:row>                        
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="TELEFONO" />  
+                            </p:column>
+                            <p:column>
+                                <p:inputText size="40" value="#{usersMB.newtelephone}" /> 
+                            </p:column>
+                        </p:row>                        
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="CORREO" />  
+                            </p:column>
+                            <p:column>
+                                <p:inputText size="40" value="#{usersMB.newEmail}" /> 
+                            </p:column>
+                        </p:row>                        
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="DIRECCION" />  
+                            </p:column>
+                            <p:column>
+                                <p:inputText size="40" value="#{usersMB.newAddress}" /> 
+                            </p:column>
+                        </p:row>                                               
+
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="ESTADO DE CUENTA " />  
+                            </p:column>
+                            <p:column >
+                                <p:selectOneRadio id="options2" value="#{usersMB.newStateUser}">  
+                                    <f:selectItem itemLabel="Activa" itemValue="Activa" />  
+                                    <f:selectItem itemLabel="Inactiva" itemValue="Inactiva" />  
+                                </p:selectOneRadio>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="2" styleClass="ui-widget-header">
+                                PERMISOS
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:selectBooleanCheckbox id="IdNewPermission1" value="#{usersMB.newPermission1}">                                            
+                                    <f:ajax 
+                                        event="change"
+                                        listener="#{usersMB.changeNewPermission1}"
+                                        render="IdNewPermission1 IdNewPermission2 IdNewPermission3 IdNewPermission4 IdNewPermission5"/>
+                                </h:selectBooleanCheckbox>
+                            </p:column>
+                            <p:column>
+                                Gestionar formularios de lesiones fatales
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:selectBooleanCheckbox id="IdNewPermission2" value="#{usersMB.newPermission2}">
+                                    <f:ajax 
+                                        event="change"
+                                        listener="#{usersMB.changeNewPermission2}"
+                                        render="IdNewPermission1 IdNewPermission2 IdNewPermission3 IdNewPermission4 IdNewPermission5"/>
+                                </h:selectBooleanCheckbox>                                            
+                            </p:column>
+                            <p:column>
+                                Gestionar formularios de lesiones no fatales
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:selectBooleanCheckbox id="IdNewPermission3" value="#{usersMB.newPermission3}">                                            
+                                    <f:ajax 
+                                        event="change"
+                                        listener="#{usersMB.changeNewPermission3}"
+                                        render="IdNewPermission1 IdNewPermission2 IdNewPermission3 IdNewPermission4 IdNewPermission5"/>
+                                </h:selectBooleanCheckbox>
+                            </p:column>
+                            <p:column>
+                                Gestionar formularios VIF
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:selectBooleanCheckbox id="IdNewPermission4" value="#{usersMB.newPermission4}">                                            
+                                    <f:ajax 
+                                        event="change"
+                                        listener="#{usersMB.changeNewPermission4}"
+                                        render="IdNewPermission1 IdNewPermission2 IdNewPermission3 IdNewPermission4 IdNewPermission5"/>
+                                </h:selectBooleanCheckbox>
+                            </p:column>
+                            <p:column>
+                                Analizar datos
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:selectBooleanCheckbox id="IdNewPermission5" value="#{usersMB.newPermission5}">                                            
+                                    <f:ajax 
+                                        event="change"
+                                        listener="#{usersMB.changeNewPermission5}"
+                                        render="IdNewPermission1 IdNewPermission2 IdNewPermission3 IdNewPermission4 IdNewPermission5"/>
+                                </h:selectBooleanCheckbox>
+                            </p:column>
+                            <p:column>
+                                Administrador
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="2" styleClass="ui-widget-header">
+                                <p:commandButton 
+                                    value="Guardar" 
+                                    icon="ui-icon-disk"
+                                    actionListener="#{usersMB.saveRegistry}"
+                                    update=":IdForm1:IdSearchTable :IdForm1:IdControls :IdForm1:message displayNew"/>                                
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:dialog> 
+                <!-- DIALOGO ELIMINAR-->
+                <p:dialog                                                         
+                    id="IdDialogDelete"
+                    modal="true"
+                    resizable="false"
+                    header="ELIMINAR USUARIO" 
+                    widgetVar="dialogDelete"> 
+                    <p:panelGrid id="displayDelete">
+                        <p:row>  
+                            <p:column style="width: 200px; height: 80px; text-align: center; background: #fbef9a;">
+                                Confirma la Eliminacion de este registro?
+                            </p:column>
+                        </p:row>
+                        <p:row>  
+                            <p:column styleClass="ui-widget-header">
+                                <p:commandButton                                                           
+                                    oncomplete="dialogDelete.hide()"
+                                    actionListener="#{usersMB.deleteRegistry}"
+                                    value="Eliminar" 
+                                    update=":IdForm1:IdSearchTable :IdForm1:IdControls :IdForm1:message"/>   
+                                <p:commandButton
+                                    value="Cancelar" 
+                                    onclick="dialogDelete.hide()"/> 
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:dialog>
+
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
+

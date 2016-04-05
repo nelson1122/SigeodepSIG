@@ -1,0 +1,2420 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<transformation>
+  <info>
+    <name>load_sivigila_temp</name>
+    <description/>
+    <extended_description/>
+    <trans_version/>
+    <trans_type>Normal</trans_type>
+    <trans_status>0</trans_status>
+    <directory>&#x2f;</directory>
+    <parameters>
+    </parameters>
+    <log>
+<trans-log-table><connection/>
+<schema/>
+<table/>
+<size_limit_lines/>
+<interval/>
+<timeout_days/>
+<field><id>ID_BATCH</id><enabled>Y</enabled><name>ID_BATCH</name></field><field><id>CHANNEL_ID</id><enabled>Y</enabled><name>CHANNEL_ID</name></field><field><id>TRANSNAME</id><enabled>Y</enabled><name>TRANSNAME</name></field><field><id>STATUS</id><enabled>Y</enabled><name>STATUS</name></field><field><id>LINES_READ</id><enabled>Y</enabled><name>LINES_READ</name><subject/></field><field><id>LINES_WRITTEN</id><enabled>Y</enabled><name>LINES_WRITTEN</name><subject/></field><field><id>LINES_UPDATED</id><enabled>Y</enabled><name>LINES_UPDATED</name><subject/></field><field><id>LINES_INPUT</id><enabled>Y</enabled><name>LINES_INPUT</name><subject/></field><field><id>LINES_OUTPUT</id><enabled>Y</enabled><name>LINES_OUTPUT</name><subject/></field><field><id>LINES_REJECTED</id><enabled>Y</enabled><name>LINES_REJECTED</name><subject/></field><field><id>ERRORS</id><enabled>Y</enabled><name>ERRORS</name></field><field><id>STARTDATE</id><enabled>Y</enabled><name>STARTDATE</name></field><field><id>ENDDATE</id><enabled>Y</enabled><name>ENDDATE</name></field><field><id>LOGDATE</id><enabled>Y</enabled><name>LOGDATE</name></field><field><id>DEPDATE</id><enabled>Y</enabled><name>DEPDATE</name></field><field><id>REPLAYDATE</id><enabled>Y</enabled><name>REPLAYDATE</name></field><field><id>LOG_FIELD</id><enabled>Y</enabled><name>LOG_FIELD</name></field><field><id>EXECUTING_SERVER</id><enabled>N</enabled><name>EXECUTING_SERVER</name></field><field><id>EXECUTING_USER</id><enabled>N</enabled><name>EXECUTING_USER</name></field><field><id>CLIENT</id><enabled>N</enabled><name>CLIENT</name></field></trans-log-table>
+<perf-log-table><connection/>
+<schema/>
+<table/>
+<interval/>
+<timeout_days/>
+<field><id>ID_BATCH</id><enabled>Y</enabled><name>ID_BATCH</name></field><field><id>SEQ_NR</id><enabled>Y</enabled><name>SEQ_NR</name></field><field><id>LOGDATE</id><enabled>Y</enabled><name>LOGDATE</name></field><field><id>TRANSNAME</id><enabled>Y</enabled><name>TRANSNAME</name></field><field><id>STEPNAME</id><enabled>Y</enabled><name>STEPNAME</name></field><field><id>STEP_COPY</id><enabled>Y</enabled><name>STEP_COPY</name></field><field><id>LINES_READ</id><enabled>Y</enabled><name>LINES_READ</name></field><field><id>LINES_WRITTEN</id><enabled>Y</enabled><name>LINES_WRITTEN</name></field><field><id>LINES_UPDATED</id><enabled>Y</enabled><name>LINES_UPDATED</name></field><field><id>LINES_INPUT</id><enabled>Y</enabled><name>LINES_INPUT</name></field><field><id>LINES_OUTPUT</id><enabled>Y</enabled><name>LINES_OUTPUT</name></field><field><id>LINES_REJECTED</id><enabled>Y</enabled><name>LINES_REJECTED</name></field><field><id>ERRORS</id><enabled>Y</enabled><name>ERRORS</name></field><field><id>INPUT_BUFFER_ROWS</id><enabled>Y</enabled><name>INPUT_BUFFER_ROWS</name></field><field><id>OUTPUT_BUFFER_ROWS</id><enabled>Y</enabled><name>OUTPUT_BUFFER_ROWS</name></field></perf-log-table>
+<channel-log-table><connection/>
+<schema/>
+<table/>
+<timeout_days/>
+<field><id>ID_BATCH</id><enabled>Y</enabled><name>ID_BATCH</name></field><field><id>CHANNEL_ID</id><enabled>Y</enabled><name>CHANNEL_ID</name></field><field><id>LOG_DATE</id><enabled>Y</enabled><name>LOG_DATE</name></field><field><id>LOGGING_OBJECT_TYPE</id><enabled>Y</enabled><name>LOGGING_OBJECT_TYPE</name></field><field><id>OBJECT_NAME</id><enabled>Y</enabled><name>OBJECT_NAME</name></field><field><id>OBJECT_COPY</id><enabled>Y</enabled><name>OBJECT_COPY</name></field><field><id>REPOSITORY_DIRECTORY</id><enabled>Y</enabled><name>REPOSITORY_DIRECTORY</name></field><field><id>FILENAME</id><enabled>Y</enabled><name>FILENAME</name></field><field><id>OBJECT_ID</id><enabled>Y</enabled><name>OBJECT_ID</name></field><field><id>OBJECT_REVISION</id><enabled>Y</enabled><name>OBJECT_REVISION</name></field><field><id>PARENT_CHANNEL_ID</id><enabled>Y</enabled><name>PARENT_CHANNEL_ID</name></field><field><id>ROOT_CHANNEL_ID</id><enabled>Y</enabled><name>ROOT_CHANNEL_ID</name></field></channel-log-table>
+<step-log-table><connection/>
+<schema/>
+<table/>
+<timeout_days/>
+<field><id>ID_BATCH</id><enabled>Y</enabled><name>ID_BATCH</name></field><field><id>CHANNEL_ID</id><enabled>Y</enabled><name>CHANNEL_ID</name></field><field><id>LOG_DATE</id><enabled>Y</enabled><name>LOG_DATE</name></field><field><id>TRANSNAME</id><enabled>Y</enabled><name>TRANSNAME</name></field><field><id>STEPNAME</id><enabled>Y</enabled><name>STEPNAME</name></field><field><id>STEP_COPY</id><enabled>Y</enabled><name>STEP_COPY</name></field><field><id>LINES_READ</id><enabled>Y</enabled><name>LINES_READ</name></field><field><id>LINES_WRITTEN</id><enabled>Y</enabled><name>LINES_WRITTEN</name></field><field><id>LINES_UPDATED</id><enabled>Y</enabled><name>LINES_UPDATED</name></field><field><id>LINES_INPUT</id><enabled>Y</enabled><name>LINES_INPUT</name></field><field><id>LINES_OUTPUT</id><enabled>Y</enabled><name>LINES_OUTPUT</name></field><field><id>LINES_REJECTED</id><enabled>Y</enabled><name>LINES_REJECTED</name></field><field><id>ERRORS</id><enabled>Y</enabled><name>ERRORS</name></field><field><id>LOG_FIELD</id><enabled>N</enabled><name>LOG_FIELD</name></field></step-log-table>
+<metrics-log-table><connection/>
+<schema/>
+<table/>
+<timeout_days/>
+<field><id>ID_BATCH</id><enabled>Y</enabled><name>ID_BATCH</name></field><field><id>CHANNEL_ID</id><enabled>Y</enabled><name>CHANNEL_ID</name></field><field><id>LOG_DATE</id><enabled>Y</enabled><name>LOG_DATE</name></field><field><id>METRICS_DATE</id><enabled>Y</enabled><name>METRICS_DATE</name></field><field><id>METRICS_CODE</id><enabled>Y</enabled><name>METRICS_CODE</name></field><field><id>METRICS_DESCRIPTION</id><enabled>Y</enabled><name>METRICS_DESCRIPTION</name></field><field><id>METRICS_SUBJECT</id><enabled>Y</enabled><name>METRICS_SUBJECT</name></field><field><id>METRICS_TYPE</id><enabled>Y</enabled><name>METRICS_TYPE</name></field><field><id>METRICS_VALUE</id><enabled>Y</enabled><name>METRICS_VALUE</name></field></metrics-log-table>
+    </log>
+    <maxdate>
+      <connection/>
+      <table/>
+      <field/>
+      <offset>0.0</offset>
+      <maxdiff>0.0</maxdiff>
+    </maxdate>
+    <size_rowset>10000</size_rowset>
+    <sleep_time_empty>50</sleep_time_empty>
+    <sleep_time_full>50</sleep_time_full>
+    <unique_connections>N</unique_connections>
+    <feedback_shown>Y</feedback_shown>
+    <feedback_size>50000</feedback_size>
+    <using_thread_priorities>Y</using_thread_priorities>
+    <shared_objects_file/>
+    <capture_step_performance>N</capture_step_performance>
+    <step_performance_capturing_delay>1000</step_performance_capturing_delay>
+    <step_performance_capturing_size_limit>100</step_performance_capturing_size_limit>
+    <dependencies>
+    </dependencies>
+    <partitionschemas>
+    </partitionschemas>
+    <slaveservers>
+    </slaveservers>
+    <clusterschemas>
+    </clusterschemas>
+  <created_user>-</created_user>
+  <created_date>2013&#x2f;12&#x2f;09 09&#x3a;12&#x3a;57.275</created_date>
+  <modified_user>-</modified_user>
+  <modified_date>2013&#x2f;12&#x2f;09 09&#x3a;12&#x3a;57.275</modified_date>
+  </info>
+  <notepads>
+  </notepads>
+  <connection>
+    <name>od</name>
+    <server>&#x7b;&#x24;od_host&#x7d;</server>
+    <type>POSTGRESQL</type>
+    <access>Native</access>
+    <database>&#x7b;&#x24;od_name&#x7d;</database>
+    <port>&#x7b;&#x24;od_port&#x7d;</port>
+    <username>&#x7b;&#x24;od_user&#x7d;</username>
+    <password>Encrypted 2be98afc86aa789c0a41d9160df81bcc7</password>
+    <servername/>
+    <data_tablespace/>
+    <index_tablespace/>
+    <attributes>
+      <attribute><code>FORCE_IDENTIFIERS_TO_LOWERCASE</code><attribute>N</attribute></attribute>
+      <attribute><code>FORCE_IDENTIFIERS_TO_UPPERCASE</code><attribute>N</attribute></attribute>
+      <attribute><code>IS_CLUSTERED</code><attribute>N</attribute></attribute>
+      <attribute><code>PORT_NUMBER</code><attribute>&#x7b;&#x24;od_port&#x7d;</attribute></attribute>
+      <attribute><code>PRESERVE_RESERVED_WORD_CASE</code><attribute>N</attribute></attribute>
+      <attribute><code>QUOTE_ALL_FIELDS</code><attribute>N</attribute></attribute>
+      <attribute><code>SUPPORTS_BOOLEAN_DATA_TYPE</code><attribute>Y</attribute></attribute>
+      <attribute><code>SUPPORTS_TIMESTAMP_DATA_TYPE</code><attribute>Y</attribute></attribute>
+      <attribute><code>USE_POOLING</code><attribute>N</attribute></attribute>
+    </attributes>
+  </connection>
+  <connection>
+    <name>od_dwh</name>
+    <server>&#x7b;&#x24;od_dwh_host&#x7d;</server>
+    <type>POSTGRESQL</type>
+    <access>Native</access>
+    <database>&#x7b;&#x24;od_dwh_name&#x7d;</database>
+    <port>&#x7b;&#x24;od_dwh_port&#x7d;</port>
+    <username>&#x7b;&#x24;od_dwh_user&#x7d;</username>
+    <password>Encrypted 2be98d4ec05c3ad80bc119160df81bcc7</password>
+    <servername/>
+    <data_tablespace/>
+    <index_tablespace/>
+    <attributes>
+      <attribute><code>FORCE_IDENTIFIERS_TO_LOWERCASE</code><attribute>N</attribute></attribute>
+      <attribute><code>FORCE_IDENTIFIERS_TO_UPPERCASE</code><attribute>N</attribute></attribute>
+      <attribute><code>IS_CLUSTERED</code><attribute>N</attribute></attribute>
+      <attribute><code>PORT_NUMBER</code><attribute>&#x7b;&#x24;od_dwh_port&#x7d;</attribute></attribute>
+      <attribute><code>PRESERVE_RESERVED_WORD_CASE</code><attribute>N</attribute></attribute>
+      <attribute><code>QUOTE_ALL_FIELDS</code><attribute>N</attribute></attribute>
+      <attribute><code>SUPPORTS_BOOLEAN_DATA_TYPE</code><attribute>Y</attribute></attribute>
+      <attribute><code>SUPPORTS_TIMESTAMP_DATA_TYPE</code><attribute>Y</attribute></attribute>
+      <attribute><code>USE_POOLING</code><attribute>N</attribute></attribute>
+    </attributes>
+  </connection>
+  <connection>
+    <name>od_dwh_test</name>
+    <server>localhost</server>
+    <type>POSTGRESQL</type>
+    <access>Native</access>
+    <database>od_dwh3</database>
+    <port>5432</port>
+    <username>santos</username>
+    <password>Encrypted 2be98afc86aa7f2e4cb79ce108fc0fc8e</password>
+    <servername/>
+    <data_tablespace/>
+    <index_tablespace/>
+    <attributes>
+      <attribute><code>FORCE_IDENTIFIERS_TO_LOWERCASE</code><attribute>N</attribute></attribute>
+      <attribute><code>FORCE_IDENTIFIERS_TO_UPPERCASE</code><attribute>N</attribute></attribute>
+      <attribute><code>IS_CLUSTERED</code><attribute>N</attribute></attribute>
+      <attribute><code>PORT_NUMBER</code><attribute>5432</attribute></attribute>
+      <attribute><code>PRESERVE_RESERVED_WORD_CASE</code><attribute>N</attribute></attribute>
+      <attribute><code>QUOTE_ALL_FIELDS</code><attribute>N</attribute></attribute>
+      <attribute><code>SUPPORTS_BOOLEAN_DATA_TYPE</code><attribute>Y</attribute></attribute>
+      <attribute><code>SUPPORTS_TIMESTAMP_DATA_TYPE</code><attribute>Y</attribute></attribute>
+      <attribute><code>USE_POOLING</code><attribute>N</attribute></attribute>
+    </attributes>
+  </connection>
+  <connection>
+    <name>od_test</name>
+    <server>localhost</server>
+    <type>POSTGRESQL</type>
+    <access>Native</access>
+    <database>od</database>
+    <port>5432</port>
+    <username>santos</username>
+    <password>Encrypted 2be98afc86aa7f2e4cb79ce108fc0fc8e</password>
+    <servername/>
+    <data_tablespace/>
+    <index_tablespace/>
+    <attributes>
+      <attribute><code>FORCE_IDENTIFIERS_TO_LOWERCASE</code><attribute>N</attribute></attribute>
+      <attribute><code>FORCE_IDENTIFIERS_TO_UPPERCASE</code><attribute>N</attribute></attribute>
+      <attribute><code>IS_CLUSTERED</code><attribute>N</attribute></attribute>
+      <attribute><code>PORT_NUMBER</code><attribute>5432</attribute></attribute>
+      <attribute><code>PRESERVE_RESERVED_WORD_CASE</code><attribute>N</attribute></attribute>
+      <attribute><code>QUOTE_ALL_FIELDS</code><attribute>N</attribute></attribute>
+      <attribute><code>SUPPORTS_BOOLEAN_DATA_TYPE</code><attribute>Y</attribute></attribute>
+      <attribute><code>SUPPORTS_TIMESTAMP_DATA_TYPE</code><attribute>Y</attribute></attribute>
+      <attribute><code>USE_POOLING</code><attribute>N</attribute></attribute>
+    </attributes>
+  </connection>
+  <order>
+  <hop> <from>Set age group keys</from><to>Set is adult key</to><enabled>Y</enabled> </hop>
+  <hop> <from>Read sivigila</from><to>Set age group keys</to><enabled>Y</enabled> </hop>
+  <hop> <from>Set unknown time</from><to>Set unknown date</to><enabled>Y</enabled> </hop>
+  <hop> <from>Set unknown checkup time</from><to>Set unknown checkup date</to><enabled>Y</enabled> </hop>
+  <hop> <from>Set unknown date</from><to>Set unknown checkup time</to><enabled>Y</enabled> </hop>
+  <hop> <from>Calculator</from><to>Calculator 3</to><enabled>Y</enabled> </hop>
+  <hop> <from>Calculator 3</from><to>Set unknown time</to><enabled>Y</enabled> </hop>
+  <hop> <from>Set unknown checkup date</from><to>Select values</to><enabled>Y</enabled> </hop>
+  <hop> <from>Select values</from><to>Sort rows</to><enabled>Y</enabled> </hop>
+  <hop> <from>Sort rows</from><to>Group by</to><enabled>Y</enabled> </hop>
+  <hop> <from>Set age group keys aggressor</from><to>Set is adult keys aggressor</to><enabled>Y</enabled> </hop>
+  <hop> <from>Set is adult key</from><to>Set age group keys aggressor</to><enabled>Y</enabled> </hop>
+  <hop> <from>Set is adult keys aggressor</from><to>Calculator</to><enabled>Y</enabled> </hop>
+  <hop> <from>Read neighborhoods</from><to>Merge Join</to><enabled>Y</enabled> </hop>
+  <hop> <from>Group by</from><to>Sort by neighborhood</to><enabled>Y</enabled> </hop>
+  <hop> <from>Sort by neighborhood</from><to>Merge Join</to><enabled>Y</enabled> </hop>
+  <hop> <from>Merge Join</from><to>Get neighborhood_key</to><enabled>Y</enabled> </hop>
+  <hop> <from>Get neighborhood_key</from><to>Select new values </to><enabled>Y</enabled> </hop>
+  <hop> <from>Select new values </from><to>Write sivigila</to><enabled>Y</enabled> </hop>
+  </order>
+  <step>
+    <name>Calculator</name>
+    <type>Calculator</type>
+    <description/>
+    <distribute>N</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+       <calculation><field_name>age_group_key</field_name>
+<calc_type>COPY_FIELD</calc_type>
+<field_a>temp_age_group_key</field_a>
+<field_b/>
+<field_c/>
+<value_type>Integer</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<remove>N</remove>
+<conversion_mask/>
+<decimal_symbol/>
+<grouping_symbol/>
+<currency_symbol/>
+</calculation>
+       <calculation><field_name>is_adult_key</field_name>
+<calc_type>COPY_FIELD</calc_type>
+<field_a>temp_is_adult_key</field_a>
+<field_b/>
+<field_c/>
+<value_type>Integer</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<remove>N</remove>
+<conversion_mask/>
+<decimal_symbol/>
+<grouping_symbol/>
+<currency_symbol/>
+</calculation>
+       <calculation><field_name>aggressor_age_group_key</field_name>
+<calc_type>COPY_FIELD</calc_type>
+<field_a>temp_age_group_aggressor_key</field_a>
+<field_b/>
+<field_c/>
+<value_type>Integer</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<remove>N</remove>
+<conversion_mask/>
+<decimal_symbol/>
+<grouping_symbol/>
+<currency_symbol/>
+</calculation>
+       <calculation><field_name>aggressor_is_adult_key</field_name>
+<calc_type>COPY_FIELD</calc_type>
+<field_a>temp_is_adult_aggressor_key</field_a>
+<field_b/>
+<field_c/>
+<value_type>Integer</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<remove>N</remove>
+<conversion_mask/>
+<decimal_symbol/>
+<grouping_symbol/>
+<currency_symbol/>
+</calculation>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>629</xloc>
+      <yloc>145</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Calculator 3</name>
+    <type>Calculator</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+       <calculation><field_name>temp_date_key</field_name>
+<calc_type>COPY_FIELD</calc_type>
+<field_a>injury_date</field_a>
+<field_b/>
+<field_c/>
+<value_type>String</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<remove>Y</remove>
+<conversion_mask>yyyyMMdd</conversion_mask>
+<decimal_symbol/>
+<grouping_symbol/>
+<currency_symbol/>
+</calculation>
+       <calculation><field_name>date_key</field_name>
+<calc_type>COPY_FIELD</calc_type>
+<field_a>temp_date_key</field_a>
+<field_b/>
+<field_c/>
+<value_type>Integer</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<remove>N</remove>
+<conversion_mask/>
+<decimal_symbol/>
+<grouping_symbol/>
+<currency_symbol/>
+</calculation>
+       <calculation><field_name>temp_injury_time</field_name>
+<calc_type>COPY_FIELD</calc_type>
+<field_a>injury_time</field_a>
+<field_b/>
+<field_c/>
+<value_type>String</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<remove>Y</remove>
+<conversion_mask>HH</conversion_mask>
+<decimal_symbol/>
+<grouping_symbol/>
+<currency_symbol/>
+</calculation>
+       <calculation><field_name>temp_time_key</field_name>
+<calc_type>COPY_FIELD</calc_type>
+<field_a>temp_injury_time</field_a>
+<field_b/>
+<field_c/>
+<value_type>Integer</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<remove>Y</remove>
+<conversion_mask/>
+<decimal_symbol/>
+<grouping_symbol/>
+<currency_symbol/>
+</calculation>
+       <calculation><field_name>temp_100</field_name>
+<calc_type>CONSTANT</calc_type>
+<field_a>100</field_a>
+<field_b/>
+<field_c/>
+<value_type>Integer</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<remove>Y</remove>
+<conversion_mask/>
+<decimal_symbol/>
+<grouping_symbol/>
+<currency_symbol/>
+</calculation>
+       <calculation><field_name>time_key</field_name>
+<calc_type>MULTIPLY</calc_type>
+<field_a>temp_time_key</field_a>
+<field_b>temp_100</field_b>
+<field_c/>
+<value_type>Integer</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<remove>N</remove>
+<conversion_mask/>
+<decimal_symbol/>
+<grouping_symbol/>
+<currency_symbol/>
+</calculation>
+       <calculation><field_name>temp_checkup_date</field_name>
+<calc_type>COPY_FIELD</calc_type>
+<field_a>checkup_date</field_a>
+<field_b/>
+<field_c/>
+<value_type>String</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<remove>Y</remove>
+<conversion_mask>yyyyMMdd</conversion_mask>
+<decimal_symbol/>
+<grouping_symbol/>
+<currency_symbol/>
+</calculation>
+       <calculation><field_name>checkup_date_key</field_name>
+<calc_type>COPY_FIELD</calc_type>
+<field_a>temp_checkup_date</field_a>
+<field_b/>
+<field_c/>
+<value_type>Integer</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<remove>N</remove>
+<conversion_mask/>
+<decimal_symbol/>
+<grouping_symbol/>
+<currency_symbol/>
+</calculation>
+       <calculation><field_name>temp_checkup_time</field_name>
+<calc_type>COPY_FIELD</calc_type>
+<field_a>checkup_time</field_a>
+<field_b/>
+<field_c/>
+<value_type>String</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<remove>Y</remove>
+<conversion_mask>HH</conversion_mask>
+<decimal_symbol/>
+<grouping_symbol/>
+<currency_symbol/>
+</calculation>
+       <calculation><field_name>temp_checkup_time_key</field_name>
+<calc_type>COPY_FIELD</calc_type>
+<field_a>temp_checkup_time</field_a>
+<field_b/>
+<field_c/>
+<value_type>Integer</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<remove>Y</remove>
+<conversion_mask/>
+<decimal_symbol/>
+<grouping_symbol/>
+<currency_symbol/>
+</calculation>
+       <calculation><field_name>checkup_time_key</field_name>
+<calc_type>MULTIPLY</calc_type>
+<field_a>temp_checkup_time_key</field_a>
+<field_b>temp_100</field_b>
+<field_c/>
+<value_type>Integer</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<remove>N</remove>
+<conversion_mask/>
+<decimal_symbol/>
+<grouping_symbol/>
+<currency_symbol/>
+</calculation>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>456</xloc>
+      <yloc>145</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Group by</name>
+    <type>GroupBy</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+      <all_rows>N</all_rows>
+      <ignore_aggregate>N</ignore_aggregate>
+      <field_ignore/>
+      <directory>&#x25;&#x25;java.io.tmpdir&#x25;&#x25;</directory>
+      <prefix>grp</prefix>
+      <add_linenr>N</add_linenr>
+      <linenr_fieldname/>
+      <give_back_row>N</give_back_row>
+      <group>
+        <field>
+          <name>data_sourde_key</name>
+        </field>
+        <field>
+          <name>data_source_name</name>
+        </field>
+        <field>
+          <name>age_five_year_key</name>
+        </field>
+        <field>
+          <name>age_five_year</name>
+        </field>
+        <field>
+          <name>age_groups</name>
+        </field>
+        <field>
+          <name>is_adult</name>
+        </field>
+        <field>
+          <name>victim_gender</name>
+        </field>
+        <field>
+          <name>job_key</name>
+        </field>
+        <field>
+          <name>insurance_key</name>
+        </field>
+        <field>
+          <name>insurance_name</name>
+        </field>
+        <field>
+          <name>ethnic_key</name>
+        </field>
+        <field>
+          <name>ethnic_name</name>
+        </field>
+        <field>
+          <name>vulnerable_group_key</name>
+        </field>
+        <field>
+          <name>vulnerable_group_name</name>
+        </field>
+        <field>
+          <name>education_key</name>
+        </field>
+        <field>
+          <name>education_name</name>
+        </field>
+        <field>
+          <name>vulnerability_key</name>
+        </field>
+        <field>
+          <name>vulnerability_name</name>
+        </field>
+        <field>
+          <name>antecedent_key</name>
+        </field>
+        <field>
+          <name>antecedent_name</name>
+        </field>
+        <field>
+          <name>alcohol_key</name>
+        </field>
+        <field>
+          <name>alcohol_name</name>
+        </field>
+        <field>
+          <name>regimen_key</name>
+        </field>
+        <field>
+          <name>regimen_name</name>
+        </field>
+        <field>
+          <name>neighborhood_key</name>
+        </field>
+        <field>
+          <name>conflict_key</name>
+        </field>
+        <field>
+          <name>conflict_name</name>
+        </field>
+        <field>
+          <name>place_key</name>
+        </field>
+        <field>
+          <name>place_name</name>
+        </field>
+        <field>
+          <name>aggressor_age_five_year_key</name>
+        </field>
+        <field>
+          <name>aggressor_age_five_year</name>
+        </field>
+        <field>
+          <name>aggressor_age_groups</name>
+        </field>
+        <field>
+          <name>aggressor_is_adult</name>
+        </field>
+        <field>
+          <name>aggressor_gender</name>
+        </field>
+        <field>
+          <name>aggressor_job_key</name>
+        </field>
+        <field>
+          <name>aggressor_education_key</name>
+        </field>
+        <field>
+          <name>aggressor_education_name</name>
+        </field>
+        <field>
+          <name>aggressor_type_key</name>
+        </field>
+        <field>
+          <name>aggressor_type_name</name>
+        </field>
+        <field>
+          <name>aggressor_live_together_key</name>
+        </field>
+        <field>
+          <name>aggressor_live_together_name</name>
+        </field>
+        <field>
+          <name>aggressor_no_relative_key</name>
+        </field>
+        <field>
+          <name>aggressor_no_relative_name</name>
+        </field>
+        <field>
+          <name>aggressor_group_key</name>
+        </field>
+        <field>
+          <name>aggressor_group_name</name>
+        </field>
+        <field>
+          <name>aggressor_alcohol_key</name>
+        </field>
+        <field>
+          <name>aggressor_alcohol_name</name>
+        </field>
+        <field>
+          <name>aggressor_mechanism_key</name>
+        </field>
+        <field>
+          <name>aggressor_mechanism_name</name>
+        </field>
+        <field>
+          <name>abuse_type_key</name>
+        </field>
+        <field>
+          <name>abuse_type_name</name>
+        </field>
+        <field>
+          <name>fieldwork_key</name>
+        </field>
+        <field>
+          <name>fieldwork_name</name>
+        </field>
+        <field>
+          <name>recommendation_key</name>
+        </field>
+        <field>
+          <name>recommendation_name</name>
+        </field>
+        <field>
+          <name>age_group_key</name>
+        </field>
+        <field>
+          <name>is_adult_key</name>
+        </field>
+        <field>
+          <name>date_key</name>
+        </field>
+        <field>
+          <name>time_key</name>
+        </field>
+        <field>
+          <name>checkup_date_key</name>
+        </field>
+        <field>
+          <name>checkup_time_key</name>
+        </field>
+        <field>
+          <name>id</name>
+        </field>
+        <field>
+          <name>aggressor_age_group_key</name>
+        </field>
+        <field>
+          <name>aggressor_is_adult_key</name>
+        </field>
+      </group>
+      <fields>
+        <field>
+          <aggregate>counts</aggregate>
+          <subject>id</subject>
+          <type>COUNT_ALL</type>
+          <valuefield/>
+        </field>
+      </fields>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>764</xloc>
+      <yloc>264</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Read sivigila</name>
+    <type>TableInput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <connection>od_test</connection>
+    <sql>SELECT&#xa;	CAST&#x28;id_lesion AS INT&#x29; AS id&#xa;	, CAST&#x28;institucion_receptora AS SMALLINT&#x29; AS data_sourde_key&#xa;	, non_fatal_data_source_name AS data_source_name&#xa;	, CASE&#xa;		WHEN edad_victima IS NULL THEN 99&#xa;		WHEN edad_victima LIKE &#x27;0-4&#x27; THEN 0&#xa;		WHEN edad_victima LIKE &#x27;5-9&#x27; THEN 5&#xa;		WHEN edad_victima LIKE &#x27;10-14&#x27; THEN 10&#xa;		WHEN edad_victima LIKE &#x27;15-19&#x27; THEN 15&#xa;		WHEN edad_victima LIKE &#x27;20-24&#x27; THEN 20&#xa;		WHEN edad_victima LIKE &#x27;25-29&#x27; THEN 25&#xa;		WHEN edad_victima LIKE &#x27;30-34&#x27; THEN 30&#xa;		WHEN edad_victima LIKE &#x27;35-39&#x27; THEN 35&#xa;		WHEN edad_victima LIKE &#x27;40-44&#x27; THEN 40&#xa;		WHEN edad_victima LIKE &#x27;45-49&#x27; THEN 45&#xa;		WHEN edad_victima LIKE &#x27;50-54&#x27; THEN 50&#xa;		WHEN edad_victima LIKE &#x27;55-59&#x27; THEN 55&#xa;		WHEN edad_victima LIKE &#x27;60-64&#x27; THEN 60&#xa;		ELSE 65&#xa;	END AS age_five_year_key&#xa;	, CASE &#xa;		WHEN edad_victima IS NULL THEN &#x27;Desconocido&#x27;&#xa;		WHEN edad_victima LIKE &#x27;0-4&#x27; THEN &#x27;De 0 a 5 a&#xf1;os&#x27;&#xa;		WHEN edad_victima LIKE &#x27;5-9&#x27; THEN &#x27;De 5 a 10 a&#xf1;os&#x27;&#xa;		WHEN edad_victima LIKE &#x27;10-14&#x27; THEN &#x27;De 10 a 15 a&#xf1;os&#x27;&#xa;		WHEN edad_victima LIKE &#x27;15-19&#x27; THEN &#x27;De 15 a 20 a&#xf1;os&#x27;&#xa;		WHEN edad_victima LIKE &#x27;20-24&#x27; THEN &#x27;De 20 a 25 a&#xf1;os&#x27;&#xa;		WHEN edad_victima LIKE &#x27;25-29&#x27; THEN &#x27;De 25 a 30 a&#xf1;os&#x27;&#xa;		WHEN edad_victima LIKE &#x27;30-34&#x27; THEN &#x27;De 30 a 35 a&#xf1;os&#x27;&#xa;		WHEN edad_victima LIKE &#x27;35-39&#x27; THEN &#x27;De 35 a 40 a&#xf1;os&#x27;&#xa;		WHEN edad_victima LIKE &#x27;40-44&#x27; THEN &#x27;De 40 a 45 a&#xf1;os&#x27;&#xa;		WHEN edad_victima LIKE &#x27;45-49&#x27; THEN &#x27;De 45 a 50 a&#xf1;os&#x27;&#xa;		WHEN edad_victima LIKE &#x27;50-54&#x27; THEN &#x27;De 50 a 55 a&#xf1;os&#x27;&#xa;		WHEN edad_victima LIKE &#x27;55-59&#x27; THEN &#x27;De 55 a 60 a&#xf1;os&#x27;&#xa;		WHEN edad_victima LIKE &#x27;60-64&#x27; THEN &#x27;De 60 a 65 a&#xf1;os&#x27;&#xa;		ELSE &#x27;Mayor de 65  a&#xf1;os&#x27;&#xa;	END AS age_five_year&#xa;	, CASE &#xa;		WHEN edad_victima IS NULL THEN &#x27;Desconocido&#x27;&#xa;		WHEN edad_victima LIKE &#x27;0-4&#x27; THEN &#x27;Ni&#xf1;o&#x27;&#xa;		WHEN edad_victima LIKE &#x27;5-9&#x27; THEN &#x27;Ni&#xf1;o&#x27;&#xa;		WHEN edad_victima LIKE &#x27;10-14&#x27; THEN &#x27;Ni&#xf1;o&#x27;&#xa;		WHEN edad_victima LIKE &#x27;15-19&#x27; THEN &#x27;Joven&#x27;&#xa;		WHEN edad_victima LIKE &#x27;20-24&#x27; THEN &#x27;Joven&#x27;&#xa;		WHEN edad_victima LIKE &#x27;25-29&#x27; THEN &#x27;Adulto&#x27;&#xa;		WHEN edad_victima LIKE &#x27;30-34&#x27; THEN &#x27;Adulto&#x27;&#xa;		WHEN edad_victima LIKE &#x27;35-39&#x27; THEN &#x27;Adulto&#x27;&#xa;		WHEN edad_victima LIKE &#x27;40-44&#x27; THEN &#x27;Adulto&#x27;&#xa;		WHEN edad_victima LIKE &#x27;45-49&#x27; THEN &#x27;Adulto&#x27;&#xa;		WHEN edad_victima LIKE &#x27;50-54&#x27; THEN &#x27;Adulto&#x27;&#xa;		WHEN edad_victima LIKE &#x27;55-59&#x27; THEN &#x27;Adulto&#x27;&#xa;		WHEN edad_victima LIKE &#x27;60-64&#x27; THEN &#x27;Adulto&#x27;&#xa;		ELSE &#x27;Adulto Mayor&#x27;&#xa;	END AS age_groups&#xa;	, CASE &#xa;		WHEN mayor_edad_victima IS NULL THEN &#x27;Desconocido&#x27;&#xa;		WHEN mayor_edad_victima LIKE &#x27;MENOR&#x27; THEN &#x27;Menor de Edad&#x27;&#xa;		ELSE &#x27;Adulto&#x27;&#xa;	END AS is_adult&#xa;	, CASE &#xa;		WHEN genero_victima &#x3d; &#x27;1&#x27; THEN &#x27;M&#x27;&#xa;		WHEN genero_victima &#x3d; &#x27;2&#x27; THEN &#x27;F&#x27;&#xa;		ELSE &#x27;Desconocido&#x27;&#xa;	END AS victim_gender&#xa;	, COALESCE&#x28;CAST&#x28;ocupacion_victima AS INT&#x29;, 0&#x29; AS job_key&#xa;	, aseguradora AS insurance_key&#xa;	, insurance_name&#xa;	, ethnic_group_id AS ethnic_key&#xa;	, ethnic_group_name AS ethnic_name&#xa;	, vulnerable_group_id AS vulnerable_group_key&#xa;	, vulnerable_group_name&#xa;	, education.sivigila_educational_level_id AS education_key&#xa;	, education.sivigila_educational_level_name AS education_name&#xa;	, sivigila_vulnerability_id AS vulnerability_key&#xa;	, sivigila_vulnerability_name AS vulnerability_name&#xa;	, antecedent.boolean_id AS antecedent_key&#xa;	, antecedent.boolean_name AS antecedent_name&#xa;	, alcohol.boolean_id AS alcohol_key&#xa;	, alcohol.boolean_name AS alcohol_name&#xa;	, sivigila_tip_ss_id AS regimen_key&#xa;	, sivigila_tip_ss_name AS regimen_name&#xa;	, COALESCE&#x28;CAST&#x28;barrio_evento AS INT&#x29;, 52001&#x29; AS neighborhood_key&#xa; 	, conflict.boolean_id AS conflict_key&#xa; 	, conflict.boolean_name AS conflict_name&#xa;	, place_id AS place_key&#xa;	, place_name AS place_name &#xa; 	--   &#xa;	, fecha_evento AS injury_date&#xa;	, hora_evento AS injury_time&#xa;	, fecha_consulta AS checkup_date&#xa;	, hora_consulta AS checkup_time	&#xa;	--&#xa;	, CASE&#xa;		WHEN edad_agresor IS NULL THEN 99&#xa;		WHEN edad_agresor LIKE &#x27;0-4&#x27; THEN 0&#xa;		WHEN edad_agresor LIKE &#x27;5-9&#x27; THEN 5&#xa;		WHEN edad_agresor LIKE &#x27;10-14&#x27; THEN 10&#xa;		WHEN edad_agresor LIKE &#x27;15-19&#x27; THEN 15&#xa;		WHEN edad_agresor LIKE &#x27;20-24&#x27; THEN 20&#xa;		WHEN edad_agresor LIKE &#x27;25-29&#x27; THEN 25&#xa;		WHEN edad_agresor LIKE &#x27;30-34&#x27; THEN 30&#xa;		WHEN edad_agresor LIKE &#x27;35-39&#x27; THEN 35&#xa;		WHEN edad_agresor LIKE &#x27;40-44&#x27; THEN 40&#xa;		WHEN edad_agresor LIKE &#x27;45-49&#x27; THEN 45&#xa;		WHEN edad_agresor LIKE &#x27;50-54&#x27; THEN 50&#xa;		WHEN edad_agresor LIKE &#x27;55-59&#x27; THEN 55&#xa;		WHEN edad_agresor LIKE &#x27;60-64&#x27; THEN 60&#xa;		ELSE 65&#xa;	END AS aggressor_age_five_year_key&#xa;	, CASE &#xa;		WHEN edad_agresor IS NULL THEN &#x27;Desconocido&#x27;&#xa;		WHEN edad_agresor LIKE &#x27;0-4&#x27; THEN &#x27;De 0 a 5 a&#xf1;os&#x27;&#xa;		WHEN edad_agresor LIKE &#x27;5-9&#x27; THEN &#x27;De 5 a 10 a&#xf1;os&#x27;&#xa;		WHEN edad_agresor LIKE &#x27;10-14&#x27; THEN &#x27;De 10 a 15 a&#xf1;os&#x27;&#xa;		WHEN edad_agresor LIKE &#x27;15-19&#x27; THEN &#x27;De 15 a 20 a&#xf1;os&#x27;&#xa;		WHEN edad_agresor LIKE &#x27;20-24&#x27; THEN &#x27;De 20 a 25 a&#xf1;os&#x27;&#xa;		WHEN edad_agresor LIKE &#x27;25-29&#x27; THEN &#x27;De 25 a 30 a&#xf1;os&#x27;&#xa;		WHEN edad_agresor LIKE &#x27;30-34&#x27; THEN &#x27;De 30 a 35 a&#xf1;os&#x27;&#xa;		WHEN edad_agresor LIKE &#x27;35-39&#x27; THEN &#x27;De 35 a 40 a&#xf1;os&#x27;&#xa;		WHEN edad_agresor LIKE &#x27;40-44&#x27; THEN &#x27;De 40 a 45 a&#xf1;os&#x27;&#xa;		WHEN edad_agresor LIKE &#x27;45-49&#x27; THEN &#x27;De 45 a 50 a&#xf1;os&#x27;&#xa;		WHEN edad_agresor LIKE &#x27;50-54&#x27; THEN &#x27;De 50 a 55 a&#xf1;os&#x27;&#xa;		WHEN edad_agresor LIKE &#x27;55-59&#x27; THEN &#x27;De 55 a 60 a&#xf1;os&#x27;&#xa;		WHEN edad_agresor LIKE &#x27;60-64&#x27; THEN &#x27;De 60 a 65 a&#xf1;os&#x27;&#xa;		ELSE &#x27;Mayor de 65  a&#xf1;os&#x27;&#xa;	END AS aggressor_age_five_year&#xa;	, CASE &#xa;		WHEN edad_agresor IS NULL THEN &#x27;Desconocido&#x27;&#xa;		WHEN edad_agresor LIKE &#x27;0-4&#x27; THEN &#x27;Ni&#xf1;o&#x27;&#xa;		WHEN edad_agresor LIKE &#x27;5-9&#x27; THEN &#x27;Ni&#xf1;o&#x27;&#xa;		WHEN edad_agresor LIKE &#x27;10-14&#x27; THEN &#x27;Ni&#xf1;o&#x27;&#xa;		WHEN edad_agresor LIKE &#x27;15-19&#x27; THEN &#x27;Joven&#x27;&#xa;		WHEN edad_agresor LIKE &#x27;20-24&#x27; THEN &#x27;Joven&#x27;&#xa;		WHEN edad_agresor LIKE &#x27;25-29&#x27; THEN &#x27;Adulto&#x27;&#xa;		WHEN edad_agresor LIKE &#x27;30-34&#x27; THEN &#x27;Adulto&#x27;&#xa;		WHEN edad_agresor LIKE &#x27;35-39&#x27; THEN &#x27;Adulto&#x27;&#xa;		WHEN edad_agresor LIKE &#x27;40-44&#x27; THEN &#x27;Adulto&#x27;&#xa;		WHEN edad_agresor LIKE &#x27;45-49&#x27; THEN &#x27;Adulto&#x27;&#xa;		WHEN edad_agresor LIKE &#x27;50-54&#x27; THEN &#x27;Adulto&#x27;&#xa;		WHEN edad_agresor LIKE &#x27;55-59&#x27; THEN &#x27;Adulto&#x27;&#xa;		WHEN edad_agresor LIKE &#x27;60-64&#x27; THEN &#x27;Adulto&#x27;&#xa;		ELSE &#x27;Adulto Mayor&#x27;&#xa;	END AS aggressor_age_groups&#xa;	, CASE &#xa;		WHEN mayor_edad_agresor IS NULL THEN &#x27;Desconocido&#x27;&#xa;		WHEN mayor_edad_agresor LIKE &#x27;MENOR&#x27; THEN &#x27;Menor de Edad&#x27;&#xa;		ELSE &#x27;Adulto&#x27;&#xa;	END AS aggressor_is_adult&#xa;	, CASE &#xa;		WHEN genero_agresor &#x3d; &#x27;1&#x27; THEN &#x27;M&#x27;&#xa;		WHEN genero_agresor &#x3d; &#x27;2&#x27; THEN &#x27;F&#x27;&#xa;		ELSE &#x27;Desconocido&#x27;&#xa;	END AS aggressor_gender&#xa;	, COALESCE&#x28;CAST&#x28;ocupacion_agresor AS INT&#x29;, 0&#x29; AS aggressor_job_key&#xa;	, CAST&#x28;aggressor_education.sivigila_educational_level_id AS SMALLINT&#x29; AS aggressor_education_key&#xa;	, aggressor_education.sivigila_educational_level_name AS aggressor_education_name&#xa;	, COALESCE&#x28;aggressor_type_id, 9&#x29; AS aggressor_type_key&#xa;	, COALESCE&#x28;aggressor_type_name, &#x27;NO SE SABE&#x27;&#x29; AS aggressor_type_name &#xa;  	, COALESCE&#x28;live_together.boolean_id, 3&#x29; AS aggressor_live_together_key&#xa;  	, COALESCE&#x28;live_together.boolean_name, &#x27;NO SE SABE&#x27;&#x29; AS aggressor_live_together_name&#xa;  	, COALESCE&#x28;sivigila_no_relative_id, 9&#x29; AS aggressor_no_relative_key&#xa;  	, COALESCE&#x28;sivigila_no_relative_name, &#x27;SIN INFORMACION&#x27;&#x29; AS aggressor_no_relative_name &#xa;  	, COALESCE&#x28;sivigila_group_id, 11&#x29; AS aggressor_group_key&#xa;  	, COALESCE&#x28;sivigila_group_name, &#x27;OTRO&#x27;&#x29; AS aggressor_group_name &#xa; 	, aggressor_alcohol.boolean_id   AS aggressor_alcohol_key&#xa; 	, aggressor_alcohol.boolean_name AS aggressor_alcohol_name&#xa;  	, COALESCE&#x28;sivigila_mechanism_id, 13&#x29;     AS aggressor_mechanism_key&#xa;  	, COALESCE&#x28;sivigila_mechanism_name, &#x27;Otro&#x27;&#x29; AS aggressor_mechanism_name&#xa;  	, COALESCE&#x28;abuse_type_id, 7&#x29; AS abuse_type_key&#xa;  	, COALESCE&#x28;abuse_type_name, &#x27;SIN DATO&#x27;&#x29; AS abuse_type_name&#xa;  	, fieldwork.boolean_id AS fieldwork_key&#xa;  	, fieldwork.boolean_name AS fieldwork_name	&#xa;  	, recommendation.boolean_id AS recommendation_key&#xa;  	, recommendation.boolean_name AS recommendation_name	  	&#xa;  &#xa;FROM&#xa;	sivigila_sta_temp&#xa;LEFT JOIN&#xa;	non_fatal_data_sources&#xa;ON&#xa;	&#x28;non_fatal_data_source_id &#x3d; CAST&#x28;institucion_receptora AS SMALLINT&#x29;&#x29;&#xa;LEFT JOIN&#xa;	insurance&#xa;ON&#xa;	&#x28;insurance_id &#x3d; aseguradora&#x29;&#xa;LEFT JOIN&#xa;	ethnic_groups&#xa;ON&#xa;	&#x28;ethnic_group_id &#x3d; CAST&#x28;pertenencia_etnica AS SMALLINT&#x29;&#x29;&#xa;LEFT JOIN&#xa;	vulnerable_groups&#xa;ON&#xa;	&#x28;vulnerable_group_id &#x3d; CAST&#x28;grupo_poblacional AS SMALLINT&#x29;&#x29;&#xa;LEFT JOIN&#xa;	sivigila_educational_level education&#xa;ON&#xa;	&#x28;education.sivigila_educational_level_id &#x3d; CAST&#x28;escolaridad_victima AS SMALLINT&#x29;&#x29;&#xa;LEFT JOIN&#xa;	sivigila_educational_level aggressor_education&#xa;ON&#xa;	&#x28;aggressor_education.sivigila_educational_level_id &#x3d; CAST&#x28;escolaridad_agresor AS SMALLINT&#x29;&#x29;&#xa;LEFT JOIN&#xa;	sivigila_vulnerability&#xa;ON&#xa;	&#x28;sivigila_vulnerability_id &#x3d; CAST&#x28;factor_vulnerabilidad AS SMALLINT&#x29;&#x29;&#xa;LEFT JOIN&#xa;	boolean3 antecedent&#xa;ON&#xa;	&#x28;antecedent.boolean_id &#x3d; CAST&#x28;antecedentes_hecho_similar AS SMALLINT&#x29;&#x29;&#xa;LEFT JOIN&#xa;	boolean3 alcohol&#xa;ON&#xa;	&#x28;alcohol.boolean_id &#x3d; CAST&#x28;presencia_alcohol_victima AS SMALLINT&#x29;&#x29;&#xa;LEFT JOIN&#xa;	boolean3 aggressor_alcohol&#xa;ON&#xa;	&#x28;aggressor_alcohol.boolean_id &#x3d; CAST&#x28;presencia_alcohol_agresor AS SMALLINT&#x29;&#x29;&#xa;LEFT JOIN&#xa;	sivigila_tip_ss&#xa;ON&#xa;	&#x28;sivigila_tip_ss_id &#x3d; CAST&#x28;tipo_regimen AS SMALLINT&#x29;&#x29;&#xa;LEFT JOIN&#xa;	boolean3 conflict&#xa;ON&#xa;	&#x28;conflict.boolean_id &#x3d; CAST&#x28;zona_conflicto AS SMALLINT&#x29;&#x29;&#xa;LEFT JOIN&#xa;	boolean3 live_together&#xa;ON&#xa;	&#x28;live_together.boolean_id &#x3d; CAST&#x28;convive_con_agresor AS SMALLINT&#x29;&#x29;&#xa;LEFT JOIN&#xa;	boolean3 fieldwork&#xa;ON&#xa;	&#x28;fieldwork.boolean_id &#x3d; CAST&#x28;trabajo_de_campo AS SMALLINT&#x29;&#x29;&#xa;LEFT JOIN&#xa;	boolean3 recommendation&#xa;ON&#xa;	&#x28;recommendation.boolean_id &#x3d; CAST&#x28;recomienda_proteccion AS SMALLINT&#x29;&#x29;&#xa;LEFT JOIN&#xa;	places&#xa;ON&#xa;	&#x28;place_id &#x3d; CAST&#x28;escenario AS SMALLINT&#x29;&#x29;&#xa;LEFT JOIN&#xa;	aggressor_types&#xa;ON&#xa;	&#x28;aggressor_type_id &#x3d; CAST&#x28;relacion_familiar_victima AS SMALLINT&#x29;&#x29;&#xa;LEFT JOIN&#xa;	sivigila_no_relative&#xa;ON&#xa;	&#x28;sivigila_no_relative_id &#x3d; CAST&#x28;relacion_no_familiar AS SMALLINT&#x29;&#x29;&#xa;LEFT JOIN&#xa;	sivigila_group&#xa;ON&#xa;	&#x28;sivigila_group_id &#x3d; CAST&#x28;grupo_agresor AS SMALLINT&#x29;&#x29;&#xa;LEFT JOIN&#xa;	sivigila_mechanism&#xa;ON&#xa;	&#x28;sivigila_mechanism_id &#x3d; CAST&#x28;armas_utilizadas AS SMALLINT&#x29;&#x29;&#xa;LEFT JOIN&#xa;	abuse_types&#xa;ON&#xa;	&#x28;abuse_type_id &#x3d; CAST&#x28;naturaleza_violencia AS SMALLINT&#x29;&#x29;&#xa;	&#xa;	</sql>
+    <limit>0</limit>
+    <lookup/>
+    <execute_each_row>N</execute_each_row>
+    <variables_active>N</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>48</xloc>
+      <yloc>32</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Select values</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <fields>      <field>        <name>id</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>data_sourde_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>data_source_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>age_five_year_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>age_five_year</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>age_groups</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>is_adult</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>victim_gender</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>job_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>insurance_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>insurance_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>ethnic_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>ethnic_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>vulnerable_group_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>vulnerable_group_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>education_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>education_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>vulnerability_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>vulnerability_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>antecedent_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>antecedent_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>alcohol_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>alcohol_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>regimen_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>regimen_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>neighborhood_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>conflict_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>conflict_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>place_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>place_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_age_five_year_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_age_five_year</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_age_groups</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_is_adult</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_gender</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_job_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_education_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_education_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_type_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_type_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_live_together_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_live_together_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_no_relative_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_no_relative_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_group_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_group_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_alcohol_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_alcohol_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_mechanism_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_mechanism_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>abuse_type_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>abuse_type_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>fieldwork_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>fieldwork_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>recommendation_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>recommendation_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>age_group_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>is_adult_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>date_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>time_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>checkup_date_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>checkup_time_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_age_group_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_is_adult_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>        <select_unspecified>N</select_unspecified>
+    </fields>     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>502</xloc>
+      <yloc>264</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Set age group keys</name>
+    <type>ValueMapper</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <field_to_use>age_groups</field_to_use>
+    <target_field>temp_age_group_key</target_field>
+    <non_match_default/>
+    <fields>
+      <field>
+        <source_value>Ni&#xf1;o</source_value>
+        <target_value>1</target_value>
+      </field>
+      <field>
+        <source_value>Joven</source_value>
+        <target_value>2</target_value>
+      </field>
+      <field>
+        <source_value>Adulto</source_value>
+        <target_value>3</target_value>
+      </field>
+      <field>
+        <source_value>Adulto Mayor</source_value>
+        <target_value>4</target_value>
+      </field>
+      <field>
+        <source_value>Desconocido</source_value>
+        <target_value>9</target_value>
+      </field>
+    </fields>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>182</xloc>
+      <yloc>31</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Set age group keys aggressor</name>
+    <type>ValueMapper</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <field_to_use>aggressor_age_groups</field_to_use>
+    <target_field>temp_age_group_aggressor_key</target_field>
+    <non_match_default/>
+    <fields>
+      <field>
+        <source_value>Ni&#xf1;o</source_value>
+        <target_value>1</target_value>
+      </field>
+      <field>
+        <source_value>Joven</source_value>
+        <target_value>2</target_value>
+      </field>
+      <field>
+        <source_value>Adulto</source_value>
+        <target_value>3</target_value>
+      </field>
+      <field>
+        <source_value>Adulto Mayor</source_value>
+        <target_value>4</target_value>
+      </field>
+      <field>
+        <source_value>Desconocido</source_value>
+        <target_value>9</target_value>
+      </field>
+    </fields>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>449</xloc>
+      <yloc>32</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Set is adult key</name>
+    <type>ValueMapper</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <field_to_use>is_adult</field_to_use>
+    <target_field>temp_is_adult_key</target_field>
+    <non_match_default/>
+    <fields>
+      <field>
+        <source_value>Menor de Edad</source_value>
+        <target_value>1</target_value>
+      </field>
+      <field>
+        <source_value>Adulto</source_value>
+        <target_value>2</target_value>
+      </field>
+      <field>
+        <source_value>Desconocido</source_value>
+        <target_value>9</target_value>
+      </field>
+    </fields>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>300</xloc>
+      <yloc>31</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Set is adult keys aggressor</name>
+    <type>ValueMapper</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <field_to_use>aggressor_is_adult</field_to_use>
+    <target_field>temp_is_adult_aggressor_key</target_field>
+    <non_match_default/>
+    <fields>
+      <field>
+        <source_value>Menor de Edad</source_value>
+        <target_value>1</target_value>
+      </field>
+      <field>
+        <source_value>Adulto</source_value>
+        <target_value>2</target_value>
+      </field>
+      <field>
+        <source_value>Desconocido</source_value>
+        <target_value>9</target_value>
+      </field>
+    </fields>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>628</xloc>
+      <yloc>32</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Set unknown checkup date</name>
+    <type>ValueMapper</type>
+    <description/>
+    <distribute>N</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <field_to_use>checkup_date_key</field_to_use>
+    <target_field/>
+    <non_match_default/>
+    <fields>
+      <field>
+        <source_value/>
+        <target_value>29990101</target_value>
+      </field>
+    </fields>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>359</xloc>
+      <yloc>264</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Set unknown checkup time</name>
+    <type>ValueMapper</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <field_to_use>checkup_time_key</field_to_use>
+    <target_field/>
+    <non_match_default/>
+    <fields>
+      <field>
+        <source_value/>
+        <target_value>2500</target_value>
+      </field>
+    </fields>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>181</xloc>
+      <yloc>264</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Set unknown date</name>
+    <type>ValueMapper</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <field_to_use>date_key</field_to_use>
+    <target_field/>
+    <non_match_default/>
+    <fields>
+      <field>
+        <source_value/>
+        <target_value>29990101</target_value>
+      </field>
+    </fields>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>178</xloc>
+      <yloc>145</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Set unknown time</name>
+    <type>ValueMapper</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <field_to_use>time_key</field_to_use>
+    <target_field/>
+    <non_match_default/>
+    <fields>
+      <field>
+        <source_value/>
+        <target_value>2500</target_value>
+      </field>
+    </fields>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>323</xloc>
+      <yloc>145</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Sort rows</name>
+    <type>SortRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+      <directory>&#x25;&#x25;java.io.tmpdir&#x25;&#x25;</directory>
+      <prefix>out</prefix>
+      <sort_size>1000000</sort_size>
+      <free_memory/>
+      <compress>N</compress>
+      <compress_variable/>
+      <unique_rows>N</unique_rows>
+    <fields>
+      <field>
+        <name>data_sourde_key</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>data_source_name</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>age_five_year_key</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>age_five_year</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>age_groups</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>is_adult</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>victim_gender</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>job_key</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>insurance_key</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>insurance_name</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>ethnic_key</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>ethnic_name</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>vulnerable_group_key</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>vulnerable_group_name</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>education_key</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>education_name</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>vulnerability_key</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>vulnerability_name</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>antecedent_key</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>antecedent_name</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>alcohol_key</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>alcohol_name</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>regimen_key</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>regimen_name</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>neighborhood_key</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>conflict_key</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>conflict_name</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>place_key</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>place_name</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>aggressor_age_five_year_key</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>aggressor_age_five_year</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>aggressor_age_groups</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>aggressor_is_adult</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>aggressor_gender</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>aggressor_job_key</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>aggressor_education_key</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>aggressor_education_name</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>aggressor_type_key</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>aggressor_type_name</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>aggressor_live_together_key</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>aggressor_live_together_name</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>aggressor_no_relative_key</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>aggressor_no_relative_name</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>aggressor_group_key</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>aggressor_group_name</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>aggressor_alcohol_key</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>aggressor_alcohol_name</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>aggressor_mechanism_key</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>aggressor_mechanism_name</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>abuse_type_key</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>abuse_type_name</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>fieldwork_key</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>fieldwork_name</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>recommendation_key</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>recommendation_name</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>age_group_key</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>is_adult_key</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>date_key</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>time_key</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>checkup_date_key</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>checkup_time_key</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>id</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>aggressor_age_group_key</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>aggressor_is_adult_key</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+    </fields>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>634</xloc>
+      <yloc>264</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Read neighborhoods</name>
+    <type>TableInput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <connection>od_test</connection>
+    <sql>SELECT&#xa;	neighborhood_id&#xa;	, neighborhood_name AS neighborhood_name&#xa;	, commune_id AS suburb_key&#xa;	, commune_name AS suburb_name&#xa;	, CASE WHEN area_id IS NULL THEN 0  &#xa;		ELSE area_id END AS zone_key&#xa;	, CASE WHEN area_id IS NULL THEN &#x27;SIN DATO&#x27;  &#xa;		WHEN area_id &#x3d; 1 THEN &#x27;URBANA&#x27;&#xa;		WHEN area_id &#x3d; 2 THEN &#x27;RURAL&#x27;&#xa;		END AS zone_name&#xa;	, CASE WHEN neighborhood_corridor IS NULL THEN 9  &#xa;		WHEN neighborhood_corridor &#x3d; 0 THEN 9&#xa;		ELSE neighborhood_corridor END AS corridor_key&#xa;	, CASE WHEN neighborhood_corridor IS NULL THEN &#x27;NO APLICA&#x27; &#xa;		WHEN neighborhood_corridor &#x3d; 1 THEN &#x27;CENTRAL&#x27;&#xa;		WHEN neighborhood_corridor &#x3d; 2 THEN &#x27;OCCIDENTAL&#x27;&#xa;		WHEN neighborhood_corridor &#x3d; 3 THEN &#x27;ORIENTAL&#x27;&#xa;		WHEN neighborhood_corridor &#x3d; 4 THEN &#x27;SURORIENTAL&#x27;&#xa;		ELSE &#x27;NO APLICA&#x27; END AS corridor_name&#xa;FROM&#xa;	neighborhoods&#xa;LEFT JOIN&#xa;	communes&#xa;ON&#xa;	&#x28;neighborhood_suburb &#x3d; commune_id&#x29;&#xa;ORDER BY&#xa;	neighborhood_id</sql>
+    <limit>0</limit>
+    <lookup/>
+    <execute_each_row>N</execute_each_row>
+    <variables_active>N</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>1008</xloc>
+      <yloc>384</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Merge Join</name>
+    <type>MergeJoin</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+<join_type>INNER</join_type>
+<step1>Sort by neighborhood</step1>
+<step2>Read neighborhoods</step2>
+    <keys_1>
+      <key>neighborhood_key</key>
+    </keys_1>
+    <keys_2>
+      <key>neighborhood_id</key>
+    </keys_2>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>1008</xloc>
+      <yloc>264</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Sort by neighborhood</name>
+    <type>SortRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+      <directory>&#x25;&#x25;java.io.tmpdir&#x25;&#x25;</directory>
+      <prefix>out</prefix>
+      <sort_size>1000000</sort_size>
+      <free_memory/>
+      <compress>N</compress>
+      <compress_variable/>
+      <unique_rows>N</unique_rows>
+    <fields>
+      <field>
+        <name>neighborhood_key</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+    </fields>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>901</xloc>
+      <yloc>263</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Get neighborhood_key</name>
+    <type>CombinationLookup</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+      <schema/>
+      <table>dim_neighborhood</table>
+      <connection>od_dwh_test</connection>
+      <commit>100</commit>
+      <cache_size>9999</cache_size>
+      <replace>N</replace>
+      <crc>N</crc>
+      <crcfield>hashcode</crcfield>
+      <fields>
+        <key>
+          <name>neighborhood_name</name>
+          <lookup>neighborhood_name</lookup>
+        </key>
+        <key>
+          <name>suburb_key</name>
+          <lookup>suburb_key</lookup>
+        </key>
+        <key>
+          <name>suburb_name</name>
+          <lookup>suburb_name</lookup>
+        </key>
+        <key>
+          <name>zone_key</name>
+          <lookup>zone_key</lookup>
+        </key>
+        <key>
+          <name>zone_name</name>
+          <lookup>zone_name</lookup>
+        </key>
+        <key>
+          <name>corridor_key</name>
+          <lookup>corridor_key</lookup>
+        </key>
+        <key>
+          <name>corridor_name</name>
+          <lookup>corridor_name</lookup>
+        </key>
+        <return>
+          <name>neighborhood_key</name>
+          <creation_method>tablemax</creation_method>
+          <use_autoinc>N</use_autoinc>
+        </return>
+      </fields>
+      <sequence/>
+      <last_update_field/>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>1139</xloc>
+      <yloc>264</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Select new values </name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <fields>      <field>        <name>abuse_type_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>abuse_type_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>age_five_year</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>age_five_year_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>age_group_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>age_groups</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_age_five_year</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_age_five_year_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_age_group_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_age_groups</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_alcohol_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_alcohol_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_education_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_education_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_gender</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_group_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_group_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_is_adult</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_is_adult_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_job_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_live_together_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_live_together_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_mechanism_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_mechanism_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_no_relative_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_no_relative_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_type_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>aggressor_type_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>alcohol_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>alcohol_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>antecedent_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>antecedent_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>checkup_date_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>checkup_time_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>conflict_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>conflict_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>corridor_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>corridor_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>counts</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>data_source_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>data_sourde_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>date_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>education_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>education_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>ethnic_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>ethnic_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>fieldwork_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>fieldwork_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>id</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>insurance_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>insurance_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>is_adult</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>is_adult_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>job_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>neighborhood_id</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>neighborhood_key_1</name>
+        <rename>neighborhood_key</rename>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>neighborhood_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>place_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>place_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>recommendation_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>recommendation_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>regimen_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>regimen_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>suburb_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>suburb_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>time_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>victim_gender</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>vulnerability_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>vulnerability_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>vulnerable_group_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>vulnerable_group_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>zone_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>zone_name</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>        <select_unspecified>N</select_unspecified>
+    </fields>     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>1268</xloc>
+      <yloc>264</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Write sivigila</name>
+    <type>TableOutput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <connection>od_dwh_test</connection>
+    <schema>public</schema>
+    <table>fact_sivigila</table>
+    <commit>1000</commit>
+    <truncate>N</truncate>
+    <ignore_errors>N</ignore_errors>
+    <use_batch>Y</use_batch>
+    <specify_fields>Y</specify_fields>
+    <partitioning_enabled>N</partitioning_enabled>
+    <partitioning_field/>
+    <partitioning_daily>N</partitioning_daily>
+    <partitioning_monthly>Y</partitioning_monthly>
+    <tablename_in_field>N</tablename_in_field>
+    <tablename_field/>
+    <tablename_in_table>Y</tablename_in_table>
+    <return_keys>N</return_keys>
+    <return_field/>
+    <fields>
+        <field>
+          <column_name>data_sourde_key</column_name>
+          <stream_name>data_sourde_key</stream_name>
+        </field>
+        <field>
+          <column_name>data_source_name</column_name>
+          <stream_name>data_source_name</stream_name>
+        </field>
+        <field>
+          <column_name>age_five_year_key</column_name>
+          <stream_name>age_five_year_key</stream_name>
+        </field>
+        <field>
+          <column_name>age_five_year</column_name>
+          <stream_name>age_five_year</stream_name>
+        </field>
+        <field>
+          <column_name>age_groups</column_name>
+          <stream_name>age_groups</stream_name>
+        </field>
+        <field>
+          <column_name>is_adult</column_name>
+          <stream_name>is_adult</stream_name>
+        </field>
+        <field>
+          <column_name>victim_gender</column_name>
+          <stream_name>victim_gender</stream_name>
+        </field>
+        <field>
+          <column_name>job_key</column_name>
+          <stream_name>job_key</stream_name>
+        </field>
+        <field>
+          <column_name>insurance_key</column_name>
+          <stream_name>insurance_key</stream_name>
+        </field>
+        <field>
+          <column_name>insurance_name</column_name>
+          <stream_name>insurance_name</stream_name>
+        </field>
+        <field>
+          <column_name>ethnic_key</column_name>
+          <stream_name>ethnic_key</stream_name>
+        </field>
+        <field>
+          <column_name>ethnic_name</column_name>
+          <stream_name>ethnic_name</stream_name>
+        </field>
+        <field>
+          <column_name>vulnerable_group_key</column_name>
+          <stream_name>vulnerable_group_key</stream_name>
+        </field>
+        <field>
+          <column_name>vulnerable_group_name</column_name>
+          <stream_name>vulnerable_group_name</stream_name>
+        </field>
+        <field>
+          <column_name>education_key</column_name>
+          <stream_name>education_key</stream_name>
+        </field>
+        <field>
+          <column_name>education_name</column_name>
+          <stream_name>education_name</stream_name>
+        </field>
+        <field>
+          <column_name>vulnerability_key</column_name>
+          <stream_name>vulnerability_key</stream_name>
+        </field>
+        <field>
+          <column_name>vulnerability_name</column_name>
+          <stream_name>vulnerability_name</stream_name>
+        </field>
+        <field>
+          <column_name>antecedent_key</column_name>
+          <stream_name>antecedent_key</stream_name>
+        </field>
+        <field>
+          <column_name>antecedent_name</column_name>
+          <stream_name>antecedent_name</stream_name>
+        </field>
+        <field>
+          <column_name>alcohol_key</column_name>
+          <stream_name>alcohol_key</stream_name>
+        </field>
+        <field>
+          <column_name>alcohol_name</column_name>
+          <stream_name>alcohol_name</stream_name>
+        </field>
+        <field>
+          <column_name>regimen_key</column_name>
+          <stream_name>regimen_key</stream_name>
+        </field>
+        <field>
+          <column_name>regimen_name</column_name>
+          <stream_name>regimen_name</stream_name>
+        </field>
+        <field>
+          <column_name>neighborhood_key</column_name>
+          <stream_name>neighborhood_key</stream_name>
+        </field>
+        <field>
+          <column_name>conflict_key</column_name>
+          <stream_name>conflict_key</stream_name>
+        </field>
+        <field>
+          <column_name>conflict_name</column_name>
+          <stream_name>conflict_name</stream_name>
+        </field>
+        <field>
+          <column_name>place_key</column_name>
+          <stream_name>place_key</stream_name>
+        </field>
+        <field>
+          <column_name>place_name</column_name>
+          <stream_name>place_name</stream_name>
+        </field>
+        <field>
+          <column_name>aggressor_age_five_year_key</column_name>
+          <stream_name>aggressor_age_five_year_key</stream_name>
+        </field>
+        <field>
+          <column_name>aggressor_age_five_year</column_name>
+          <stream_name>aggressor_age_five_year</stream_name>
+        </field>
+        <field>
+          <column_name>aggressor_age_groups</column_name>
+          <stream_name>aggressor_age_groups</stream_name>
+        </field>
+        <field>
+          <column_name>aggressor_is_adult</column_name>
+          <stream_name>aggressor_is_adult</stream_name>
+        </field>
+        <field>
+          <column_name>aggressor_gender</column_name>
+          <stream_name>aggressor_gender</stream_name>
+        </field>
+        <field>
+          <column_name>aggressor_job_key</column_name>
+          <stream_name>aggressor_job_key</stream_name>
+        </field>
+        <field>
+          <column_name>aggressor_education_key</column_name>
+          <stream_name>aggressor_education_key</stream_name>
+        </field>
+        <field>
+          <column_name>aggressor_education_name</column_name>
+          <stream_name>aggressor_education_name</stream_name>
+        </field>
+        <field>
+          <column_name>aggressor_type_key</column_name>
+          <stream_name>aggressor_type_key</stream_name>
+        </field>
+        <field>
+          <column_name>aggressor_type_name</column_name>
+          <stream_name>aggressor_type_name</stream_name>
+        </field>
+        <field>
+          <column_name>aggressor_live_together_key</column_name>
+          <stream_name>aggressor_live_together_key</stream_name>
+        </field>
+        <field>
+          <column_name>aggressor_live_together_name</column_name>
+          <stream_name>aggressor_live_together_name</stream_name>
+        </field>
+        <field>
+          <column_name>aggressor_no_relative_key</column_name>
+          <stream_name>aggressor_no_relative_key</stream_name>
+        </field>
+        <field>
+          <column_name>aggressor_no_relative_name</column_name>
+          <stream_name>aggressor_no_relative_name</stream_name>
+        </field>
+        <field>
+          <column_name>aggressor_group_key</column_name>
+          <stream_name>aggressor_group_key</stream_name>
+        </field>
+        <field>
+          <column_name>aggressor_group_name</column_name>
+          <stream_name>aggressor_group_name</stream_name>
+        </field>
+        <field>
+          <column_name>aggressor_alcohol_key</column_name>
+          <stream_name>aggressor_alcohol_key</stream_name>
+        </field>
+        <field>
+          <column_name>aggressor_alcohol_name</column_name>
+          <stream_name>aggressor_alcohol_name</stream_name>
+        </field>
+        <field>
+          <column_name>aggressor_mechanism_key</column_name>
+          <stream_name>aggressor_mechanism_key</stream_name>
+        </field>
+        <field>
+          <column_name>aggressor_mechanism_name</column_name>
+          <stream_name>aggressor_mechanism_name</stream_name>
+        </field>
+        <field>
+          <column_name>abuse_type_key</column_name>
+          <stream_name>abuse_type_key</stream_name>
+        </field>
+        <field>
+          <column_name>abuse_type_name</column_name>
+          <stream_name>abuse_type_name</stream_name>
+        </field>
+        <field>
+          <column_name>fieldwork_key</column_name>
+          <stream_name>fieldwork_key</stream_name>
+        </field>
+        <field>
+          <column_name>fieldwork_name</column_name>
+          <stream_name>fieldwork_name</stream_name>
+        </field>
+        <field>
+          <column_name>recommendation_key</column_name>
+          <stream_name>recommendation_key</stream_name>
+        </field>
+        <field>
+          <column_name>recommendation_name</column_name>
+          <stream_name>recommendation_name</stream_name>
+        </field>
+        <field>
+          <column_name>age_group_key</column_name>
+          <stream_name>age_group_key</stream_name>
+        </field>
+        <field>
+          <column_name>is_adult_key</column_name>
+          <stream_name>is_adult_key</stream_name>
+        </field>
+        <field>
+          <column_name>date_key</column_name>
+          <stream_name>date_key</stream_name>
+        </field>
+        <field>
+          <column_name>time_key</column_name>
+          <stream_name>time_key</stream_name>
+        </field>
+        <field>
+          <column_name>checkup_date_key</column_name>
+          <stream_name>checkup_date_key</stream_name>
+        </field>
+        <field>
+          <column_name>checkup_time_key</column_name>
+          <stream_name>checkup_time_key</stream_name>
+        </field>
+        <field>
+          <column_name>counts</column_name>
+          <stream_name>counts</stream_name>
+        </field>
+        <field>
+          <column_name>aggressor_age_group_key</column_name>
+          <stream_name>aggressor_age_group_key</stream_name>
+        </field>
+        <field>
+          <column_name>aggressor_is_adult_key</column_name>
+          <stream_name>aggressor_is_adult_key</stream_name>
+        </field>
+    </fields>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>1269</xloc>
+      <yloc>397</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step_error_handling>
+  </step_error_handling>
+   <slave-step-copy-partition-distribution>
+</slave-step-copy-partition-distribution>
+   <slave_transformation>N</slave_transformation>
+
+</transformation>

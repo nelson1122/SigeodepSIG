@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+
+    <ui:composition template="../templates/layoutTemplate.xhtml">
+        <!--==================================================================-->
+        <!--========================CABECERA SCRIPTS==========================-->                    
+        <ui:define name="head">
+            <link href="../../resources/css/style.css" rel="stylesheet" type="text/css" />               
+            <script type="text/javascript">  
+                
+            </script> 
+        </ui:define>
+        <!--=================================================================-->
+        <!--================================TITULOS==========================-->
+        <ui:define name="titlePage">
+            SIGEODEP -  INDICADORES PARA SIVIGILA - VIF
+        </ui:define>
+        <ui:define name="title">
+            SIGEODEP -  INDICADORES PARA SIVIGILA - VIF
+        </ui:define>
+        <!--=================================================================-->
+        <!--==============================CONTENIDO==========================-->
+        <ui:define name="content">
+            <h:form enctype="multipart/form-data" id="IdForm2"> 
+                <p:growl id="message"  showDetail="true" sticky="true" autoUpdate="true" life="1000"  />
+                <!--===================================================================================-->
+                <br/>
+                <p:panelGrid style="position: absolute;  width: 750px;  margin-left: -375px; left: 50%;" >                            
+                    <p:row>  
+                        <p:column styleClass="ui-widget-header" style="text-align: center;">
+                            <h:outputLabel value="OBSERVATORIO DEL DELITO - ALCALDA DE PASTO"/><br/>  
+                            <h:outputLabel value="INDICADORES PARA VIOLENCIA INTERPERSONAL EN FAMILIA"/>  
+                        </p:column>                                       
+                    </p:row>
+                    <p:row>  
+                        <p:column style="text-align: center;">
+                            <br/> 
+                            <p:commandButton 
+                                style="width: 650px;"  
+                                value="CASOS DE VIOLENCIA SIVIGILA" 
+                                actionListener="#{indicatorsCountMB.loadIndicator68}"
+                                action="countIndicator"/>
+                            <p:separator style="width: 650px"/> 
+                            <p:commandButton 
+                                style="width: 650px;" 
+                                value="CASOS DE VIOLENCIA INTRAFAMILIAR (VIF) SECTOR SALUD" 
+                                actionListener="#{indicatorsCountMB.loadIndicator69}"
+                                action="countIndicator"/>
+                            <p:separator style="width: 650px"/> 
+                            <p:commandButton 
+                                style="width: 650px;" 
+                                value="CASOS DE VIOLENCIA CONTRA LA MUJER (VCM) EN EL SECTOR SALUD" 
+                                actionListener="#{indicatorsCountMB.loadIndicator70}"
+                                action="countIndicator"/>       
+                            <p:separator style="width: 650px"/> 
+                            <p:commandButton 
+                                style="width: 650px;" 
+                                value="CASOS DE VIOLENCIA SEXUAL (VSX) EN EL SECTOR SALUD" 
+                                actionListener="#{indicatorsCountMB.loadIndicator71}"
+                                action="countIndicator"/>       
+                            <p:separator style="width: 650px"/> 
+                            <p:commandButton 
+                                style="width: 650px;" 
+                                value="TASA DE VIOLENCIA SIVIGILA" 
+                                actionListener="#{indicatorsRateMB.loadIndicator72}"
+                                action="rateIndicator"/>       
+                            <p:separator style="width: 650px"/> 
+                            <p:commandButton 
+                                style="width: 650px;" 
+                                value="PORCENTAJE DE CASOS DE SIVIGILA_VIF" 
+                                actionListener="#{indicatorsPercentageMB.loadIndicator73}"
+                                action="percentageIndicator"/>
+                            <p:separator style="width: 650px"/> 
+                            <p:commandButton 
+                                style="width: 650px;" 
+                                value="PORCENTAJE DE CASOS DE SIVIGILA_VCM" 
+                                actionListener="#{indicatorsPercentageMB.loadIndicator74}"
+                                action="percentageIndicator"/>  
+                            <p:separator style="width: 650px"/> 
+                            <p:commandButton 
+                                style="width: 650px;" 
+                                value="PORCENTAJE DE CASOS DE SIVIGILA_VSX" 
+                                actionListener="#{indicatorsPercentageMB.loadIndicator75}"
+                                action="percentageIndicator"/>                              
+                            <br/>  <br/>
+                        </p:column>                                       
+                    </p:row>
+                </p:panelGrid>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

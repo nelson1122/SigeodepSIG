@@ -1,0 +1,89 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <link rel="shortcut icon" href="resources/img/icon.gif"/>
+        <title>INICIO</title>	        
+        <script type="text/javascript">  
+            function mostrar(bloq) {
+                obj = document.getElementById(bloq);
+                var uname = document.getElementById("IdImgCarga");
+                obj.style.display = (obj.style.display==='none') ? 'block' : 'none';
+            }
+            function show() {
+                uname = document.getElementById("IdImgCarga");
+                //jQuery("#IdImgCarga").fadeIn();
+                uname.style.display='block';
+                alert("cargando");
+            }
+            function hide() {  
+                var uname = document.getElementById("IdImgCarga");
+                //jQuery("#IdImgCarga").fadeOut();
+                uname.style.display='none';
+                alert("ocultando");
+            }
+        </script>
+    </h:head>
+    <h:body style="font-size: 10px;">
+        <div style=" 
+             position:absolute;
+             width: 500px; 
+             height: 380px; 
+             left: 50%; 
+             margin-left: -250px;  
+             top: 50%;
+             margin-top: -190px;
+             background-image:url(resources/img/entrada.png);">
+            <h:form id="IdForm3">                
+                <p:growl id="message"  showDetail="true" sticky="true" />
+                <h:graphicImage id="IdImgCarga" value="resources/img/ajaxloading.gif"  style="display: none" />
+                
+                <p:panelGrid style="margin-top: 160px; margin-left: 210px; "> 
+                    <p:row>  
+                        <p:column styleClass="ui-widget-header" colspan="2">
+                            <h:outputText value="CONFIGURAR CONEXION " />
+                        </p:column>                        
+                    </p:row>  
+                    <p:row>  
+                        <p:column colspan="2">
+                            Se debe configurar una conexion para poder acceder a la apliacación
+                        </p:column>                        
+                    </p:row>  
+                    <p:row>
+                        <p:column styleClass="ui-widget-header" ><h:outputText value="Usuario: " /></p:column>
+                        <p:column ><h:inputText value="#{connectionJdbcMB.user}" /></p:column>
+                    </p:row>  
+                    <p:row>
+                        <p:column styleClass="ui-widget-header" ><h:outputText value="Base de Datos: " /></p:column>
+                        <p:column ><h:inputText value="#{connectionJdbcMB.db}" /></p:column>
+                    </p:row>  
+                    <p:row>
+                        <p:column styleClass="ui-widget-header" ><h:outputText value="Base de Datos Bodega: " /></p:column>
+                        <p:column ><h:inputText value="#{connectionJdbcMB.db_dwh}" /></p:column>
+                    </p:row>  
+                    <p:row>
+                        <p:column styleClass="ui-widget-header" ><h:outputText value="Contraseña: " /></p:column>
+                        <p:column ><h:inputSecret value="#{connectionJdbcMB.password}" /></p:column>
+                    </p:row>  
+                    <p:row>
+                        <p:column styleClass="ui-widget-header" ><h:outputText value="Servidor: " /></p:column>
+                        <p:column ><h:inputText value="#{connectionJdbcMB.server}" /></p:column>
+                    </p:row>  
+                    <p:row>
+                        <p:column colspan="2" style="text-align: center;" >
+                            <p:commandButton 
+                                value="CONECTAR" 												
+                                action="#{connectionJdbcMB.checkConnection}" 
+                                onclick="show();"
+                                oncomplete="hide();"
+                                update="message" />
+                        </p:column>
+                    </p:row>  
+                </p:panelGrid>
+                
+            </h:form>  
+        </div>
+    </h:body>
+</html>

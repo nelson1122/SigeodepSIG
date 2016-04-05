@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <body>
+
+        <ui:composition template="template.xhtml">
+            
+            <ui:define name="indexTitle">
+                BUSQUEDA DE DIRECCIONES URBANAS MUNICIPIO DE PASTO
+            </ui:define>
+
+            <ui:define name="centerPanel">
+
+                <p:outputPanel id="panelMap">
+                    <div id="addressMap"></div>
+                    <script type="text/javascript">
+
+                        var map, gmap, osm;
+
+                        $(function () {
+
+                            map = new OpenLayers.Map('addressMap');
+                            osm = new OpenLayers.Layer.OSM();
+                            gmap = new OpenLayers.Layer.Google(
+                                    "Google Hybrid",
+                                    {
+                                        type: google.maps.MapTypeId.HYBRID,
+                                        numZoomLevels: 20
+                                    }
+                            );
+
+
+                            map.addLayers([osm, gmap]);
+                            map.addControl(new OpenLayers.Control.LayerSwitcher());
+                            map.addControl(new OpenLayers.Control.MousePosition());
+
+                            map.setCenter(new OpenLayers.LonLat(-77.280, 1.21489).transform(
+                                    new OpenLayers.Projection("EPSG:4326"),
+                                    map.getProjectionObject()
+                                    ), 14);
+                        });
+                    </script>
+                </p:outputPanel>
+            </ui:define>
+
+            <ui:define name="leftPanel">
+
+                <p:layoutUnit position="east" size="30%">
+                    <p:fieldset legend="Busqueda de direcciones">
+
+                        <p:accordionPanel>
+                            <p:tab title="Malla Vial">
+
+
+
+                            </p:tab>
+                            <p:tab title="Barrio Manzana Predio">
+
+
+
+                            </p:tab>
+
+                        </p:accordionPanel>
+
+                    </p:fieldset>
+                </p:layoutUnit>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

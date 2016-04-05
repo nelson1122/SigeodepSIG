@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+
+    <ui:composition template="../templates/layoutTemplate.xhtml">
+        <!--==================================================================-->
+        <!--========================CABECERA SCRIPTS==========================-->                    
+        <ui:define name="head">
+            <link href="../../resources/css/style.css" rel="stylesheet" type="text/css" />               
+            <script type="text/javascript">
+                function startA() {                                          
+                    document.getElementById('IdForm1:IdBtnExport').click();                    
+                    //$('#IdPaint').click();
+                }
+            </script> 
+        </ui:define>
+        <!--=================================================================-->
+        <!--================================TITULOS==========================-->
+        <ui:define name="titlePage">
+            SIGEODEP -  CONJUNTOS DE REGISTROS
+        </ui:define>
+        <ui:define name="title">
+            SIGEODEP -  CONJUNTOS DE REGISTROS
+        </ui:define>
+        <!--=================================================================-->
+        <!--==============================CONTENIDO==========================-->
+        <ui:define name="content">
+            <h:outputText 
+                value="No se puede mostrar esta sección por que no cuenta con los permisos suficientes"
+                style=" color: red;"
+                rendered="#{!loginMB.permissionAdministrator}"/> 
+            <h:form enctype="multipart/form-data" id="IdForm1" rendered="#{loginMB.permissionAdministrator}">
+                <p:growl id="message"  showDetail="true" sticky="true" autoUpdate="true" life="1000"  />
+                <!--===================================================================================-->
+
+                <br/>
+                <p:panelGrid id="IdPanel1" style="position: absolute;  width: 750px;  margin-left: -375px; left: 50%;" >                            
+                    <p:row>  
+                        <p:column styleClass="ui-widget-header" style="text-align: center;">
+                            <h:outputLabel value="OBSERVATORIO DEL DELITO - ALCALDA DE PASTO"/>
+                        </p:column>                                       
+                    </p:row>
+                    <p:row>  
+                        <p:column>
+                            <br/>
+                            <p:panelGrid>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <h:outputLabel value="Total de registros:"/>
+                                    </p:column>
+                                    <p:column>                                        
+                                        <h:outputLabel id="IdTotalRecords" value="#{recordSetsSivigilaVifMB.totalRecords}"/>                                        
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <h:outputLabel value="Fecha Inicial:"/>
+                                    </p:column>
+                                    <p:column>                                        
+                                        <h:outputLabel value="#{recordSetsSivigilaVifMB.initialDateStr}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">                                                                    
+                                        <h:outputLabel value="Fecha Final:"/>
+                                    </p:column>
+                                    <p:column>                                        
+                                        <h:outputLabel value="#{recordSetsSivigilaVifMB.endDateStr}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">                                                                    
+                                        <h:outputLabel value="Conjunto(s):"/>
+                                    </p:column>
+                                    <p:column>                                        
+                                        <h:outputLabel value="#{recordSetsSivigilaVifMB.data}"/>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <br/>
+                            <p:dataTable 
+                                id="IdSearchTable" 
+                                var="rowX" 
+                                value="#{recordSetsSivigilaVifMB.table_model}" 
+                                selection="#{recordSetsSivigilaVifMB.selectedRowsDataTable}" 
+                                selectionMode="multiple"
+                                rowKey="#{rowX.column1}"  
+                                scrollWidth="730"                        
+                                lazy="true"
+                                resizableColumns="true"
+                                paginator="true" 
+                                rows="10" 
+                                pageLinks="5"
+                                paginatorPosition="bottom"
+                                emptyMessage="No existen resultados."
+                                paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                rowsPerPageTemplate="5,10,15"
+                                scrollable="true">                                                     
+                                <p:column headerText="CODIGO INTERNO" width="50">#{rowX.column1}</p:column>
+                                <p:column headerText="INSTITUCION RECEPTORA" width="300">#{rowX.column42}</p:column>
+                                <p:column headerText="NOMBRES Y APELLIDOS" width="400">#{rowX.column2}</p:column>                                                
+                                <p:column headerText="TIPO IDENTIFICACION" width="200">#{rowX.column3}</p:column>
+                                <p:column headerText="IDENTIFICACION" width="100">#{rowX.column4}</p:column>                
+                                <p:column headerText="TIPO EDAD" width="100">#{rowX.column5}</p:column>                
+                                <p:column headerText="EDAD CANTIDAD" width="100">#{rowX.column6}</p:column>                
+                                <p:column headerText="GENERO" width="100">#{rowX.column7}</p:column>                
+                                <p:column headerText="OCUPACION" width="500">#{rowX.column8}</p:column>
+                                <p:column headerText="DIRECCION RESIDENCIA" width="400">#{rowX.column9}</p:column>                                
+                                <p:column headerText="ASEGURADORA" width="400">#{rowX.column10}</p:column>                                
+                                <p:column headerText="PERTENENCIA ETNICA" width="100">#{rowX.column11}</p:column>  
+                                <p:column headerText="GRUPO POBLACIONAL" width="400">#{rowX.column12}</p:column>                                
+                                <p:column headerText="MUNICIPIO RESIDENCIA" width="100">#{rowX.column13}</p:column>
+                                <p:column headerText="DEPARTAMENTO RESIDENCIA" width="100">#{rowX.column14}</p:column>                                
+                                <p:column headerText="TELEFONO" width="100">#{rowX.column15}</p:column>
+                                <p:column headerText="FECHA NACIMIENTO" width="100">#{rowX.column16}</p:column>                                         
+                                <p:column headerText="ESCOLARIDAD VICTIMA" width="200">#{rowX.column18}</p:column>
+                                <p:column headerText="FACTOR DE VULNERABILIDAD" width="200">#{rowX.column19}</p:column>
+                                <p:column headerText="OTRO FACTOR VULNERABILIDAD" width="400">#{rowX.column20}</p:column>
+                                <p:column headerText="ANTECEDENTES HECHO SIMILAR" width="100">#{rowX.column21}</p:column>
+                                <p:column headerText="PRESENCIA ALCOHOL VICTIMA" width="200">#{rowX.column41}</p:column>
+                                <p:column headerText="TIPO DE REGIMEN" width="150">#{rowX.column17}</p:column>
+                                //------------------------------------------------------------
+                                //SE CARGAN VARIABLES LESION DE CAUSA EXTERNA NO FATAL
+                                //------------------------------------------------------------        
+                                <p:column headerText="BARRIO EVENTO" width="250">#{rowX.column22}</p:column>
+                                <p:column headerText="CUADRANTE EVENTO" width="250">#{rowX.column71}</p:column>
+                                <p:column headerText="COMUNA BARRIO EVENTO" width="60">#{rowX.column23}</p:column>
+                                <p:column headerText="DIRECCION EVENTO" width="400">#{rowX.column40}</p:column>
+                                <p:column headerText="AREA" width="100">#{rowX.column43}</p:column>
+                                <p:column headerText="ZONA CONFLICTO" width="100">#{rowX.column60}</p:column>
+                                <p:column headerText="FECHA EVENTO" width="100">#{rowX.column26}</p:column>
+                                <p:column headerText="HORA EVENTO" width="100">#{rowX.column27}</p:column>                                
+                                <p:column headerText="FECHA CONSULTA" width="100">#{rowX.column24}</p:column>
+                                <p:column headerText="HORA CONSULTA" width="100">#{rowX.column25}</p:column>                                
+                                <p:column headerText="ESCENARIO" width="200">#{rowX.column39}</p:column>                                                                 
+                                //------------------------------------------------------------
+                                //DATOS AGRESOR
+                                //------------------------------------------------------------        
+                                <p:column headerText="EDAD AGRESOR" width="100">#{rowX.column44}</p:column>
+                                <p:column headerText="GENERO AGRESOR" width="100">#{rowX.column45}</p:column>
+                                <p:column headerText="OCUPACION AGRESOR" width="500">#{rowX.column46}</p:column>
+                                <p:column headerText="ESCOLARIDAD AGRESOR" width="100">#{rowX.column47}</p:column>
+                                <p:column headerText="RELACION FAMILIAR VICTIMA" width="250">#{rowX.column48}</p:column>
+                                <p:column headerText="OTRA RELACION FAMILIAR" width="150">#{rowX.column49}</p:column>
+                                <p:column headerText="CONVIVE CON AGRESOR" width="100">#{rowX.column50}</p:column>
+                                <p:column headerText="RELACION NO FAMILIAR VICTIMA" width="150">#{rowX.column51}</p:column>
+                                <p:column headerText="OTRA RELACION NO FAMILIAR" width="150">#{rowX.column52}</p:column>
+                                <p:column headerText="GRUPO AGRESOR" width="150">#{rowX.column53}</p:column>
+                                <p:column headerText="OTRO GRUPO AGRESOR" width="150">#{rowX.column54}</p:column>
+                                <p:column headerText="PRESENCIA ALCOHOL AGRESOR" width="100">#{rowX.column55}</p:column>
+                                <p:column headerText="ARMAS UTILIZADAS" width="300">#{rowX.column56}</p:column>
+                                <p:column headerText="SUSTANCIA INTOXICACION" width="100">#{rowX.column57}</p:column>
+                                <p:column headerText="OTRA ARMA" width="200">#{rowX.column58}</p:column>
+                                <p:column headerText="OTRO MECANISMO" width="100">#{rowX.column59}</p:column>
+                                <p:column headerText="NATURALEZA VIOLENCIA" width="150">#{rowX.column29}</p:column>
+                                <p:column headerText="ASP1 ATENCION PSICOSOCIAL" width="150">#{rowX.column62}</p:column>
+                                <p:column headerText="ASP2 PROFILAXIS ITS" width="150">#{rowX.column63}</p:column>
+                                <p:column headerText="ASP3 ANTICONCEPCION DE EMERGENCIA" width="150">#{rowX.column64}</p:column>
+                                <p:column headerText="ASP4 ORIENTACION IVE" width="150">#{rowX.column65}</p:column>
+                                <p:column headerText="ASP5 ATENCION EN SALUD MENTAL ESPECIALIZADA" width="150">#{rowX.column66}</p:column>
+                                <p:column headerText="ASP6 INFORME A LA AUTORIDAD" width="150">#{rowX.column67}</p:column>
+                                <p:column headerText="ASP7 OTRO" width="150">#{rowX.column68}</p:column>                                
+                                
+                                <p:column headerText="RECOMINEDA PROTECCION" width="100">#{rowX.column69}</p:column>
+                                <p:column headerText="TRABAJO DE CAMPO" width="100">#{rowX.column70}</p:column>                                
+                                
+                                
+                                <p:column headerText="PROFESIONAL SALUD" width="250">#{rowX.column28}</p:column>                                
+                                
+                            </p:dataTable> 
+                            <br/>
+                            <p:progressBar 
+                                id="IdProgresValidate" 
+                                interval="500" 
+                                widgetVar="pbAjaxValidate" 
+                                ajax="true" 
+                                value="#{recordSetsSivigilaVifMB.progress}" 
+                                labelTemplate="{value}%"/>
+                            <br/>
+                            <p:panelGrid id="IdControls" style="width: 730px;">
+                                <p:row>  
+                                    <p:column styleClass="ui-widget-header" colspan="5">                                        
+                                        <p:commandButton 
+                                            id="IdRemove" 
+                                            
+                                            value="Eliminar registro" 
+                                            icon="ui-icon-close"
+                                            oncomplete="dialogDelete.show()"                                            
+                                            update=":IdForm2:IdDialogDelete :IdForm1:message"/>                                        
+                                        <p:commandButton 
+                                            id="IdR" 
+                                            value="Exportar" 
+                                            onclick="pbAjaxValidate.start();"
+                                            oncomplete="startA(); pbAjaxValidate.cancel();"
+                                            actionListener="#{recordSetsSivigilaVifMB.postProcessXLS1}"/>                                                                                
+                                        <h:commandLink id="IdComandLink" style="display: none" >
+                                            <p:commandButton id="IdBtnExport"  widgetVar="btnExport" value="ExportarA"/>
+                                            <p:dataExporter type="xls" target="IdOutFile" fileName="#{recordSetsSivigilaVifMB.exportFileName}" postProcessor="#{recordSetsSivigilaVifMB.postProcessXLS}"/>  
+                                        </h:commandLink>
+                                        <p:dataTable id="IdOutFile" style="display: none">
+                                            <p:column>                                                  
+                                            </p:column>
+                                        </p:dataTable>
+                                    </p:column>                            
+                                </p:row>
+                            </p:panelGrid>
+                            <br/>
+                        </p:column>                                       
+                    </p:row>
+                </p:panelGrid>
+            </h:form>
+        </ui:define>
+        <ui:define name="dialogs">
+            <h:form id="IdForm2">                
+                <!-- DIALOGO ELIMINAR-->
+                <p:dialog                                                         
+                    id="IdDialogDelete"
+                    modal="true"
+                    resizable="false"
+                    header="Eliminar" 
+                    widgetVar="dialogDelete"> 
+                    <br/>
+                    <p:inputTextarea
+                        value="Confirma la Eliminación del registro o registros seleccionados?" 
+                        readonly="true" 
+                        style="text-align: center; background: #ebf4fb; font-size: 13px; font-weight: 900; height: 48px;"/>
+                    <br/>
+                    <br/>
+                    <p:commandButton                                                           
+                        oncomplete="dialogDelete.hide()"
+                        actionListener="#{recordSetsSivigilaVifMB.deleteRegistry}"
+                        value="Eliminar" 
+                        update=":IdForm1:IdSearchTable :IdForm1:IdControls :IdForm1:message :IdForm1:IdTotalRecords"/>
+                    <p:commandButton
+                        value="Cancelar" 
+                        onclick="dialogDelete.hide()"/> 
+                </p:dialog>                
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
+
+

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    <ui:composition template="../templates/layoutTemplate.xhtml">
+        <!--==================================================================-->
+        <!--========================CABECERA SCRIPTS==========================-->                    
+        <ui:define name="head">
+            <link href="../../resources/css/style.css" rel="stylesheet" type="text/css" />               
+            <script type="text/javascript">
+            </script> 
+        </ui:define>
+        <!--=================================================================-->
+        <!--================================TITULOS==========================-->
+        <ui:define name="titlePage">
+            SIGEODEP -  CONTROL DE REGISTROS
+        </ui:define>
+        <ui:define name="title">
+            SIGEODEP -  CONTROL DE REGISTROS
+        </ui:define>
+        <!--=================================================================-->
+        <!--==============================CONTENIDO==========================-->
+        <ui:define name="content">
+            <h:outputText 
+                value="No se puede mostrar esta sección por que no cuenta con los permisos suficientes"
+                style=" color: red;"
+                rendered="#{!loginMB.permissionAdministrator}"/> 
+            <h:form enctype="multipart/form-data" id="IdForm1" rendered="#{loginMB.permissionAdministrator}">
+                <p:growl id="message"  showDetail="true" sticky="true" autoUpdate="true" life="1000"  />
+                <!--===================================================================================-->
+                <br/>
+                <p:panelGrid id="IdPanel1" style="position: absolute;  width: 750px;  margin-left: -375px; left: 50%;" >                            
+                    <p:row>  
+                        <p:column styleClass="ui-widget-header" style="text-align: center;">
+                            <h:outputLabel value="OBSERVATORIO DEL DELITO - ALCALDA DE PASTO"/><br/>  
+                            <h:outputLabel value="CONTROL DE REGISTROS"/>  
+                        </p:column>                                       
+                    </p:row>
+                    <p:row>  
+                        <p:column>
+                            <p:fieldset legend="RANGO DE FECHAS" > 
+                                <br/>
+                                <h:outputText value="Fecha Inicial:" />                            
+                                <h:outputScript  library="js" name="calendar_es.js" />
+                                <p:calendar
+                                    id="IdInitialDate"
+                                    value="#{registerControlMB.initialDate}" 
+                                    locale="es"                                       
+                                    converterMessage="La fecha inicial no es válida, por favor corríjala." 
+                                    showOn="button" 
+                                    pattern="dd/MM/yyyy">
+                                    <f:ajax 
+                                        event="change"
+                                        listener="#{registerControlMB.changeDate}"/>
+                                </p:calendar>
+                                <br/>
+                                <br/>
+                                <h:outputText value="Fecha Final:" />
+                                <p:calendar 
+                                    id="IdEndDate"
+                                    value="#{registerControlMB.endDate}" 
+                                    converterMessage="La fecha final no es válida, por favor corríjala." 
+                                    showOn="button" 
+                                    pattern="dd/MM/yyyy">
+                                    <f:ajax 
+                                        event="change"
+                                        listener="#{registerControlMB.changeDate}"/>
+                                </p:calendar>
+                                <br/>
+                                <br/>
+                                <p:dataTable id="IdOutFile" style="display: none" >
+                                    <p:column>                                                  
+                                    </p:column>
+                                </p:dataTable> 
+                                <h:commandLink>                                              
+                                    <p:button 
+                                        value="Generar reporte"
+                                        disabled="#{registerControlMB.btnExportDisabled}"/>
+                                    <p:dataExporter 
+                                        type="xls" 
+                                        target="IdOutFile" 
+                                        fileName="#{registerControlMB.exportFileName}" 
+                                        postProcessor="#{registerControlMB.postProcessXLS}"
+                                        rendered="message"/>  
+                                </h:commandLink>                                
+                                <br/>
+                                <br/>
+                            </p:fieldset>                        
+                        </p:column>                                       
+                    </p:row>
+                </p:panelGrid>
+            </h:form>
+        </ui:define>
+
+    </ui:composition>
+</html>
+

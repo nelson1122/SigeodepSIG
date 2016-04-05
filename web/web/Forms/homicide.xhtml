@@ -1,0 +1,1119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+
+    <ui:composition template="../templates/layoutTemplate.xhtml">
+        <!--==================================================================-->
+        <!--========================CABECERA SCRIPTS==========================-->                    
+        <ui:define name="head">
+            <link href="../../resources/css/style.css" rel="stylesheet" type="text/css" />               
+            <script type="text/javascript">  
+                $('*').live("keypress", function(e) 
+                {    
+                    if (e.keyCode === 13) {                        
+                        return false;
+                    }
+                });
+                function goNextFocus(current, next, len)
+                {
+                    if((current.value.length) === len){
+                        next.focus();
+                        next.select();
+                    }
+                }
+                function goFirstFocus()
+                {
+                    document.getElementById('IdForm1:IdCode').focus();
+                }                
+            </script> 
+        </ui:define>
+        <!--=================================================================-->
+        <!--================================TITULOS==========================-->
+        <ui:define name="titlePage">
+            SIGEODEP - FICHA PARA HOMICIDIOS
+        </ui:define>
+        <ui:define name="title">
+            SIGEODEP - FICHA PARA HOMICIDIOS
+        </ui:define>
+        <!--=================================================================-->
+        <!--==============================CONTENIDO==========================-->
+        <ui:define name="content">
+            <h:outputText 
+                value="No se puede mostrar esta sección por que no cuenta con los permisos suficientes"
+                style=" color: red;"
+                rendered="#{!loginMB.permissionFatal}"/> 
+            <h:form enctype="multipart/form-data" id="IdForm1" rendered="#{loginMB.permissionFatal}"> 
+                <p:growl id="message"  showDetail="true" sticky="true" />
+                <!--================================== FILTRADO DE REGISTROS ===========================================-->
+                <br/>
+                <p:panelGrid style="position: absolute;  margin-left: -375px; left: 50%;" >
+                    <p:row>  
+                        <p:column styleClass="ui-widget-header">
+                            <h:outputLabel value="Conjunto"/>    
+                        </p:column>                                    
+                        <p:column>
+                            <h:selectOneMenu id="IdRecordSets" value="#{homicideMB.currentTag}" > 
+                                <f:selectItems value="#{homicideMB.tags}"/>
+                                <f:ajax 
+                                    event="change"
+                                    listener="#{homicideMB.changeTag}"
+                                    render="@form"/>
+                            </h:selectOneMenu>
+                        </p:column>                                    
+                    </p:row>
+                </p:panelGrid>
+                <!--===================================================================================-->                
+                <br/>
+                <p:panelGrid style="position: absolute; width: 750px; margin-top: 30px;  margin-left: -375px; left: 50%;" >
+                    <p:row>  
+                        <p:column styleClass="ui-widget-header" style="text-align: center;">
+                            <h:outputLabel value="ALCALDIA DE PASTO - SECRETERIA DE GOBIERNO"/><br/>  
+                            <h:outputLabel value="SUBSECRETARIA DE JUSTICIA Y SEGURIDAD - OBSERVATORIO DEL DELITO"/>  <br/>
+                            <h:outputLabel value="FICHA PARA  HOMICIDIOS"/>                              
+                        </p:column>                                       
+                    </p:row>
+                    <p:row>  
+                        <p:column style="background-color: #ebf4fb;">                            
+                            <br/>
+                            <!--=====================================INFORMACION DEL HECHO==============================================-->
+                            <p:panelGrid> 
+                                <p:row>  
+                                    <p:column styleClass="ui-widget-header" style="text-align: center;" colspan="2">
+                                        <h:outputLabel value="INFORMACION DEL HECHO"/>                                          
+                                    </p:column>  
+                                </p:row>
+                                <p:row>  
+                                    <p:column>CODIGO:</p:column>
+                                    <p:column >
+                                        <h:inputText                                            
+                                            value="#{homicideMB.currentCode}"
+                                            id="IdCode">  
+                                            <f:ajax 
+                                                event="change"
+                                                listener="#{homicideMB.changeForm}"/>
+                                            <f:ajax 
+                                                event="blur"                                                
+                                                render="IdControls message"/>
+                                        </h:inputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="2">
+                                        <p:panelGrid>                            
+                                            <p:row>  
+                                                <p:column>
+                                                    FECHA HECHO: 
+                                                </p:column>
+                                                <p:column>
+                                                    <p:panelGrid> 
+                                                        <p:row>  
+                                                            <p:column>
+                                                                DIA:  
+                                                            </p:column>
+                                                            <p:column>
+                                                                MES:  
+                                                            </p:column>
+                                                            <p:column>
+                                                                AÑO:
+                                                            </p:column>
+                                                        </p:row>
+                                                        <p:row>  
+                                                            <p:column>
+                                                                <h:inputText 
+                                                                    id="IdDayEvent"
+                                                                    disabled="#{homicideMB.currentDayEventDisabled}"
+                                                                    value="#{homicideMB.currentDayEvent}" 
+                                                                    onkeyup="goNextFocus(this, document.getElementById('IdForm1:IdMonthEvent'), 2);"
+                                                                    maxlength="2"
+                                                                    size="2">                                                                      
+                                                                    <f:ajax 
+                                                                        event="blur"                                                                          
+                                                                        listener="#{homicideMB.changeDayEvent}"
+                                                                        render="IdControls message IdDayEvent"/>                                                                    
+                                                                    <f:ajax 
+                                                                        event="change"
+                                                                        listener="#{homicideMB.changeForm}"/>
+                                                                </h:inputText>  
+                                                            </p:column>
+                                                            <p:column>
+                                                                <h:inputText 
+                                                                    id="IdMonthEvent"
+                                                                    disabled="#{homicideMB.currentMonthEventDisabled}"
+                                                                    value="#{homicideMB.currentMonthEvent}" 
+                                                                    onkeyup="goNextFocus(this, document.getElementById('IdForm1:IdYearEvent'), 2);"
+                                                                    size="2"                                                                     
+                                                                    maxlength="2">
+                                                                    <f:ajax 
+                                                                        event="blur"  
+                                                                        listener="#{homicideMB.changeMonthEvent}"
+                                                                        render="IdDayEvent IdMonthEvent IdYearEvent IdDateEvent IdWeekdayEvent IdControls message"/> 
+                                                                    <f:ajax 
+                                                                        event="change"
+                                                                        listener="#{homicideMB.changeForm}"/>
+                                                                </h:inputText>   
+                                                            </p:column>
+                                                            <p:column>
+                                                                <h:inputText 
+                                                                    id="IdYearEvent"
+                                                                    disabled="#{homicideMB.currentYearEventDisabled}"
+                                                                    value="#{homicideMB.currentYearEvent}" 
+                                                                    onkeyup="goNextFocus(this, document.getElementById('IdForm1:IdHourEvent'), 4);"
+                                                                    size="5" 
+                                                                    maxlength="4">                                                                    
+                                                                    <f:ajax 
+                                                                        event="change"
+                                                                        listener="#{homicideMB.changeForm}"/>
+                                                                    <f:ajax 
+                                                                        event="blur"  
+                                                                        listener="#{homicideMB.changeYearEvent}"
+                                                                        render="IdDayEvent IdMonthEvent IdYearEvent IdDateEvent IdWeekdayEvent IdControls message"/> 
+                                                                </h:inputText>
+                                                            </p:column>
+                                                        </p:row>
+                                                    </p:panelGrid>
+                                                </p:column>
+                                                <p:column >
+                                                    <p:panelGrid> 
+                                                        <p:row>  
+                                                            <p:column>
+                                                                FECHA HECHO<br/>(dd/mm/yyyy):  
+                                                            </p:column>
+                                                            <p:column>
+                                                                <h:inputText 
+                                                                    disabled="true" 
+                                                                    id="IdDateEvent" 
+                                                                    value="#{homicideMB.currentDateEvent}"/> 
+                                                            </p:column>
+                                                        </p:row>
+                                                        <p:row>  
+                                                            <p:column>
+                                                                DIA EN SEMANA  
+                                                            </p:column>
+                                                            <p:column>
+                                                                <h:inputText 
+                                                                    disabled="true" 
+                                                                    id="IdWeekdayEvent" 
+                                                                    value="#{homicideMB.currentWeekdayEvent}" 
+                                                                    size="9"/> 
+                                                            </p:column>
+                                                        </p:row>
+                                                    </p:panelGrid>
+                                                </p:column>
+                                            </p:row>                                            
+
+                                            <p:row>                                                
+                                                <p:column>
+                                                    HORA HECHO:
+                                                </p:column>
+                                                <p:column>
+                                                    <p:panelGrid> 
+                                                        <p:row>  
+                                                            <p:column>
+                                                                HORAS:  
+                                                            </p:column>
+                                                            <p:column>
+                                                                MINUTOS:  
+                                                            </p:column>
+                                                            <p:column>
+                                                                AMPM:
+                                                            </p:column>
+                                                        </p:row>                                            
+                                                        <p:row>                                                
+                                                            <p:column>
+                                                                <h:inputText 
+                                                                    id="IdHourEvent"
+                                                                    disabled="#{homicideMB.currentHourEventDisabled}"
+                                                                    value="#{homicideMB.currentHourEvent}" 
+                                                                    onkeyup="goNextFocus(this, document.getElementById('IdForm1:IdMinuteEvent'), 2);"
+                                                                    maxlength="2"
+                                                                    size="2">
+                                                                    <f:ajax 
+                                                                        event="blur"  
+                                                                        listener="#{homicideMB.changeHourEvent}"
+                                                                        render="IdHourEvent IdTimeEvent IdControls message"/>   
+                                                                    <f:ajax 
+                                                                        event="change"
+                                                                        listener="#{homicideMB.changeForm}"/>
+                                                                </h:inputText>
+                                                            </p:column>
+                                                            <p:column>
+                                                                <h:inputText 
+                                                                    id="IdMinuteEvent"
+                                                                    disabled="#{homicideMB.currentMinuteEventDisabled}"
+                                                                    value="#{homicideMB.currentMinuteEvent}" 
+                                                                    onkeyup="goNextFocus(this, document.getElementById('IdForm1:IdAmPmEvent'), 2);"
+                                                                    maxlength="2"
+                                                                    size="2">
+                                                                    <f:ajax 
+                                                                        event="blur"  
+                                                                        listener="#{homicideMB.changeMinuteEvent}"
+                                                                        render="IdMinuteEvent IdTimeEvent IdControls message"/> 
+                                                                    <f:ajax 
+                                                                        event="change"
+                                                                        listener="#{homicideMB.changeForm}"/>
+                                                                </h:inputText> 
+                                                            </p:column>
+                                                            <p:column>
+                                                                <h:selectOneMenu
+                                                                    id="IdAmPmEvent"
+                                                                    value="#{homicideMB.currentAmPmEvent}" 
+                                                                    disabled="#{homicideMB.currentAmPmEventDisabled}">                                                                     
+                                                                    <f:selectItem itemLabel="AM" itemValue="AM" />  
+                                                                    <f:selectItem itemLabel="PM" itemValue="PM" />
+                                                                    <f:selectItem itemLabel="SIN DATO" itemValue="SIN DATO" />
+                                                                    <f:ajax 
+                                                                        event="change"                                                                                                            
+                                                                        render="IdTimeEvent IdControls message IdMinuteEvent IdHourEvent"
+                                                                        listener="#{homicideMB.changeAmPmEvent}"/>
+                                                                </h:selectOneMenu>
+                                                            </p:column>
+                                                        </p:row> 
+                                                    </p:panelGrid>
+                                                </p:column>
+                                                <p:column>
+                                                    HORA MILITAR HECHO:&nbsp;                                                    
+                                                    <h:inputText 
+                                                        id="IdTimeEvent" 
+                                                        disabled="true" 
+                                                        value="#{homicideMB.currentMilitaryHourEvent}" 
+                                                        maxlength="4" 
+                                                        size="4"/>
+                                                </p:column>
+                                            </p:row>
+                                        </p:panelGrid>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <br/>
+                            <!--=====================================LUGAR DE OCURRENCIA DE LOS HECHOS==============================================-->
+                            <p:panelGrid>  
+                                <p:row>  
+                                    <p:column styleClass="ui-widget-header" style="text-align: center;" colspan="2">
+                                        <h:outputLabel value="LUGAR DE OCURRENCIA DE LOS HECHOS"/>                                          
+                                    </p:column>  
+                                </p:row>
+                                <p:row>  
+                                    <p:column>
+                                        <h:outputLabel value="DIRECCION:   "/>   
+                                    </p:column>
+                                    <p:column>
+                                        <h:inputText 
+                                            value="#{homicideMB.currentDirectionEvent}" 
+                                            size="40">
+                                            <f:ajax 
+                                                event="change"
+                                                listener="#{homicideMB.changeForm}"/>
+                                            <f:ajax 
+                                                event="blur"                                                
+                                                render="IdControls message"/>
+                                        </h:inputText>                                      
+                                    </p:column>   
+                                </p:row>
+                                <p:row>  
+                                    <p:column>BARRIO / VEREDA:&nbsp; </p:column>
+                                    <p:column>
+                                        <p:autoComplete 
+                                            value="#{homicideMB.currentNeighborhoodEvent}"                                                                    
+                                            completeMethod="#{homicideMB.suggestNeighborhoods}" 
+                                            forceSelection="true"                                            
+                                            size="40" >                                                        
+                                            <p:ajax 
+                                                event="itemSelect" 
+                                                listener="#{homicideMB.changeNeighborhoodEvent}" 
+                                                update="IdNeighborhoodsEventCode IdArea IdControls message IdQuadrant"/>                                            
+                                            <f:ajax 
+                                                event="change"
+                                                listener="#{homicideMB.changeForm}"/>
+                                        </p:autoComplete>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>CODIGO BARRIO:&nbsp;  </p:column>
+                                    <p:column>
+                                        <h:inputText 
+                                            id="IdNeighborhoodsEventCode"
+                                            disabled="true"
+                                            value="#{homicideMB.currentNeighborhoodEventCode}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>CUADRANTE:&nbsp;  </p:column>
+                                    <p:column>
+                                        <h:selectOneMenu
+                                            id="IdQuadrant"
+                                            value="#{homicideMB.currentQuadrantEvent}"> 
+                                            <f:selectItems value="#{homicideMB.quadrantsEvent}"/>
+                                            <f:ajax 
+                                                event="change"                                                                                                            
+                                                render="IdControls message"
+                                                listener="#{homicideMB.changeForm}"/>
+                                        </h:selectOneMenu>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>AREA DEL HECHO:&nbsp;  </p:column>
+                                    <p:column>
+                                        <h:selectOneMenu
+                                            id="IdArea"
+                                            value="#{homicideMB.currentArea}" 
+                                            disabled="true"> 
+                                            <f:selectItems value="#{homicideMB.areas}"/>
+
+                                        </h:selectOneMenu>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>CLASE DEL LUGAR DE LOS HECHOS:&nbsp;  </p:column>
+                                    <p:column>
+                                        <h:selectOneMenu value="#{homicideMB.currentPlace}" > 
+                                            <f:selectItems value="#{homicideMB.places}"/>
+                                            <f:ajax 
+                                                event="change"                                                                                                            
+                                                render="IdControls message"
+                                                listener="#{homicideMB.changeForm}"/>
+                                        </h:selectOneMenu>
+                                    </p:column>
+                                </p:row>                                
+                                <p:row>
+                                    <p:column>NUMERO DE VICTIMAS FATALES EN EL MISMO HECHO:&nbsp;  </p:column>
+                                    <p:column>
+                                        <h:inputText 
+                                            id="IdNumberVictims"
+                                            value="#{homicideMB.currentNumberVictims}" >
+                                            <f:ajax 
+                                                event="blur"  
+                                                listener="#{homicideMB.changeNumberVictims}"
+                                                render="IdControls message IdNumberVictims"/> 
+                                        </h:inputText>                                        
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <br/>
+                            <!--=====================================INFORMACION DE LA VICTIMA==============================================-->
+                            <p:panelGrid>  
+                                <p:row>  
+                                    <p:column styleClass="ui-widget-header" style="text-align: center;" colspan="2">
+                                        <h:outputLabel value="INFORMACION DE LA VICTIMA"/>                                          
+                                    </p:column>  
+                                </p:row>
+                                <p:row>  
+                                    <p:column>
+                                        <h:outputLabel value="NOMBRES Y APELLIDOS"/>   
+                                    </p:column>
+                                    <p:column>
+                                        <h:inputText 
+                                            id="IdName"
+                                            value="#{homicideMB.currentName}" 
+                                            size="60">
+                                            <f:ajax 
+                                                event="change"
+                                                listener="#{homicideMB.changeForm}"/>
+                                            <f:ajax 
+                                                event="blur"                       
+                                                render="IdControls message"/>                                             
+                                        </h:inputText>
+                                    </p:column>   
+                                </p:row>
+                                <!--p:row>
+                                    <p:column>
+                                        <h:outputLabel value="APELLIDOS:   "/>                                          
+                                    </p:column>
+                                    <p:column>
+                                        <h:inputText 
+                                            id="IdSurname"
+                                            value="{homicideMB.currentSurname}" 
+                                            size="60">
+                                            <f:ajax 
+                                                event="change"
+                                                listener="{homicideMB.changeForm}"/>
+                                            <f:ajax 
+                                                event="blur"                       
+                                                render="IdControls message"/> 
+                                        </h:inputText>    
+                                    </p:column>  
+                                </p:row-->
+                                <p:row>
+                                    <p:column>
+                                        <h:outputLabel value="SEXO:   "/>    
+                                    </p:column>
+                                    <p:column>
+                                        <h:selectOneMenu value="#{homicideMB.currentGender}" > 
+                                            <f:selectItems value="#{homicideMB.genders}"/>
+                                            <f:ajax 
+                                                event="change"                                                                                                            
+                                                render="IdControls message"
+                                                listener="#{homicideMB.changeForm}"/>
+                                        </h:selectOneMenu>
+                                    </p:column>
+                                </p:row>
+                                <p:row>  
+                                    <p:column >
+                                        <h:outputLabel value="TIPO EDAD:   "/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:selectOneMenu value="#{homicideMB.currentMeasureOfAge}" > 
+                                            <f:selectItems value="#{homicideMB.measuresOfAge}"/>
+                                            <f:ajax 
+                                                event="change"                                            
+                                                listener="#{homicideMB.changeMeasuresOfAge}" 
+                                                render="IdValueAge IdControls message"/>
+                                        </h:selectOneMenu>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column  >
+                                        <h:outputLabel value="EDAD CANTIDAD:   "/>                                          
+                                    </p:column>
+                                    <p:column>
+                                        <h:inputText 
+                                            id="IdValueAge"
+                                            value="#{homicideMB.currentAge}" 
+                                            disabled="#{homicideMB.valueAgeDisabled}" 
+                                            size="3">
+                                            <f:ajax 
+                                                event="blur"  
+                                                listener="#{homicideMB.changeValueAge}"
+                                                render="IdValueAge IdControls message"/> 
+                                            <f:ajax 
+                                                event="change"
+                                                listener="#{homicideMB.changeForm}"/>
+                                        </h:inputText>                               
+                                    </p:column>                                                                                             
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <h:outputLabel value="OCUPACION:   "/>                                          
+                                    </p:column>
+                                    <p:column>
+                                        <p:autoComplete                                                                                                                 
+                                            id="IdJob"
+                                            value="#{homicideMB.currentJob}"                                                                    
+                                            completeMethod="#{homicideMB.suggestJobs}" 
+                                            size="105" 
+                                            forceSelection="true"> 
+                                            <p:ajax 
+                                                event="itemSelect" 
+                                                listener="#{homicideMB.changeForm}" 
+                                                update="IdControls" 
+                                                process="@this"/>
+                                        </p:autoComplete>
+                                        <!--h:selectOneMenu value="# {homicideMB.currentJob}" > 
+                                            <f:selectItems value="# {homicideMB.jobs}"/>
+                                            <f:ajax 
+                                                event="change"                                                                                                            
+                                                render="IdControls message"
+                                                listener="# {homicideMB.changeForm}"/>
+                                        </h:selectOneMenu-->
+                                    </p:column>
+                                </p:row>
+                                <p:row>  
+                                    <p:column>
+                                        <h:outputLabel value="TIPO DE IDENTIFICACION:   "/>                                          
+                                    </p:column>
+                                    <p:column>
+                                        <h:selectOneMenu 
+                                            value="#{homicideMB.currentIdentificationType}" 
+                                            id="IdIdentificationType"> 
+                                            <f:selectItems value="#{homicideMB.identificationsTypes}"/>
+                                            <f:ajax 
+                                                event="change"                                                                                                            
+                                                render="IdControls message IdIdentificationNumber IdStranger"
+                                                listener="#{homicideMB.changeIdentificationType}"/>
+                                        </h:selectOneMenu>
+                                    </p:column>
+                                </p:row>
+                                <p:row>  
+                                    <p:column>
+                                        <h:outputLabel value="NUMERO DE IDENTIFICACION:   "/>                                          
+                                    </p:column>
+                                    <p:column>
+                                        <h:inputText 
+                                            value="#{homicideMB.currentIdentificationNumber}"
+                                            disabled="#{homicideMB.identificationNumberDisabled}"
+                                            id="IdIdentificationNumber">
+                                            <f:ajax 
+                                                event="change"
+                                                listener="#{homicideMB.changeForm}"/>
+                                            <f:ajax 
+                                                event="blur"                                                
+                                                render="IdControls message"/>
+                                        </h:inputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>  
+                                    <p:column>EXTRANJERO:&nbsp;</p:column>
+                                    <p:column>
+                                        <h:selectBooleanCheckbox 
+                                            value="#{homicideMB.stranger}"
+                                            disabled="#{homicideMB.strangerDisabled}"
+                                            id="IdStranger">
+                                            <f:ajax 
+                                                event="change"
+                                                listener="#{homicideMB.changeStranger}"
+                                                render="IdControls IdDepartamentHome IdMunicipalitieList IdNeighborhoodHomeName IdMunicipalitiesHomeCode"/>
+                                        </h:selectBooleanCheckbox>
+                                    </p:column>
+                                </p:row>
+                                <p:row>  
+                                    <p:column>DEPARTAMENTO DE RESIDENCIA:&nbsp;</p:column>
+                                    <p:column>
+                                        <h:selectOneMenu 
+                                            id="IdDepartamentHome" 
+                                            disabled="#{homicideMB.currentDepartamentHomeDisabled}"
+                                            value="#{homicideMB.currentDepartamentHome}" > 
+                                            <f:selectItems value="#{homicideMB.homeDepartaments}"/>
+                                            <f:ajax 
+                                                event="change"                                                            
+                                                listener="#{homicideMB.changeDepartamentHome}"
+                                                render="IdMunicipalitieList IdNeighborhoodHomeName IdNeighborhoodsHomeCode IdControls message"/>
+
+                                        </h:selectOneMenu>
+                                    </p:column>
+                                </p:row>
+                                <p:row>  
+                                    <p:column>MUNICIPIO DE  RESIDENCIA:&nbsp;</p:column>
+                                    <p:column>
+                                        <h:selectOneMenu 
+                                            id="IdMunicipalitieList"
+                                            disabled="#{homicideMB.currentMunicipalitieDisabled}"
+                                            value="#{homicideMB.currentMunicipalitie}"  > 
+                                            <f:selectItems value="#{homicideMB.municipalities}"/>
+                                            <f:ajax 
+                                                event="change"   							    
+                                                listener="#{homicideMB.changeMunicipalitieHome}"
+                                                render="IdMunicipalitiesHomeCode IdNeighborhoodHomeName IdNeighborhoodsHomeCode IdControls message"/>
+                                        </h:selectOneMenu>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>CODIGO MUNICIPIO:&nbsp;</p:column>
+                                    <p:column>
+                                        <h:inputText 
+                                            id="IdMunicipalitiesHomeCode"                                                        
+                                            disabled="true"
+                                            value="#{homicideMB.currentMunicipalitie}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>  
+                                    <p:column>BARRIO / VEREDA:&nbsp; </p:column>
+                                    <p:column>
+                                        <p:autoComplete 
+                                            id="IdNeighborhoodHomeName"
+                                            value="#{homicideMB.currentNeighborhoodHome}"                                                                    
+                                            completeMethod="#{homicideMB.suggestNeighborhoods}" 
+                                            disabled="#{homicideMB.neighborhoodHomeNameDisabled}"
+                                            size="40" 
+                                            forceSelection="true">                                                        
+                                            <p:ajax 
+                                                event="itemSelect" 
+                                                listener="#{homicideMB.changeNeighborhoodHomeName}" 
+                                                update="IdNeighborhoodsHomeCode IdControls message" process="@this"/>                                            
+                                            <f:ajax 
+                                                event="change"
+                                                listener="#{homicideMB.changeForm}"/>
+                                        </p:autoComplete>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>CODIGO BARRIO:&nbsp;  </p:column>
+                                    <p:column>
+                                        <h:inputText
+                                            id="IdNeighborhoodsHomeCode"
+                                            disabled="true"
+                                            value="#{homicideMB.currentNeighborhoodHomeCode}"/>
+                                    </p:column>
+                                </p:row>
+
+                                <p:row>  
+                                    <p:column>
+                                        <h:outputLabel value="PROCEDENCIA:   "/>                                          
+                                    </p:column>
+                                    <p:column>
+                                        <p:panelGrid>   
+                                            <p:row>  
+                                                <p:column>PAIS:&nbsp;</p:column>
+                                                <p:column>
+                                                    <h:selectOneMenu  id="IdCountrySource" value="#{homicideMB.currentSourceCountry}" > 
+                                                        <f:selectItems value="#{homicideMB.sourceCountries}"/>
+                                                        <f:ajax 
+                                                            event="change"                                                            
+                                                            listener="#{homicideMB.findSourceDepartaments}"
+                                                            render="IdDepartamentSource IdMunicipalitieSource IdControls message"/>                                                        
+                                                    </h:selectOneMenu>
+                                                </p:column>                                                
+                                            </p:row>
+                                            <p:row>  
+                                                <p:column>DEPARTAMENTO:&nbsp;</p:column>
+                                                <p:column>
+                                                    <h:selectOneMenu id="IdDepartamentSource" value="#{homicideMB.currentSourceDepartament}" > 
+                                                        <f:selectItems value="#{homicideMB.sourceDepartaments}"/>
+                                                        <f:ajax 
+                                                            event="change"                                                            
+                                                            listener="#{homicideMB.findSourceMunicipalities}"
+                                                            render="IdMunicipalitieSource IdControls message"/>                                                        
+                                                    </h:selectOneMenu>
+                                                </p:column>                                                
+                                            </p:row>
+                                            <p:row>  
+                                                <p:column>MUNICIPIO:&nbsp;</p:column>
+                                                <p:column>                                                    
+                                                    <h:selectOneMenu 
+                                                        id="IdMunicipalitieSource"
+                                                        value="#{homicideMB.currentSourceMunicipalitie}"  > 
+                                                        <f:selectItems value="#{homicideMB.sourceMunicipalities}"/>
+                                                        <f:ajax 
+                                                            event="change"   							    
+                                                            listener="#{homicideMB.changeForm}"
+                                                            render="IdControls message"/>
+                                                    </h:selectOneMenu>
+                                                </p:column>                                                
+                                            </p:row>
+                                        </p:panelGrid>                                        
+                                    </p:column>
+                                </p:row> 
+
+                            </p:panelGrid>
+                            <br/>
+                            <!--=====================================DATOS DEL HECHO==============================================-->
+                            <p:panelGrid>  
+                                <p:row>  
+                                    <p:column styleClass="ui-widget-header" style="text-align: center;" colspan="2">
+                                        <h:outputLabel value="DATOS DEL HECHO"/>                                          
+                                    </p:column>  
+                                </p:row>
+                                <p:row>  
+                                    <p:column>
+                                        <h:outputLabel value="ARMA O CAUSA DE MUERTE:   "/>                                          
+                                    </p:column>
+                                    <p:column>
+                                        <h:selectOneMenu 
+                                            value="#{homicideMB.currentWeaponType}" 
+                                            id="IdWeaponType"> 
+                                            <f:selectItems value="#{homicideMB.weaponTypes}"/>
+                                            <f:ajax 
+                                                event="change"                                                                                                            
+                                                render="IdControls message"
+                                                listener="#{homicideMB.changeForm}"/>
+                                        </h:selectOneMenu>
+                                    </p:column>
+                                </p:row>
+                                <p:row>  
+                                    <p:column>
+                                        <h:outputLabel value="CONTEXTO RELACIONADOS CON EL HECHO:   "/>                                          
+                                    </p:column>
+                                    <p:column>
+                                        <h:selectOneMenu 
+                                            value="#{homicideMB.currentMurderContext}"  
+                                            id="IdMurderContext"> 
+                                            <f:selectItems value="#{homicideMB.murderContexts}"/>
+                                            <f:ajax 
+                                                event="change"                                                                                                            
+                                                render="IdControls message"
+                                                listener="#{homicideMB.changeForm}"/>
+                                        </h:selectOneMenu>
+                                    </p:column>
+                                </p:row>
+                                <p:row>  
+                                    <p:column>
+                                        <h:outputLabel value="NARRACION DEL HECHO:   "/>
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputTextarea 
+                                            value="#{homicideMB.currentNarrative}" 
+                                            style="width: 250px; height: 150px;"
+                                            id="IdNarrative">
+                                            <f:ajax 
+                                                event="change"
+                                                listener="#{homicideMB.changeForm}"/>
+                                            <f:ajax 
+                                                event="blur"                                                
+                                                render="IdControls message"/>
+                                        </p:inputTextarea>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <br/>
+                            <!--======================================NIVEL DE ALCOHOL==============================-->                            
+                            <p:panelGrid> 
+                                <p:row>  
+                                    <p:column colspan="4" styleClass="ui-widget-header">
+                                        NIVEL DE ALCOHOL DE LA VICTIMA:
+                                    </p:column>
+                                </p:row> 
+                                <p:row>  
+                                    <p:column>
+                                        NIVEL 
+                                    </p:column>
+                                    <p:column colspan="3">
+                                        <h:inputText 
+                                            value="#{homicideMB.currentAlcoholLevel}"
+                                            id="IdcurrentAlcoholLevel"
+                                            disabled="#{homicideMB.currentAlcoholLevelDisabled}">
+                                            <f:ajax 
+                                                event="blur"  
+                                                listener="#{homicideMB.changeAlcoholLevelNumber}"
+                                                render="IdControls message"/> 
+                                            <f:ajax 
+                                                event="change"
+                                                listener="#{homicideMB.changeForm}"/>
+                                        </h:inputText>
+                                    </p:column>                                    
+                                </p:row> 
+                                <p:row>  
+                                    <p:column>
+                                        <h:outputLabel value="sin dato"/>&nbsp;  
+                                        <h:selectBooleanCheckbox 
+                                            value="#{homicideMB.isNoDataAlcoholLevel}"
+                                            id="IdNoDataAlcoholLevel"
+                                            disabled="#{homicideMB.isNoDataAlcoholLevelDisabled}">
+                                            <f:ajax 
+                                                event="change"
+                                                listener="#{homicideMB.changeAlcoholLevel}"
+                                                render="IdcurrentAlcoholLevel IdNegativeAlcoholLevel IdPendentAlcoholLevel IdUnknownAlcoholLevel IdControls message"/>
+                                        </h:selectBooleanCheckbox>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputLabel value="Pendiente"/>&nbsp;                                        
+                                        <h:selectBooleanCheckbox 
+                                            value="#{homicideMB.isPendentAlcoholLevel}"
+                                            id="IdPendentAlcoholLevel"
+                                            disabled="#{homicideMB.isPendentAlcoholLevelDisabled}">
+                                            <f:ajax 
+                                                event="change"
+                                                listener="#{homicideMB.changeAlcoholLevel}"
+                                                render="IdcurrentAlcoholLevel IdNoDataAlcoholLevel IdNegativeAlcoholLevel IdUnknownAlcoholLevel IdControls message"/>
+                                        </h:selectBooleanCheckbox>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputLabel value="ns"/>&nbsp;                                        
+                                        <h:selectBooleanCheckbox 
+                                            value="#{homicideMB.isUnknownAlcoholLevel}"
+                                            id="IdUnknownAlcoholLevel"
+                                            disabled="#{homicideMB.isUnknownAlcoholLevelDisabled}">
+                                            <f:ajax 
+                                                event="change"
+                                                listener="#{homicideMB.changeAlcoholLevel}"
+                                                render="IdcurrentAlcoholLevel IdNoDataAlcoholLevel IdNegativeAlcoholLevel IdPendentAlcoholLevel IdControls message"/>
+                                        </h:selectBooleanCheckbox>
+                                    </p:column>                                                
+                                    <p:column>
+                                        <h:outputLabel value="negativo"/>&nbsp;                                                                            
+                                        <h:selectBooleanCheckbox 
+                                            value="#{homicideMB.isNegativeAlcoholLevel}"
+                                            id="IdNegativeAlcoholLevel"
+                                            disabled="#{homicideMB.isNegativeAlcoholLevelDisabled}">
+                                            <f:ajax 
+                                                event="change"
+                                                listener="#{homicideMB.changeAlcoholLevel}"
+                                                render="IdcurrentAlcoholLevel IdNoDataAlcoholLevel IdPendentAlcoholLevel IdUnknownAlcoholLevel IdControls message"/>
+                                        </h:selectBooleanCheckbox>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                        </p:column>                                       
+                    </p:row>
+                </p:panelGrid>
+                <!--===========CONTROLES: PRIMERO SIGUIENTE ANTERIOR ULTIMO REGISTRO ===========================-->
+                <div style="position:fixed; bottom: 3px; right: 20px; ">                    
+                    <p:panelGrid id="IdControls" style="width: 600px;">
+                        <p:row >
+                            <p:column styleClass="ui-widget-header">
+
+                                <p:commandButton 
+                                    icon="ui-icon-plus" 
+                                    title="Nuevo"
+                                    actionListener="#{homicideMB.newForm}"
+                                    oncomplete="#{homicideMB.openDialogNew}"
+                                    update="IdForm1"/>
+                                <p:commandButton 
+                                    icon="ui-icon-close" 
+                                    title="Eliminar"  
+                                    actionListener="#{homicideMB.nada}"
+                                    oncomplete="#{homicideMB.openDialogDelete}"                                    
+                                    update="IdForm1"/>
+                                <p:commandButton 
+                                    icon="ui-icon-search" 
+                                    title="Buscar"  
+                                    actionListener="#{homicideMB.clearSearch}"
+                                    oncomplete="dialogFind.show();"/>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header">
+                                <p:commandButton
+                                    icon="ui-icon-seek-first" 
+                                    title="Primero"
+                                    actionListener="#{homicideMB.first}"
+                                    oncomplete="#{homicideMB.openDialogFirst}"
+                                    update="IdForm1"/>
+                                <p:commandButton 
+                                    icon="ui-icon-seek-prev" 
+                                    title="Anterior"
+                                    actionListener="#{homicideMB.previous}"
+                                    oncomplete="#{homicideMB.openDialogPrevious}"
+                                    update="IdForm1"/>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header">
+                                <h:inputText 
+                                    id="IdPosition"
+                                    style="#{homicideMB.stylePosition}"
+                                    value="#{homicideMB.currentPosition}"
+                                    readonly="true"/>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header">
+                                <p:commandButton  
+                                    icon="ui-icon-seek-next" 
+                                    title="Siguiente"
+                                    actionListener="#{homicideMB.next}"
+                                    oncomplete="#{homicideMB.openDialogNext}"                                    
+                                    update="IdForm1"/>                             
+                                <p:commandButton  
+                                    icon="ui-icon-seek-end" 
+                                    title="Ultimo"
+                                    actionListener="#{homicideMB.last}"
+                                    oncomplete="#{homicideMB.openDialogLast}"
+                                    update="IdForm1"/>
+                            </p:column>          
+                            <p:column styleClass="ui-widget-header">
+                                <h:outputLabel id="IdFormId">CODIGO. #{homicideMB.currentIdForm}</h:outputLabel>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>                   
+                </div>
+            </h:form>
+        </ui:define>
+        <!--================================= CUADROS DE DIALOGO ==============================================-->
+        <ui:define name="dialogs">
+            <h:form id="IdForm2">
+                <p:dialog                                                         
+                    id="dialogFind"
+                    modal="true"
+                    resizable="false"
+                    header="Buscar registro" 
+                    widgetVar="dialogFind"> 
+                    <br/>
+                    <h:outputLabel value="Variable"/>
+                    <h:selectOneMenu id="IdSearchCriteria" value="#{homicideMB.currentSearchCriteria}" > 
+                        <f:selectItems value="#{homicideMB.searchCriteriaList}"/>                                    
+                    </h:selectOneMenu>
+                    <h:outputLabel value="Valor"/>
+                    <h:inputText 
+                        id="IdSearcValue"
+                        value="#{homicideMB.currentSearchValue}"/>
+                    <p:commandButton 
+                        value="Buscar" 
+                        icon="ui-icon-search"                                                
+                        actionListener="#{homicideMB.createDynamicTable}"
+                        update="IdSearchTable :IdForm1:message"/> 
+                    <br/><br/>
+                    <p:dataTable 
+                        id="IdSearchTable" var="rowX" 
+                        value="#{homicideMB.rowDataTableList}" 
+                        rowKey="#{rowX.column1}"  
+                        selection="#{homicideMB.selectedRowDataTable}" 
+                        selectionMode="single"
+                        paginator="true"
+                        rows="5"                                    
+                        paginatorPosition="bottom"
+                        scrollable="true"
+                        scrollWidth="525"                                    
+                        emptyMessage="Vacio"
+                        pageLinks="3"
+                        resizableColumns="true"> 
+                        <p:column headerText="CODIGO" width="50">  
+                            #{rowX.column1}  
+                        </p:column>  
+                        <p:column headerText="IDENTIFICACION" width="200">  
+                            #{rowX.column2}  
+                        </p:column>  
+                        <p:column headerText="NOMBRES APELLIDOS" width="450">  
+                            #{rowX.column3}  
+                        </p:column>                                      
+
+                    </p:dataTable> 
+                    <br/>
+                    <p:commandButton 
+                        id="IdLoadButton" 
+                        value="Cargar" 
+                        icon="ui-icon-document"  
+                        update=":IdForm1 :IdForm2" 
+                        actionListener="#{homicideMB.openForm}"
+                        oncomplete="dialogFind.hide(); goFirstFocus();"
+                        style=""/>
+                    <p:commandButton 
+                        id="IdCancelFind" 
+                        value="Cancelar" 
+                        icon="ui-icon-close"  
+                        oncomplete="dialogFind.hide()"
+                        style=""/>
+                    <br/><br/>
+                </p:dialog>
+                <p:dialog                                                         
+                    id="dialogFirst"
+                    modal="true"
+                    resizable="false"
+                    header="Guardar" 
+                    widgetVar="dialogFirst"> 
+                    <br/>
+                    <p:inputTextarea 
+                        value="El registro ha sido modificado, desea guardar los cambios?" 
+                        readonly="true" 
+                        style="text-align: center; background: #ebf4fb; font-size: 13px; font-weight: 900; height: 48px;"/>
+                    <br/>
+                    <br/>
+                    <p:commandButton                                        
+                        oncomplete="dialogFirst.hide(); goFirstFocus();"
+                        value="Si" 
+                        actionListener="#{homicideMB.saveAndGoFirst}"
+                        update=":IdForm1"/>   
+                    <p:commandButton
+                        value="No" 
+                        oncomplete="dialogFirst.hide(); goFirstFocus();"
+                        actionListener="#{homicideMB.noSaveAndGoFirst}"
+                        update=":IdForm1"/> 
+                    <p:commandButton
+                        value="Cancelar" 
+                        onclick="dialogFirst.hide();"/> 
+                </p:dialog>
+                <p:dialog                                                         
+                    id="dialogPrevious"
+                    modal="true"
+                    resizable="false"
+                    header="Guardar" 
+                    widgetVar="dialogPrevious"> 
+                    <br/>
+                    <p:inputTextarea 
+                        value="El registro ha sido modificado, desea guardar los cambios?" 
+                        readonly="true" 
+                        style="text-align: center; background: #ebf4fb; font-size: 13px; font-weight: 900; height: 48px;"/>
+                    <br/>
+                    <br/>
+                    <p:commandButton                                        
+                        oncomplete="dialogPrevious.hide(); goFirstFocus();"
+                        value="Si" 
+                        actionListener="#{homicideMB.saveAndGoPrevious}"
+                        update=":IdForm1"/>   
+                    <p:commandButton
+                        value="No" 
+                        oncomplete="dialogPrevious.hide(); goFirstFocus();"
+                        actionListener="#{homicideMB.noSaveAndGoPrevious}"
+                        update=":IdForm1"/> 
+                    <p:commandButton
+                        value="Cancelar" 
+                        onclick="dialogPrevious.hide();"/> 
+                </p:dialog>
+                <p:dialog                                                         
+                    id="dialogNext"
+                    modal="true"
+                    resizable="false"
+                    header="Guardar" 
+                    widgetVar="dialogNext"> 
+                    <br/>
+                    <p:inputTextarea 
+                        value="El registro ha sido modificado, desea guardar los cambios?" 
+                        readonly="true" 
+                        style="text-align: center; background: #ebf4fb; font-size: 13px; font-weight: 900; height: 48px;"/>
+                    <br/>
+                    <br/>
+                    <p:commandButton                                        
+                        oncomplete="dialogNext.hide(); goFirstFocus();"
+                        value="Si" 
+                        actionListener="#{homicideMB.saveAndGoNext}"
+                        update=":IdForm1"/>   
+                    <p:commandButton
+                        value="No" 
+                        oncomplete="dialogNext.hide(); goFirstFocus();"
+                        actionListener="#{homicideMB.noSaveAndGoNext}"
+                        update=":IdForm1"/> 
+                    <p:commandButton
+                        value="Cancelar" 
+                        onclick="dialogNext.hide();"/> 
+                </p:dialog>
+                <p:dialog                                                         
+                    id="dialogLast"
+                    modal="true"
+                    resizable="false"
+                    header="Guardar" 
+                    widgetVar="dialogLast"> 
+                    <br/>
+                    <p:inputTextarea 
+                        value="El registro ha sido modificado, desea guardar los cambios?" 
+                        readonly="true" 
+                        style="text-align: center; background: #ebf4fb; font-size: 13px; font-weight: 900; height: 48px;"/>
+                    <br/>
+                    <br/>
+                    <p:commandButton                                        
+                        oncomplete="dialogLast.hide(); goFirstFocus();"
+                        value="Si" 
+                        actionListener="#{homicideMB.saveAndGoLast}"
+                        update=":IdForm1"/>   
+                    <p:commandButton
+                        value="No" 
+                        oncomplete="dialogLast.hide(); goFirstFocus();"
+                        actionListener="#{homicideMB.noSaveAndGoLast}"
+                        update=":IdForm1"/> 
+                    <p:commandButton
+                        value="Cancelar" 
+                        onclick="dialogLast.hide();"/>
+                </p:dialog>
+                <p:dialog                                                         
+                    id="dialogNew"
+                    modal="true"
+                    resizable="false"
+                    header="Guardar" 
+                    widgetVar="dialogNew"> <br/>
+                    <p:inputTextarea 
+                        value="El registro ha sido modificado, desea guardar los cambios?" 
+                        readonly="true" 
+                        style="text-align: center; background: #ebf4fb; font-size: 13px; font-weight: 900; height: 48px;"/>
+                    <br/>
+                    <br/>
+                    <p:commandButton                                        
+                        oncomplete="dialogNew.hide(); goFirstFocus();"
+                        value="Si" 
+                        actionListener="#{homicideMB.saveAndGoNew}"
+                        update=":IdForm1"/>   
+                    <p:commandButton
+                        value="No" 
+                        oncomplete="dialogNew.hide(); goFirstFocus();"
+                        actionListener="#{homicideMB.noSaveAndGoNew}"
+                        update=":IdForm1"/> 
+                    <p:commandButton
+                        value="Cancelar" 
+                        onclick="dialogNew.hide();"/> 
+                </p:dialog>
+                <p:dialog                                                         
+                    id="dialogDelete"
+                    modal="true"
+                    resizable="false"
+                    header="Eliminar Registro" 
+                    widgetVar="dialogDelete"> 
+                    <br/>
+                    <p:inputTextarea 
+                        value="Confirma la eliminación de este registro?" 
+                        readonly="true" 
+                        style="text-align: center; background: #ebf4fb; font-size: 13px; font-weight: 900; height: 48px;"/>
+                    <br/>
+                    <br/>
+                    <p:commandButton                                                           
+                        oncomplete="dialogDelete.hide(); goFirstFocus();"
+                        actionListener="#{homicideMB.deleteRegistry}"
+                        value="Eliminar" 
+                        update=":IdForm1"/>   
+                    <p:commandButton
+                        value="Cancelar" 
+                        onclick="dialogDelete.hide();"/> 
+                </p:dialog>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
+

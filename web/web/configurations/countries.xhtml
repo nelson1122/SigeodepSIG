@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+
+    <ui:composition template="../templates/layoutTemplate.xhtml">
+        <!--==================================================================-->
+        <!--========================CABECERA SCRIPTS==========================-->                    
+        <ui:define name="head">
+            <link href="../../resources/css/style.css" rel="stylesheet" type="text/css" />               
+            <script type="text/javascript">                  
+            </script> 
+        </ui:define>
+        <!--=================================================================-->
+        <!--================================TITULOS==========================-->
+        <ui:define name="titlePage">
+            SIGEODEP -  EDICION DE VARIABLES CATEGORICAS
+        </ui:define>
+        <ui:define name="title">
+            SIGEODEP -  EDICION DE VARIABLES CATEGORICAS
+        </ui:define>
+        <!--=================================================================-->
+        <!--==============================CONTENIDO==========================-->
+        <ui:define name="content">
+            <h:outputText 
+                value="No se puede mostrar esta sección por que no cuenta con los permisos suficientes"
+                style=" color: red;"
+                rendered="#{!loginMB.permissionAdministrator}"/> 
+            <h:form enctype="multipart/form-data" id="IdForm1" rendered="#{loginMB.permissionAdministrator}">
+                <p:growl id="message"  showDetail="true" sticky="true" autoUpdate="true" life="1000"  />
+                <!--===================================================================================-->
+
+                <br/>
+                <p:panelGrid id="IdPanel1" style="position: absolute;  width: 750px;  margin-left: -375px; left: 50%;" >                            
+                    <p:row>  
+                        <p:column styleClass="ui-widget-header" style="text-align: center;">
+                            <h:outputLabel value="OBSERVATORIO DEL DELITO - ALCALDA DE PASTO"/><br/>  
+                            <h:outputLabel value="PAISES"/>  
+                        </p:column>                                       
+                    </p:row>
+                    <p:row>  
+                        <p:column>
+                            <br/>
+                            <p:panelGrid style="width: 730px;">
+                                <p:row>  
+                                    <p:column styleClass="ui-widget-header" colspan="5">
+                                        <h:outputLabel value="FILTRAR DATOS"/>
+                                    </p:column>                            
+                                </p:row>
+                                <p:row>  
+                                    <p:column styleClass="ui-widget-header ui-state-focus" colspan="1">
+                                        <h:outputLabel value="Variable"/>
+                                    </p:column>
+                                    <p:column colspan="1">
+                                        <p:selectOneMenu id="IdSearchCriteria" value="#{countriesVariableMB.currentSearchCriteria}" > 
+                                            <f:selectItem itemLabel="NOMBRE" itemValue="2" />
+                                            <f:selectItem itemLabel="CODIGO" itemValue="1" />
+                                        </p:selectOneMenu>
+                                    </p:column>                                                                        
+                                    <p:column styleClass="ui-widget-header ui-state-focus" colspan="1">
+                                        <h:outputLabel value="Valor"/>
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText 
+                                            id="IdSearcValue"
+                                            value="#{countriesVariableMB.currentSearchValue}"/>
+                                    </p:column>
+                                    <p:column colspan="1" styleClass="ui-widget-header ui-state-focus">
+                                        <p:commandButton 
+                                            value="Buscar" 
+                                            icon="ui-icon-search"                                                
+                                            actionListener="#{countriesVariableMB.createDynamicTable}"
+                                            update="IdSearchTable :IdForm1:message"/>                                                                        
+                                    </p:column>
+                                </p:row>                        
+                            </p:panelGrid>
+                            <br/>
+                            <p:dataTable 
+                                id="IdSearchTable" var="rowX" 
+                                value="#{countriesVariableMB.rowDataTableList}" 
+                                rowKey="#{rowX.column1}"  
+                                selection="#{countriesVariableMB.selectedRowDataTable}" 
+                                paginator="true"
+                                rows="10"                                    
+                                paginatorPosition="bottom"                                
+                                emptyMessage="Vacio"
+                                scrollable="true"
+                                scrollWidth="730"                                    
+                                paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                rowsPerPageTemplate="5,10,15"
+                                pageLinks="5"
+                                selectionMode="single"
+                                resizableColumns="true">                                
+                                <p:ajax
+                                    event="rowSelect"
+                                    listener="#{countriesVariableMB.load}"                                    
+                                    update=":IdForm1:IdControls :IdForm2:IdDialogEdit :IdForm2:display :IdForm1:message" />
+                                <p:column headerText="CODIGO" width="140">  
+                                    #{rowX.column1}  
+                                </p:column>  
+                                <p:column headerText="NOMBRE" width="546">  
+                                    #{rowX.column2}  
+                                </p:column>  
+                            </p:dataTable>                            
+                            <br/>
+                            <p:panelGrid id="IdControls" style="width: 730px;">
+                                <p:row>  
+                                    <p:column styleClass="ui-widget-header" colspan="5">
+                                        <p:commandButton 
+                                            id="IdEdit"
+                                            disabled="#{countriesVariableMB.btnEditDisabled}"
+                                            value="Editar"                                 
+                                            icon="ui-icon-pencil"                                            
+                                            oncomplete="dialogEdit.show()"                                            
+                                            update=":IdForm2:IdDialogEdit :IdForm2:display :IdForm1:message"/>
+                                        <p:commandButton 
+                                            id="IdRemove" 
+                                            disabled="#{countriesVariableMB.btnRemoveDisabled}"
+                                            value="Eliminar" 
+                                            icon="ui-icon-close"
+                                            oncomplete="dialogDelete.show()"                                            
+                                            update=":IdForm2:IdDialogDelete :IdForm2:displayDelete :IdForm1:message"/>
+                                        <p:commandButton 
+                                            id="IdNew" 
+                                            value="Nuevo" 
+                                            icon="ui-icon-document"
+                                            actionListener="#{countriesVariableMB.newRegistry}"
+                                            oncomplete="dialogNew.show()"                                            
+                                            update=":IdForm2:IdDialogNew :IdForm2:displayNew :IdForm1:message"/>
+                                        <h:commandLink >                                              
+                                            <p:button value="Exportar"/>
+                                            <p:dataExporter type="xls" target="IdSearchTable" fileName="PAISES" postProcessor="#{countriesVariableMB.postProcessXLS}"/>  
+                                        </h:commandLink>
+                                    </p:column>                            
+                                </p:row>
+                            </p:panelGrid>
+                            <br/>
+                        </p:column>                                       
+                    </p:row>
+                </p:panelGrid>
+            </h:form>
+        </ui:define>
+        <ui:define name="dialogs">
+            <h:form id="IdForm2">
+                <!--   DIALOGO EDITAR -->
+                <p:dialog id="IdDialogEdit" header="EDICION DE PAIS" widgetVar="dialogEdit" resizable="false" modal="true">  
+                    <p:panelGrid id="display">                          
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="NOMBRE" />  
+                            </p:column>
+                            <p:column>
+                                <p:inputText size="40" value="#{countriesVariableMB.name}" /> 
+                            </p:column>
+                        </p:row>                        
+                        <p:row>
+                            <p:column colspan="2" styleClass="ui-widget-header">
+                                <p:commandButton 
+                                    value="Guardar" 
+                                    icon="ui-icon-disk"
+                                    oncomplete="dialogEdit.hide()"
+                                    actionListener="#{countriesVariableMB.updateRegistry}"
+                                    update=":IdForm1:IdSearchTable :IdForm1:IdControls :IdForm1:message"/>
+                                <p:commandButton 
+                                    value="Cancelar" 
+                                    icon="ui-icon-close"
+                                    oncomplete="dialogEdit.hide()"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>  
+                </p:dialog> 
+                <!--   DIALOGO NUEVO -->
+                <p:dialog id="IdDialogNew" header="NUEVO PAIS" widgetVar="dialogNew" resizable="false" modal="true">  
+                    <p:panelGrid id="displayNew">                          
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="NOMBRE" />  
+                            </p:column>
+                            <p:column>
+                                <p:inputText size="40" value="#{countriesVariableMB.newName}" /> 
+                            </p:column>
+                        </p:row>                        
+                        <p:row>
+                            <p:column colspan="2" styleClass="ui-widget-header">
+                                <p:commandButton 
+                                    value="Guardar" 
+                                    icon="ui-icon-disk"                                   
+                                    oncomplete="dialogNew.hide()"
+                                    actionListener="#{countriesVariableMB.saveRegistry}"
+                                    update=":IdForm1:IdSearchTable :IdForm1:IdControls :IdForm1:message"/>
+                                <p:commandButton 
+                                    value="Cancelar" 
+                                    icon="ui-icon-close"
+                                    oncomplete="dialogNew.hide()"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>  
+                </p:dialog> 
+                <!-- DIALOGO ELIMINAR-->
+                <p:dialog                                                         
+                    id="IdDialogDelete"
+                    modal="true"
+                    resizable="false"
+                    header="ELIMINAR PAIS" 
+                    widgetVar="dialogDelete"> 
+                    <p:panelGrid id="displayDelete">
+                        <p:row>  
+                            <p:column style="width: 200px; height: 80px; text-align: center; background: #fbef9a;">
+                                Confirma la Eliminacion de este registro?
+                            </p:column>
+                        </p:row>
+                        <p:row>  
+                            <p:column styleClass="ui-widget-header">
+                                <p:commandButton                                                           
+                                    oncomplete="dialogDelete.hide()"
+                                    actionListener="#{countriesVariableMB.deleteRegistry}"
+                                    value="Eliminar" 
+                                    update=":IdForm1:IdSearchTable :IdForm1:IdControls :IdForm1:message"/>   
+                                <p:commandButton
+                                    value="Cancelar" 
+                                    onclick="dialogDelete.hide()"/> 
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:dialog>
+                
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
+

@@ -1,0 +1,260 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <f:view contentType="text/html; charset=UTF-8">
+        <h:head> 
+            <link rel="shortcut icon" href="../../resources/img/icon.gif"/>
+            <meta 
+                http-equiv="Content-Type" 
+                content="text/html; charset=UTF-8" />
+            <link 
+                rel="stylesheet" 
+                href="./../../resources/css/style.css" 
+                type="text/css" />
+            <ui:insert name="head">  
+            </ui:insert>
+            <script type="text/javascript">                
+                function pageInactive() {//muestra la pagina deshabilitada                    
+                    document.getElementById('IdInactivityLayer').style.display = "block";
+                }
+                function pageActive() {//muestra la pagina habilitada
+                    document.getElementById('IdInactivityLayer').style.display = "none";
+                }
+            </script> 
+            <title>
+                <ui:insert name="titlePage">
+                </ui:insert>
+            </title>
+        </h:head>
+
+        <h:body>
+            <div class="InactivityLayer" id="IdInactivityLayer"> Procesando...</div>            
+
+            <p:panelGrid rendered="#{!loginMB.autenticado}" style="margin-top: 160px; margin-left: 210px; ">
+                <p:row>
+                    <p:column>
+                        <a href="./index.html">No se ha iniciado sesion</a>
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
+            <p:layout fullPage="true" rendered="#{loginMB.autenticado}" >  
+                <!-- ****************************** MENU LATERAL (PARTE IZQUIERDA) ************************ -->
+                <p:layoutUnit position="west" size="300" header="&nbsp;" collapsible="true"> 
+                    <h:form target="_blank">
+                        <h:commandButton value="+" action="home" image="../../resources/img/logo2.png" />                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <!-- h:commandButton value="h"  action="help" image="../../resources/img/help.gif" /-->                        
+                        
+                    </h:form>
+                    
+                    <h:form id="IdForm0">                          
+                        <h:commandButton image="../../resources/img/help.gif" value="Download" >  
+                            <p:fileDownload value="#{loginMB.fileHelp}" />  
+                        </h:commandButton>                         
+                        <br/>
+                        <p:accordionPanel  activeIndex="#{loginMB.activeIndexAcoordion1}" >                            
+                            <p:tab title="REGISTRO DE DATOS"  rendered="#{loginMB.permissionRegistryDataSection}">
+                                <p:menu style="width: 200px; z-index:23; overflow: no-display;">
+                                    <p:menuitem 
+                                        icon="ui-icon-document"
+                                        value="Conjuntos desde Archivo"
+                                        rendered="#{loginMB.permissionAdministrator}"
+                                        actionListener="#{projectsMB.loadConfigurationUser}"
+                                        action="proccesFile"
+                                        ajax="false"/>
+                                    <p:menuitem 
+                                        icon="ui-icon-clipboard"
+                                        value="Registro desde Formularios"
+                                        action="forms"
+                                        ajax="false"/>  
+                                    <p:menuitem 
+                                        icon="ui-icon-newwin" 
+                                        value="Gestión de Conjuntos"                                         
+                                        rendered="#{loginMB.permissionAdministrator}"
+                                        actionListener="#{recordSetsMB.reset}"
+                                        action="recordSets"
+                                        ajax="false"/>
+                                </p:menu> 
+                            </p:tab>
+                            <p:tab title="INDICADORES" rendered="#{loginMB.permissionIndicators}">
+                                <p:accordionPanel activeIndex="#{loginMB.activeIndexAcoordion2}" style="width: 250px;" > 
+                                    <p:tab title="FATALES">
+                                        <p:menu >                               
+                                            <p:menuitem 
+                                                icon="ui-icon-copy"
+                                                value="General" 
+                                                action="fatalIndicators" 
+                                                ajax="false"/>
+                                            <p:menuitem 
+                                                icon="ui-icon-copy"
+                                                value="Homicidios" 
+                                                action="fatalMurderIndicators" 
+                                                ajax="false"/>
+                                            <p:menuitem 
+                                                icon="ui-icon-copy"
+                                                value="Suicidios" 
+                                                action="fatalSuicideIndicators" 
+                                                ajax="false"/>
+                                            <p:menuitem 
+                                                icon="ui-icon-copy"
+                                                value="No Intencionales" 
+                                                action="fatalAccidentalIndicators" 
+                                                ajax="false"/>
+                                            <p:menuitem 
+                                                icon="ui-icon-copy"
+                                                value="Transito" 
+                                                action="fatalTransitIndicators" 
+                                                ajax="false"/>
+                                        </p:menu> 
+                                    </p:tab>
+                                    <p:tab title="NO FATALES">
+                                        <p:menu style="width: 200px;">                               
+                                            <p:menuitem 
+                                                icon="ui-icon-copy"
+                                                value="General" 
+                                                action="nonFatalIndicators" 
+                                                ajax="false"/>
+                                            <p:menuitem 
+                                                icon="ui-icon-copy"
+                                                value="Interpersonal en Comunidad" 
+                                                action="nonFatalInterpersonalIndicators" 
+                                                ajax="false"/>
+                                            <p:menuitem 
+                                                icon="ui-icon-copy"
+                                                value="Autoinflingida" 
+                                                action="nonFatalSelfInflictedIndicators" 
+                                                ajax="false"/>
+                                            <p:menuitem 
+                                                icon="ui-icon-copy"
+                                                value="Accidente de Transito" 
+                                                action="nonFatalTrafficAccidentIndicators" 
+                                                ajax="false"/>
+                                            <p:menuitem 
+                                                icon="ui-icon-copy"
+                                                value="No intencional" 
+                                                action="nonFatalNonIntentionalIndicators" 
+                                                ajax="false"/>
+                                            <p:menuitem 
+                                                icon="ui-icon-copy"
+                                                value="Interpersonal en Familia" 
+                                                action="nonFatalDomesticViolenceIndicators" 
+                                                ajax="false"/>
+                                            <p:menuitem 
+                                                icon="ui-icon-copy"
+                                                value="SIVIGILA - VIF" 
+                                                action="sivigilaVifIndicators" 
+                                                ajax="false"/>
+                                        </p:menu> 
+                                    </p:tab>
+                                </p:accordionPanel>
+                            </p:tab>                            
+                            <p:tab title="CONFIGURACIONES" rendered="#{loginMB.permissionAdministrator}">
+                                <p:menu style="width: 200px; z-index:23;">                               
+                                    <p:menuitem 
+                                        icon="ui-icon-calculator"
+                                        value="Variables Categoricas" 
+                                        actionListener="#{categoricalVariablesMB.reset}"
+                                        action="categoricalVariables" 
+                                        ajax="false"/>                                      
+                                    <p:menuitem 
+                                        icon="ui-icon-link"
+                                        value="Configurar Poblaciones" 
+                                        action="populate" 
+                                        ajax="false"/>                                      
+                                    <p:menuitem 
+                                        icon="ui-icon-person"
+                                        value="Gestión de Usuarios" 
+                                        actionListener="#{usersMB.reset}"
+                                        action="users" 
+                                        ajax="false"/>  
+                                    <p:menuitem
+                                        icon="ui-icon-disk"
+                                        value="Copias de seguridad" 
+                                        actionListener="#{backupsMB.reset}"
+                                        action="backups" 
+                                        ajax="false"/>  
+                                    <p:menuitem
+                                        icon="ui-icon-flag"
+                                        value="Cierres" 
+                                        actionListener="#{closuresMB.reset}"
+                                        action="closures" 
+                                        ajax="false"/>  
+                                    <p:menuitem 
+                                        icon="ui-icon-clipboard"
+                                        value="Control de Registros" 
+                                        actionListener="#{registerControlMB.reset}"
+                                        action="registerControl" 
+                                        ajax="false"/>  
+                                </p:menu> 
+                            </p:tab>
+                            <p:tab title="GENERAL">
+                                <p:panel 
+                                    footer="#{loginMB.userName}" 
+                                    header="#{loginMB.userLogin} - #{loginMB.userJob}" >
+                                    <p:graphicImage value="../../resources/img/user.png"/>                                    
+                                </p:panel>
+
+                                <br/>
+                                <p:menu style="width: 200px; z-index:23;">                               
+                                    <p:menuitem 
+                                        icon="ui-icon-home"
+                                        value="Inicio"
+                                        action="homePage"
+                                        ajax="false"/>  
+                                    <p:menuitem 
+                                        icon="ui-icon-circle-close"
+                                        value="Cerrar Sesión"
+                                        actionListener="#{loginMB.logout2}"
+                                        ajax="false"/>                                      
+                                </p:menu> 
+                            </p:tab>                            
+                        </p:accordionPanel>
+
+                        <h:commandButton value="Correcciones de Santos" rendered="#{loginMB.activeSantos}" actionListener="#{loginMB.corregirDB}" />
+                    </h:form>  
+
+                </p:layoutUnit>  
+                <!-- ****************************** CONTENIDO (PARTE CENTRAL) ************************ -->
+                <p:layoutUnit position="center" > 
+                    <p:ajaxStatus 
+                        style=" position:fixed; 
+                        top: 5px; 
+                        right:35px; 
+                        width:17px;
+                        height:17px; 
+                        z-index: 21;"                        
+                        id="ajaxStatusPanel">  
+                        <f:facet name="start">  
+                            <h:graphicImage value="../../resources/img/ajaxloading.gif" />                      
+                        </f:facet>          
+                        <f:facet name="complete">  
+                            <h:outputText value="&nbsp;" />  
+                        </f:facet>  
+                    </p:ajaxStatus>
+                    <!-- p:ajaxStatus onstart="statusDialog.show();" onsuccess="statusDialog.hide();"/> 
+                    <p:dialog modal="true" widgetVar="statusDialog" header="procesando.." 
+                              draggable="false" closable="false" resizable="false" > 
+                        <h:graphicImage value="../../resources/img/ajaxloading.gif" />
+                    </p:dialog-->
+                    <div id="welcome">
+                        <h1>
+                            <ui:insert name="title" >  
+
+                            </ui:insert>
+                        </h1>
+                    </div>
+                    <div>
+                        <ui:insert name="content">   
+                        </ui:insert>
+                    </div>
+
+                </p:layoutUnit>
+            </p:layout>            
+            <ui:insert name="dialogs">   
+            </ui:insert>
+        </h:body>
+    </f:view>
+</html>

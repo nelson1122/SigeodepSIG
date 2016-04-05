@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Scene Scope="Project" version="2">
+    <Scope Scope="Faces Configuration Only"/>
+    <Scope Scope="Project">
+        <Node id="web/Forms/suicide.xhtml" x="693" y="192" zoom="false"/>
+        <Node id="web/recordSets/recordSetsSuicide.xhtml" x="2400" y="150" zoom="true"/>
+        <Node id="web/configurations/involvedVehicles.xhtml" x="900" y="750" zoom="true"/>
+        <Node id="web/indicators/percentageVariationIndicator.xhtml" x="2150" y="600" zoom="true"/>
+        <Node id="web/recordSets/recordSetsSivigilaVif.xhtml" x="1400" y="600" zoom="true"/>
+        <Node id="web/indicators/nonFatalNonIntentionalIndicators.xhtml" x="650" y="1050" zoom="true"/>
+        <Node id="web/indicators/fatalMurderIndicators.xhtml" x="1650" y="600" zoom="true"/>
+        <Node id="web/configurations/users.xhtml" x="1650" y="450" zoom="true"/>
+        <Node id="web/configurations/victimCharacteristics.xhtml" x="400" y="900" zoom="true"/>
+        <Node id="web/duplicateSets/duplicateSetsAccidental.xhtml" x="650" y="1200" zoom="true"/>
+        <Node id="web/duplicateSets/duplicateSetsTransit.xhtml" x="900" y="450" zoom="true"/>
+        <Node id="indexConfiguration.xhtml" x="400" y="1500" zoom="true"/>
+        <Node id="web/configurations/protectiveMeasures.xhtml" x="150" y="750" zoom="true"/>
+        <Node id="web/recordSets/recordSetsTransit.xhtml" x="400" y="1200" zoom="true"/>
+        <Node id="web/configurations/backups.xhtml" x="2400" y="300" zoom="true"/>
+        <Node id="web/configurations/departaments.xhtml" x="1150" y="450" zoom="true"/>
+        <Node id="web/duplicateSets/duplicateSetsVIF.xhtml" x="1150" y="900" zoom="true"/>
+        <Node id="web/indicators/nonFatalSelfInflictedIndicators.xhtml" x="1900" y="600" zoom="true"/>
+        <Node id="web/indicators/variationIndicator.xhtml" x="150" y="1050" zoom="true"/>
+        <Node id="web/configurations/murderContext.xhtml" x="1150" y="150" zoom="true"/>
+        <Node id="web/configurations/healtProfessionals.xhtml" x="400" y="300" zoom="true"/>
+        <Node id="web/configurations/healtInstitutions.xhtml" x="400" y="600" zoom="true"/>
+        <Node id="*" x="406" y="255" zoom="false"/>
+        <Node id="web/fileProcessing/fileProcessing.xhtml" x="19" y="414" zoom="false"/>
+        <Node id="web/recordSets/recordSetsVIF.xhtml" x="150" y="1350" zoom="true"/>
+        <Node id="web/indicators/averageIndicator.xhtml" x="2650" y="150" zoom="true"/>
+        <Node id="index.html" x="900" y="900" zoom="true"/>
+        <Node id="web/Forms/homicide.xhtml" x="684" y="456" zoom="false"/>
+        <Node id="web/indicators/nonFatalInterpersonalIndicators.xhtml" x="1400" y="750" zoom="true"/>
+        <Node id="web/duplicateSets/duplicateSetsHomicide.xhtml" x="900" y="1200" zoom="true"/>
+        <Node id="web/configurations/vulnerableGroup.xhtml" x="400" y="1050" zoom="true"/>
+        <Node id="web/indicators/percentageIndicator.xhtml" x="2900" y="150" zoom="true"/>
+        <Node id="web/configurations/nonFatalPlaces.xhtml" x="1400" y="450" zoom="true"/>
+        <Node id="web/indicators/fatalIndicators.xhtml" x="650" y="1350" zoom="true"/>
+        <Node id="web/configurations/ethnicGroup.xhtml" x="900" y="600" zoom="true"/>
+        <Node id="web/configurations/countries.xhtml" x="1400" y="300" zoom="true"/>
+        <Node id="web/duplicateSets/duplicateSetsSuicide.xhtml" x="900" y="1050" zoom="true"/>
+        <Node id="web/configurations/neighborhoods.xhtml" x="1900" y="150" zoom="true"/>
+        <Node id="web/configurations/municipalities.xhtml" x="1150" y="600" zoom="true"/>
+        <Node id="web/indicators/nonFatalDomesticViolenceIndicators.xhtml" x="1400" y="900" zoom="true"/>
+        <Node id="web/indicators/fatalSuicideIndicators.xhtml" x="1900" y="450" zoom="true"/>
+        <Node id="web/configurations/fromWhereSumbited.xhtml" x="650" y="750" zoom="true"/>
+        <Node id="web/configurations/insurances.xhtml" x="900" y="150" zoom="true"/>
+        <Node id="web/configurations/relatedEvents.xhtml" x="150" y="300" zoom="true"/>
+        <Node id="web/indicators/nonFatalTrafficAccidentIndicators.xhtml" x="400" y="1350" zoom="true"/>
+        <Node id="web/configurations/mechanism.xhtml" x="400" y="450" zoom="true"/>
+        <Node id="web/Forms/accidental.xhtml" x="684" y="101" zoom="false"/>
+        <Node id="web/indicators/fatalTransitIndicators.xhtml" x="2400" y="450" zoom="true"/>
+        <Node id="web/indicators/rateIndicator.xhtml" x="2150" y="150" zoom="true"/>
+        <Node id="web/configurations/destinationPatient.xhtml" x="150" y="1200" zoom="true"/>
+        <Node id="web/duplicateSets/duplicateSetsSivigilaVif.xhtml" x="1150" y="1050" zoom="true"/>
+        <Node id="web/homepage.xhtml" x="31" y="192" zoom="false"/>
+        <Node id="web/recordSets/recordSetsLCENF.xhtml" x="1650" y="750" zoom="true"/>
+        <Node id="web/templates/layoutTemplate.xhtml" x="250" y="15" zoom="true"/>
+        <Node id="web/recordSets/recordSetsAccidental.xhtml" x="2150" y="450" zoom="true"/>
+        <Node id="web/configurations/jobs.xhtml" x="1650" y="150" zoom="true"/>
+        <Node id="web/configurations/categoricalVariables.xhtml" x="1400" y="150" zoom="true"/>
+        <Node id="web/recordSets/recordSets.xhtml" x="45" y="525" zoom="true"/>
+        <Node id="web/indicators/nonFatalIndicators.xhtml" x="150" y="150" zoom="true"/>
+        <Node id="web/configurations/accidentClass.xhtml" x="150" y="146" zoom="true"/>
+        <Node id="web/Forms/LCENF.xhtml" x="539" y="68" zoom="true"/>
+        <Node id="web/configurations/diagnoses.xhtml" x="150" y="450" zoom="true"/>
+        <Node id="web/indicators/countIndicator.xhtml" x="150" y="1500" zoom="true"/>
+        <Node id="web/configurations/activities.xhtml" x="150" y="600" zoom="true"/>
+        <Node id="web/configurations/serviceType.xhtml" x="650" y="300" zoom="true"/>
+        <Node id="web/indicators/specifiedRateIndicator.xhtml" x="2150" y="300" zoom="true"/>
+        <Node id="web/recordSets/recordSetsHomicide.xhtml" x="2650" y="300" zoom="true"/>
+        <Node id="web/duplicateSets/duplicateSetsLCENF.xhtml" x="1150" y="750" zoom="true"/>
+        <Node id="web/indicators/fatalAccidentalIndicators.xhtml" x="1900" y="300" zoom="true"/>
+        <Node id="web/Forms/VIF.xhtml" x="31" y="103" zoom="false"/>
+        <Node id="web/configurations/weaponType.xhtml" x="650" y="600" zoom="true"/>
+        <Node id="web/Forms/transit.xhtml" x="415" y="530" zoom="false"/>
+        <Node id="web/Forms/forms.xhtml" x="16" y="353" zoom="true"/>
+        <Node id="web/configurations/places.xhtml" x="1650" y="300" zoom="true"/>
+    </Scope>
+    <Scope Scope="All Faces Configurations"/>
+</Scene>

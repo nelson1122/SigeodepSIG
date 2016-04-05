@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+
+    <ui:composition template="../templates/layoutTemplate.xhtml">
+        <!--==================================================================-->
+        <!--========================CABECERA SCRIPTS==========================-->                    
+        <ui:define name="head">
+            <link href="../../resources/css/style.css" rel="stylesheet" type="text/css" />               
+            <script type="text/javascript">
+            </script> 
+        </ui:define>
+        <!--=================================================================-->
+        <!--================================TITULOS==========================-->
+        <ui:define name="titlePage">
+            SIGEODEP -  COPIAS DE SEGURIDAD
+        </ui:define>
+        <ui:define name="title">
+            SIGEODEP -  COPIAS DE SEGURIDAD
+        </ui:define>
+        <!--=================================================================-->
+        <!--==============================CONTENIDO==========================-->
+        <ui:define name="content">
+            <h:outputText 
+                value="No se puede mostrar esta sección por que no cuenta con los permisos suficientes"
+                style=" color: red;"
+                rendered="#{!loginMB.permissionAdministrator}"/> 
+            <h:form enctype="multipart/form-data" id="IdForm1" rendered="#{loginMB.permissionAdministrator}">
+                <p:growl id="message"  showDetail="true" sticky="true" autoUpdate="true" life="1000"  />
+                <!--===================================================================================-->
+
+                <br/>
+                <p:panelGrid id="IdPanel1" style="position: absolute;  width: 750px;  margin-left: -375px; left: 50%;" >                            
+                    <p:row>  
+                        <p:column styleClass="ui-widget-header" style="text-align: center;">
+                            <h:outputLabel value="OBSERVATORIO DEL DELITO - ALCALDA DE PASTO"/><br/>  
+                            <h:outputLabel value="COPIAS DE SEGURIDAD"/>  
+                        </p:column>                                       
+                    </p:row>
+                    <p:row>  
+                        <p:column>
+                            <br/>
+                            <br/>
+                            <p:tabView id="IdTabView"  style=" width: 700px;  margin-left: -350px; left: 50%;" > 
+                                <p:tab title="SIGEODEP">
+                                    <p:dataTable 
+                                        id="IdSearchTable" var="rowX" 
+                                        value="#{backupsMB.rowDataTableList}" 
+                                        rowKey="#{rowX.column1}"  
+                                        selection="#{backupsMB.selectedRowDataTable}" 
+                                        paginator="true"
+                                        rows="10"                                    
+                                        paginatorPosition="bottom"                                
+                                        emptyMessage="No existen copias de seguridad creadas"
+                                        scrollable="true"
+                                        scrollWidth="650"                                    
+                                        paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                        rowsPerPageTemplate="5,10,15"
+                                        pageLinks="5"
+                                        selectionMode="single"
+                                        resizableColumns="true">                                                                
+                                        <p:column headerText="CREACION" width="130">  
+                                            #{rowX.column3}  
+                                        </p:column>  
+                                        <p:column headerText="TIPO" width="130">  
+                                            #{rowX.column4}  
+                                        </p:column>  
+                                        <p:column headerText="NOMBRE DE LA COPIA" width="320">  
+                                            #{rowX.column2}  
+                                        </p:column>                                  
+
+                                    </p:dataTable>                            
+                                    <br/>
+                                    <p:commandButton 
+                                        value="Restaurar"                                 
+                                        icon="ui-icon-pencil"                                            
+                                        oncomplete="dialogEdit.show()"                                            
+                                        update=":IdForm2:IdDialogEdit :IdForm1:message"/>
+                                    <p:commandButton  
+                                        value="Eliminar" 
+                                        icon="ui-icon-close"
+                                        oncomplete="dialogDelete.show()"                                            
+                                        update=":IdForm2:IdDialogDelete :IdForm1:message"/>
+                                    <p:commandButton 
+                                        value="Crear" 
+                                        icon="ui-icon-document"                                            
+                                        oncomplete="dialogNew.show()"                                            
+                                        update=":IdForm2:IdDialogNew :IdForm1:message"/>                                        
+                                </p:tab>
+                                <p:tab title="BODEGA">
+                                    <p:dataTable 
+                                        id="IdSearchTableDwh" var="rowX" 
+                                        value="#{backupsMB.rowDataTableListDwh}" 
+                                        rowKey="#{rowX.column1}"  
+                                        selection="#{backupsMB.selectedRowDataTableDwh}" 
+                                        paginator="true"
+                                        rows="10"                                    
+                                        paginatorPosition="bottom"                                
+                                        emptyMessage="No existen copias de seguridad creadas"
+                                        scrollable="true"
+                                        scrollWidth="650"                                    
+                                        paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                        rowsPerPageTemplate="5,10,15"
+                                        pageLinks="5"
+                                        selectionMode="single"
+                                        resizableColumns="true">                                                                
+                                        <p:column headerText="CREACION" width="200">  
+                                            #{rowX.column3}  
+                                        </p:column>                                          
+                                        <p:column headerText="NOMBRE DE LA COPIA" width="400">  
+                                            #{rowX.column2}  
+                                        </p:column>                                  
+
+                                    </p:dataTable>                            
+                                    <br/>
+                                    <p:commandButton 
+                                        value="Restaurar"                                 
+                                        icon="ui-icon-pencil"                                            
+                                        oncomplete="dialogEditDwh.show()"                                            
+                                        update=":IdForm2:IdDialogEditDwh :IdForm1:message"/>
+                                    <p:commandButton  
+                                        value="Eliminar" 
+                                        icon="ui-icon-close"
+                                        oncomplete="dialogDeleteDwh.show()"                                            
+                                        update=":IdForm2:IdDialogDeleteDwh :IdForm1:message"/>
+                                    <!-- p:commandButton 
+                                        value="Crear" 
+                                        icon="ui-icon-document"                                            
+                                        oncomplete="dialogNewDwh.show()"                                            
+                                        update=":IdForm2:IdDialogNewDwh :IdForm1:message"/ -->                                        
+                                </p:tab>
+                            </p:tabView>
+                            <br/><br/>
+                        </p:column>                                       
+                    </p:row>
+                </p:panelGrid>
+            </h:form>
+        </ui:define>
+        <ui:define name="dialogs">
+            <h:form id="IdForm2">
+                <!--   DIALOGO RESTAURAR COPIA -->
+                <p:dialog id="IdDialogEdit" header="Restaurar Copia de Seguridad" widgetVar="dialogEdit" resizable="false" modal="true">  
+                    <br/>
+                    <p:inputTextarea 
+                        value="Se procedera a restaurar una copia de seguridad, se recomienda crear una copia de seguridad antes de realizar la restauración ya que el sistema se reiniciara y finalizara todas las sesiones que se encuentren abiertas, desea continuar?" 
+                        readonly="true" 
+                        style="text-align: match-parent; background: #ebf4fb; font-size: 13px; font-weight: 900; height: 80px; width: 320px;"/>
+                    <br/><br/>
+                    <p:commandButton 
+                        value="Restaurar" 
+                        icon="ui-icon-disk"
+                        oncomplete="pageActive();"
+                        onclick="dialogEdit.hide();
+                    pageInactive();"
+                        actionListener="#{backupsMB.restoreBackupClick}"
+                        update=":IdForm1:IdTabView:IdSearchTable :IdForm1:message"/>
+                    <p:commandButton 
+                        value="Cancelar" 
+                        icon="ui-icon-close"
+                        oncomplete="dialogEdit.hide()"/>
+                    <br/><br/>
+                </p:dialog> 
+                <!--   DIALOGO NUEVO -->
+                <p:dialog id="IdDialogNew" header="Nueva Copia de Seguridad" widgetVar="dialogNew" resizable="false" modal="true">  
+                    <br/>
+                    <h:outputText value="NOMBRE:" />&nbsp;&nbsp;
+                    <p:inputText size="40" value="#{backupsMB.newName}" /> 
+                    <br/><br/>
+                    <p:commandButton 
+                        value="Crear" 
+                        icon="ui-icon-disk"                                   
+                        onclick="dialogNew.hide();
+                    pageInactive();"
+                        oncomplete="pageActive();"
+                        actionListener="#{backupsMB.createBackupClick}"
+                        update=":IdForm1:IdTabView:IdSearchTable :IdForm1:message"/>
+                    <p:commandButton 
+                        value="Cancelar" 
+                        icon="ui-icon-close"
+                        oncomplete="dialogNew.hide()"/>
+                    <br/><br/>
+                </p:dialog> 
+                <!-- DIALOGO ELIMINAR-->
+                <p:dialog                                                         
+                    id="IdDialogDelete"
+                    modal="true"
+                    resizable="false"
+                    header="Eliminar copia de seguridad" 
+                    widgetVar="dialogDelete"> 
+                    <br/>
+                    <p:inputTextarea 
+                        value="Se procedera a eliminar la copia de seguridad seleccionada, desea continuar?" 
+                        readonly="true" 
+                        style="text-align: match-parent; background: #ebf4fb; font-size: 13px; font-weight: 900; height: 50px; width: 220px;"/>
+                    <br/><br/>
+                    <p:commandButton                                                           
+                        oncomplete="dialogDelete.hide()"
+                        actionListener="#{backupsMB.deleteBackupClick}"
+                        value="Eliminar" 
+                        update=":IdForm1:IdTabView:IdSearchTable :IdForm1:message"/>   
+                    <p:commandButton
+                        value="Cancelar" 
+                        onclick="dialogDelete.hide();"/> 
+                    <br/><br/>
+                </p:dialog>
+                <!--   DIALOGO RESTAURAR COPIA DE SEGURIDAD BODEGA DE DATOS -->
+                <p:dialog id="IdDialogEditDwh" header="Restaurar Copia de Seguridad" widgetVar="dialogEditDwh" resizable="false" modal="true">  
+                    <br/>
+                    <p:inputTextarea 
+                        value="Se procedera a restaurar una copia de seguridad desea continuar?" 
+                        readonly="true" 
+                        style="text-align: match-parent; background: #ebf4fb; font-size: 13px; font-weight: 900; height: 80px; width: 320px;"/>
+                    <br/><br/>
+                    <p:commandButton 
+                        value="Restaurar" 
+                        icon="ui-icon-disk"
+                        oncomplete="pageActive();"
+                        onclick="dialogEditDwh.hide();
+                    pageInactive();"
+                        actionListener="#{backupsMB.restoreBackupClickDwh}"
+                        update=":IdForm1:IdTabView:IdSearchTableDwh :IdForm1:message"/>
+                    <p:commandButton 
+                        value="Cancelar" 
+                        icon="ui-icon-close"
+                        oncomplete="dialogEditDwh.hide()"/>
+                    <br/><br/>
+                </p:dialog> 
+                <!--   DIALOGO NUEVA COPIA DE SEGURIDAD DE BODEGA >
+                <p:dialog id="IdDialogNewDwh" header="Nueva Copia de Seguridad" widgetVar="dialogNewDwh" resizable="false" modal="true">  
+                    <br/>
+                    <h:outputText value="NOMBRE:" />&nbsp;&nbsp;
+                    <p:inputText size="40" value="# {backupsMB.newNameDwh}" /> 
+                    <br/><br/>
+                    <p:commandButton 
+                        value="Crear" 
+                        icon="ui-icon-disk"                                   
+                        onclick="dialogNewDwh.hide();
+                    pageInactive();"
+                        oncomplete="pageActive();"
+                        actionListener="# {backupsMB.createBackupClickDwh}"
+                        update=":IdForm1:IdTabView:IdSearchTableDwh :IdForm1:message"/>
+                    <p:commandButton 
+                        value="Cancelar" 
+                        icon="ui-icon-close"
+                        oncomplete="dialogNewDwh.hide()"/>
+                    <br/><br/>
+                </p:dialog --> 
+                <!-- DIALOGO ELIMINAR COPIA DE SEGURIDAD DE BODEGA-->
+                <p:dialog                                                         
+                    id="IdDialogDeleteDwh"
+                    modal="true"
+                    resizable="false"
+                    header="Eliminar copia de seguridad" 
+                    widgetVar="dialogDeleteDwh"> 
+                    <br/>
+                    <p:inputTextarea 
+                        value="Se procedera a eliminar la copia de seguridad seleccionada, desea continuar?" 
+                        readonly="true" 
+                        style="text-align: match-parent; background: #ebf4fb; font-size: 13px; font-weight: 900; height: 50px; width: 220px;"/>
+                    <br/><br/>
+                    <p:commandButton                                                           
+                        oncomplete="dialogDeleteDwh.hide()"
+                        actionListener="#{backupsMB.deleteBackupClickDwh}"
+                        value="Eliminar" 
+                        update=":IdForm1:IdTabView:IdSearchTableDwh :IdForm1:message"/>   
+                    <p:commandButton
+                        value="Cancelar" 
+                        onclick="dialogDeleteDwh.hide();"/> 
+                    <br/><br/>
+                </p:dialog>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
+

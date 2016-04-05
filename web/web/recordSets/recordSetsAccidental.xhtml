@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+
+    <ui:composition template="../templates/layoutTemplate.xhtml">
+        <!--==================================================================-->
+        <!--========================CABECERA SCRIPTS==========================-->                    
+        <ui:define name="head">
+            <link href="../../resources/css/style.css" rel="stylesheet" type="text/css" />               
+            <script type="text/javascript">   
+                function startA() {                                          
+                    document.getElementById('IdForm1:IdBtnExport').click();                    
+                    //$('#IdPaint').click();
+                }
+            </script> 
+        </ui:define>
+        <!--=================================================================-->
+        <!--================================TITULOS==========================-->
+        <ui:define name="titlePage">
+            SIGEODEP -  CONJUNTOS DE REGISTROS
+        </ui:define>
+        <ui:define name="title">
+            SIGEODEP -  CONJUNTOS DE REGISTROS
+        </ui:define>
+        <!--=================================================================-->
+        <!--==============================CONTENIDO==========================-->
+        <ui:define name="content"> 
+            <h:outputText 
+                value="No se puede mostrar esta sección por que no cuenta con los permisos suficientes"
+                style=" color: red;"
+                rendered="#{!loginMB.permissionAdministrator}"/> 
+            <h:form enctype="multipart/form-data" id="IdForm1" rendered="#{loginMB.permissionAdministrator}">
+                <p:growl id="message"  showDetail="true" sticky="true" autoUpdate="true" life="1000"  />
+                <!--===================================================================================-->
+
+                <br/>
+                <p:panelGrid id="IdPanel1" style="position: absolute;  width: 750px;  margin-left: -375px; left: 50%;" >                            
+                    <p:row>  
+                        <p:column styleClass="ui-widget-header" style="text-align: center;">
+                            <h:outputLabel value="OBSERVATORIO DEL DELITO - ALCALDA DE PASTO"/> 
+                        </p:column>                                       
+                    </p:row>
+                    <p:row>  
+                        <p:column>
+                            <br/>
+                            <p:panelGrid>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <h:outputLabel value="Total de registros:"/>
+                                    </p:column>
+                                    <p:column>                                        
+                                        <h:outputLabel id="IdTotalRecords" value="#{recordSetsAccidentalMB.totalRecords}"/>                                        
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <h:outputLabel value="Fecha Inicial:"/>
+                                    </p:column>
+                                    <p:column>                                        
+                                        <h:outputLabel value="#{recordSetsAccidentalMB.initialDateStr}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">                                                                    
+                                        <h:outputLabel value="Fecha Final:"/>
+                                    </p:column>
+                                    <p:column>                                        
+                                        <h:outputLabel value="#{recordSetsAccidentalMB.endDateStr}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">                                                                    
+                                        <h:outputLabel value="Conjunto(s):"/>
+                                    </p:column>
+                                    <p:column>                                        
+                                        <h:outputLabel value="#{recordSetsAccidentalMB.data}"/>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <br/>
+                            <p:dataTable 
+                                id="IdSearchTable" 
+                                var="rowX" 
+                                value="#{recordSetsAccidentalMB.table_model}" 
+                                selection="#{recordSetsAccidentalMB.selectedRowsDataTable}" 
+                                selectionMode="multiple"
+                                rowKey="#{rowX.column1}"  
+                                scrollWidth="730"                        
+                                lazy="true"
+                                resizableColumns="true"
+                                paginator="true" 
+                                rows="10" 
+                                pageLinks="5"
+                                paginatorPosition="bottom"                                
+                                emptyMessage="Vacio"
+                                paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                rowsPerPageTemplate="5,10,15"
+                                scrollable="true">         
+                                <p:ajax
+                                    event="rowSelect"
+                                    listener="#{recordSetsAccidentalMB.load}"                                    
+                                    update=":IdForm1:IdControls :IdForm1:message" />                 
+                                <p:column headerText="CODIGO INTERNO" width="100">#{rowX.column1}</p:column>
+                                <p:column headerText="CODIGO" width="100">#{rowX.column23}</p:column>                                
+                                <p:column headerText="FECHA HECHO" width="100">#{rowX.column13}</p:column>
+                                <p:column headerText="DIA EN SEMANA" width="100">#{rowX.column20}</p:column>
+                                <p:column headerText="HORA HECHO" width="100">#{rowX.column14}</p:column>
+                                <p:column headerText="DIRECCION HECHO" width="400">#{rowX.column15}</p:column>
+                                <p:column headerText="BARRIO HECHO" width="250">#{rowX.column16}</p:column>
+                                <p:column headerText="CUADRANTE HECHO" width="250">#{rowX.column32}</p:column>
+                                <p:column headerText="COMUNA BARRIO HECHO" width="100">#{rowX.column30}</p:column>                                
+                                <p:column headerText="AREA HECHO" width="100">#{rowX.column24}</p:column>
+                                <p:column headerText="CLASE DE LUGAR" width="250">#{rowX.column17}</p:column>
+                                <p:column headerText="NUMERO VICTIMAS EN HECHO" width="100">#{rowX.column18}</p:column>
+                                <p:column headerText="NUMERO LESIONADOS EN ECHO" width="250">#{rowX.column28}</p:column>        
+                                <p:column headerText="NOMBRES Y APELLIDOS" width="400">#{rowX.column4}</p:column>
+                                <p:column headerText="SEXO" width="100">#{rowX.column8}</p:column> 
+                                <p:column headerText="TIPO EDAD" width="100">#{rowX.column6}</p:column>
+                                <p:column headerText="EDAD" width="100">#{rowX.column7}</p:column> 
+                                <p:column headerText="OCUPACION" width="300">#{rowX.column9}</p:column> 
+                                <p:column headerText="TIPO IDENTIFICACION" width="200">#{rowX.column2}</p:column>
+                                <p:column headerText="IDENTIFICACION" width="100">#{rowX.column3}</p:column>
+                                <p:column headerText="EXTRANJERO" width="100">#{rowX.column5}</p:column>
+                                <p:column headerText="DEPARTAMENTO RESIDENCIA" width="100">#{rowX.column12}</p:column>
+                                <p:column headerText="MUNICIPIO RESIDENCIA" width="100">#{rowX.column11}</p:column>
+                                <p:column headerText="BARRIO RESIDENCIA" width="250">#{rowX.column10}</p:column>                                
+                                <p:column headerText="COMUNA BARRIO RESIDENCIA" width="250">#{rowX.column31}</p:column>                                
+                                
+                                <p:column headerText="PAIS PROCEDENCIA" width="100">#{rowX.column25}</p:column>
+                                <p:column headerText="DEPARTAMENTO PROCEDENCIA" width="100">#{rowX.column26}</p:column>
+                                <p:column headerText="MUNICIPIO PROCEDENCIA" width="100">#{rowX.column27}</p:column>        
+                                <p:column headerText="ARMA O CAUSA DE MUERTE" width="200">#{rowX.column29}</p:column>                                    
+                                <p:column headerText="NARRACION DEL HECHO" width="700">#{rowX.column19}</p:column>                                
+                                <p:column headerText="NIVEL DE ALCOHOL" width="100">#{rowX.column21}</p:column>
+                                <p:column headerText="TIPO NIVEL DE ALCOHOL" width="100">#{rowX.column22}</p:column>
+                            </p:dataTable>
+                            <br/>
+                            <p:progressBar 
+                                id="IdProgresValidate" 
+                                interval="500" 
+                                widgetVar="pbAjaxValidate" 
+                                ajax="true" 
+                                value="#{recordSetsAccidentalMB.progress}" 
+                                labelTemplate="{value}%"/>          
+                                
+                            <br/>
+                            <p:panelGrid id="IdControls" style="width: 730px;">
+                                <p:row>  
+                                    <p:column styleClass="ui-widget-header" colspan="5">
+                                        <p:commandButton 
+                                            id="IdEdit"
+                                            disabled="#{recordSetsAccidentalMB.btnEditDisabled}"
+                                            value="Mostrar formulario"                                 
+                                            icon="ui-icon-pencil"
+                                            actionListener="#{recordSetsAccidentalMB.openInForm}"
+                                            action="#{recordSetsAccidentalMB.openForm}"                                            
+                                            update=":IdForm1:message"/>
+                                        <p:commandButton 
+                                            id="IdRemove"                                             
+                                            value="Eliminar registros" 
+                                            icon="ui-icon-close"
+                                            oncomplete="dialogDelete.show()"                                            
+                                            update=":IdForm2:IdDialogDelete :IdForm1:message"/>                                        
+                                        <p:commandButton 
+                                            id="IdR" 
+                                            value="Exportar" 
+                                            onclick="pbAjaxValidate.start();"
+                                            oncomplete="startA(); pbAjaxValidate.cancel();"
+                                            actionListener="#{recordSetsAccidentalMB.postProcessXLS1}"/>                                                                                
+                                        <h:commandLink id="IdComandLink" style="display: none" >
+                                            <p:commandButton id="IdBtnExport"  widgetVar="btnExport" value="ExportarA"/>
+                                            <p:dataExporter type="xls" target="IdOutFile" fileName="#{recordSetsAccidentalMB.exportFileName}"  postProcessor="#{recordSetsAccidentalMB.postProcessXLS}"/>  
+                                        </h:commandLink>
+                                        <p:dataTable id="IdOutFile" style="display: none">
+                                            <p:column>                                                  
+                                            </p:column>
+                                        </p:dataTable>
+                                    </p:column>                            
+                                </p:row>
+                            </p:panelGrid>
+                            <br/>
+                        </p:column>                                       
+                    </p:row>
+                </p:panelGrid>
+            </h:form>
+        </ui:define>
+        <ui:define name="dialogs">
+            <h:form id="IdForm2">                
+                <!-- DIALOGO ELIMINAR-->
+                <p:dialog                                                         
+                    id="IdDialogDelete"
+                    modal="true"
+                    resizable="false"
+                    header="Eliminar" 
+                    widgetVar="dialogDelete"> 
+                    <br/>
+                    <p:inputTextarea 
+                        value="Confirma la Eliminación del registro o registros seleccionados?" 
+                        readonly="true" 
+                        style="text-align: center; background: #ebf4fb; font-size: 13px; font-weight: 900; height: 48px;"/>
+                    <br/>
+                    <br/>
+                    <p:commandButton                                                           
+                        oncomplete="dialogDelete.hide()"
+                        actionListener="#{recordSetsAccidentalMB.deleteRegistry}"
+                        value="Eliminar" 
+                        update=":IdForm1:IdSearchTable :IdForm1:IdControls :IdForm1:message :IdForm1:IdTotalRecords"/>
+                    <p:commandButton
+                        value="Cancelar" 
+                        onclick="dialogDelete.hide()"/> 
+                </p:dialog>                
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
+

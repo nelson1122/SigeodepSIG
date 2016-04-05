@@ -1,0 +1,634 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+    <ui:composition template="../templates/layoutTemplate.xhtml">
+        <!--==================================================================-->
+        <!--========================CABECERA SCRIPTS==========================-->                    
+        <ui:define name="head">
+            <link href="../../resources/css/style.css" rel="stylesheet" type="text/css" />               
+            <script>
+                //function to support scrolling of title and first column
+                fnScroll = function() {
+                    $('#divHeader').scrollLeft($('#table_div').scrollLeft());
+                    $('#firstcol').scrollTop($('#table_div').scrollTop());
+                };
+                function showTableResult() {
+                    document.getElementById('IdTabView:IdForm:IdPaint').click();
+                }
+            </script> 
+        </ui:define>
+        <!--=================================================================-->
+        <!--================================TITULOS==========================-->
+        <ui:define name="titlePage">
+            #{indicatorsRateMB.titlePage}
+        </ui:define>
+        <ui:define name="title">
+            #{indicatorsRateMB.titleIndicator}
+        </ui:define>
+        <!--=================================================================-->
+        <!--==============================CONTENIDO==========================-->
+        <br/>
+        <ui:define name="content">
+            <br/>
+            <p:tabView id="IdTabView"  style=" width: 750px;  margin-left: -375px; left: 50%;" > 
+                <p:tab id="tab1" title="#{indicatorsRateMB.subTitleIndicator}">  
+                    <h:form enctype="multipart/form-data" id="IdForm"> 
+                        <p:growl id="message"  showDetail="true" sticky="true" autoUpdate="true" life="1000"  />
+                        <!--===================================================================================-->
+                        <br/>
+                        <p:fieldset legend="OPCIONES"> 
+                            <br/>
+                            <h:outputText value="Fecha Inicial:" />
+                            <p:calendar
+                                id="IdInitialDate"
+                                value="#{indicatorsRateMB.initialDate}" 
+                                converterMessage="La fecha inicial no es válida, por favor corríjala." 
+                                showOn="button" 
+                                pattern="dd/MM/yyyy">
+                            </p:calendar>
+                            <br/>
+                            <br/>
+                            <h:outputText value="Fecha Final:" />
+                            <p:calendar 
+                                id="IdEndDate"
+                                value="#{indicatorsRateMB.endDate}" 
+                                converterMessage="La fecha final no es válida, por favor corríjala." 
+                                showOn="button" 
+                                pattern="dd/MM/yyyy">
+                            </p:calendar>
+                            <br/><br/>                            
+                            <h:outputText value="Desagregación temporal:" />
+                            <h:selectOneMenu 
+                                id="IdTimeType" value="#{indicatorsRateMB.currentTemporalDisaggregation}"> 
+                                <f:selectItems value="#{indicatorsRateMB.temporalDisaggregationTypes}"/>                                                
+                            </h:selectOneMenu>
+                            <br/><br/>
+                            <h:outputText value="Desagregación espacial:" />
+                            <h:selectOneMenu 
+                                id="IdEspacialType" value="#{indicatorsRateMB.currentSpatialDisaggregation}"> 
+                                <f:selectItems value="#{indicatorsRateMB.spatialDisaggregationTypes}"/>                                                
+                                <f:ajax 
+                                    event="change"
+                                    listener="#{indicatorsRateMB.changeSpatialDisaggregation}"
+                                    render="IdSelectOneListVariables IdSelectOneListCrossVariables :IdTabView:IdForm:message IdBtnRemove IdBtnAdd IdBtnOptions"/>
+                            </h:selectOneMenu>
+                            <br/><br/>
+                            <h:outputText value="Cifras por:" />
+                            <h:selectOneMenu 
+                                id="IdMultiplerType" value="#{indicatorsRateMB.currentMultipler}"> 
+                                <f:selectItems value="#{indicatorsRateMB.multiplers}"/>                                                
+                            </h:selectOneMenu>
+                            <h:outputText value=" habitantes" />
+                            <br/>
+                            <br/>
+                        </p:fieldset>                        
+                        <br/>
+                        <br/>
+                        <p:fieldset legend="VARIABLES A CRUZAR"> 
+                            <br/>
+                            <p:panelGrid>                    
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        Variables disponibles                                            
+                                    </p:column>    
+                                    <p:column styleClass="ui-widget-header">
+
+                                    </p:column>    
+                                    <p:column styleClass="ui-widget-header">
+                                        Variables a cruzar
+                                    </p:column>    
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <h:selectManyListbox 
+                                            id="IdSelectOneListVariables" 
+                                            value="#{indicatorsRateMB.currentAvailableVariablesNamesSelected}"
+                                            style="height:110px; width: 200px;"
+                                            converterMessage="Fallo de comunicación, por favor intente nuevamente.">
+                                            <f:selectItems value="#{indicatorsRateMB.listOfAvailableVariablesNames}"/>                                                                                                
+                                            <f:ajax 
+                                                event="change"
+                                                listener="#{indicatorsRateMB.changeVariable}"
+                                                render="IdBtnRemove IdBtnAdd IdBtnOptions"/>
+                                            <f:ajax 
+                                                event="dblclick"
+                                                listener="#{indicatorsRateMB.addVariableClick}"                                                    
+                                                render="IdSelectOneListVariables IdSelectOneListCrossVariables :IdTabView:IdForm:message IdBtnRemove IdBtnAdd IdBtnOptions"/>
+                                        </h:selectManyListbox> 
+                                    </p:column>
+                                    <p:column>
+                                        <p:commandButton 
+                                            value="Agregar" 
+                                            style="width: 180px;"
+                                            id="IdBtnAdd" 
+                                            icon="ui-icon-arrowthick-1-e"
+                                            disabled="#{indicatorsRateMB.btnAddVariableDisabled}"
+                                            actionListener="#{indicatorsRateMB.addVariableClick}"  
+                                            update="IdSelectOneListVariables IdSelectOneListCrossVariables :IdTabView:IdForm:message IdBtnRemove IdBtnAdd IdBtnOptions"/> 
+                                        <br/>
+                                        <p:commandButton 
+                                            value="Quitar" 
+                                            style="width: 180px;"
+                                            id="IdBtnRemove" 
+                                            icon="ui-icon-arrowthick-1-w"
+                                            disabled="#{indicatorsRateMB.btnRemoveVariableDisabled}"
+                                            actionListener="#{indicatorsRateMB.removeVariableClick}"  
+                                            update="IdSelectOneListVariables IdSelectOneListCrossVariables :IdTabView:IdForm:message IdBtnRemove IdBtnAdd IdBtnOptions"/> 
+                                        <br/>
+                                        <p:commandButton 
+                                            value="Configuraciones" 
+                                            style="width: 180px;"
+                                            id="IdBtnOptions" 
+                                            icon="ui-icon-wrench"
+                                            disabled="#{indicatorsRateMB.btnRemoveVariableDisabled}"
+                                            actionListener="#{indicatorsRateMB.btnLoadConfigurationClick}"
+                                            oncomplete="configurationsDialog.show();"
+                                            update="IdSelectOneListVariables :IdForm2:IdConfigurationsList IdSelectOneListCrossVariables :IdTabView:IdForm:message IdBtnRemove IdBtnAdd IdBtnOptions"/> 
+                                    </p:column>
+                                    <p:column>
+                                        <h:selectManyListbox 
+                                            id="IdSelectOneListCrossVariables" 
+                                            value="#{indicatorsRateMB.currentVariablesCrossSelected}"
+                                            style="height:110px; width: 200px;"
+                                            converterMessage="Fallo de comunicación, por favor intente nuevamente.">
+                                            <f:selectItems value="#{indicatorsRateMB.listOfCrossVariablesNames}"/>                                                            
+                                            <f:ajax 
+                                                event="change"                                                                                                           
+                                                listener="#{indicatorsRateMB.changeCrossVariable}" 
+                                                render="IdBtnRemove IdBtnAdd IdBtnOptions :IdForm2:IdConfigurationsDialog"/>
+                                            <f:ajax 
+                                                event="dblclick"
+                                                listener="#{indicatorsRateMB.removeVariableClick}"                                                    
+                                                render="IdSelectOneListVariables IdSelectOneListCrossVariables :IdTabView:IdForm:message IdBtnRemove IdBtnAdd IdBtnOptions"/>
+                                        </h:selectManyListbox> 
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="3">                                            
+                                        <p:panelGrid>                    
+                                            <p:row>
+                                                <p:column styleClass="ui-widget-header">
+                                                    <p:commandButton 
+                                                        value="Reiniciar" 
+                                                        style="width: 100px;"
+                                                        id="IdBtnReset" 
+                                                        action="indicator"
+                                                        actionListener="#{indicatorsRateMB.reset}"  
+                                                        ajax="false"/> 
+                                                </p:column>
+                                                <p:column styleClass="ui-widget-header">
+                                                    <p:commandButton 
+                                                        value="Procesar" 
+                                                        style="width: 100px;"
+                                                        id="IdBtnGenerate" 
+                                                        actionListener="#{indicatorsRateMB.process}"
+                                                        oncomplete="showTableResult(); pageActive();"  
+                                                        onclick="pageInactive();"                                                        
+                                                        update="IdForm">
+                                                    </p:commandButton>  
+                                                    &nbsp;&nbsp;
+                                                    <h:selectBooleanCheckbox value="#{indicatorsRateMB.showEmpty}" />
+                                                    &nbsp;Ver vacios
+                                                    <p:commandButton
+                                                        id="IdPaint"
+                                                        value="paint"
+                                                        actionListener="#{indicatorsRateMB.showMessage}"
+                                                        update=":IdTabView:IdForm:message"                                                                                                    
+                                                        style="display: none;">
+                                                        <f:ajax 
+                                                            event="blur"
+                                                            listener="#{indicatorsRateMB.createImage}"
+                                                            render="IdImageChart IdVariableGraph IdValueGraph"/>
+                                                    </p:commandButton>
+                                                </p:column>
+                                                <!--p:column styleClass="ui-widget-header">
+                                                    Ver Vacios
+                                                    <h:selectBooleanCheckbox id="IdEmpty" value="# {indicatorsRateMB.showAll}" />
+                                                </p:column-->           
+                                                <p:column styleClass="ui-widget-header">
+                                                    Ver Cálculo
+                                                    <h:selectBooleanCheckbox id="IdTotals" value="#{indicatorsRateMB.showCalculation}" />
+                                                </p:column>
+                                            </p:row>
+                                        </p:panelGrid>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <br/>
+                            <br/>
+                        </p:fieldset>
+                        <br/>
+                        <br/>
+                        <p:fieldset legend="TABLA DE RESULTADOS" rendered="#{indicatorsRateMB.showTableResult}"> 
+                            <br/>
+                            <h:outputText 
+                                id="IdDataTableHtml"
+                                value="#{indicatorsRateMB.dataTableHtml}" 
+                                escape="false"/>
+                            <br/>
+                            <p:dataTable id="IdOutFile" style="display: none" >
+                                <p:column>                                                  
+                                </p:column>
+                            </p:dataTable> 
+                            <p:commandButton                                 
+                                icon="ui-icon-transferthick-e-w"
+                                actionListener="#{indicatorsRateMB.invertMatrixClick}"
+                                oncomplete="showTableResult(); pageActive();"
+                                onclick="pageInactive();"
+                                value="Invertir"
+                                update="IdDataTableHtml IdBtnExport"/> 
+                            <h:commandLink id="IdBtnExport" disabled="#{indicatorsRateMB.btnExportDisabled}">  
+                                <p:button  value="Exportar datos" disabled="#{indicatorsRateMB.btnExportDisabled}"/>
+                                <p:dataExporter type="xls" target="IdOutFile" fileName="salida" postProcessor="#{indicatorsRateMB.postProcessXLS}"/>  
+                            </h:commandLink>
+                            <br/>
+                            <br/>
+                        </p:fieldset>
+                        <br/>
+                        <br/>                        
+                        <p:fieldset legend="GRAFICOS" rendered="#{indicatorsRateMB.showGraphic}">
+                            <br/> 
+                            <p:panelGrid>                                
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        Tipo de Gráfico
+                                    </p:column>
+                                    <p:column colspan="3">
+                                        <h:selectOneMenu 
+                                            id="IdTypeGraph" value="#{indicatorsRateMB.currentTypeGraph}"> 
+                                            <f:selectItems value="#{indicatorsRateMB.typesGraph}"/>
+                                            <f:ajax 
+                                                event="change"
+                                                listener="#{indicatorsRateMB.createImage}"
+                                                render="IdImageChart"/>
+                                        </h:selectOneMenu>
+                                    </p:column>                                    
+                                    <p:column styleClass="ui-widget-header">
+                                        Filtro 1
+                                    </p:column>
+                                    <p:column colspan="2">
+                                        <h:outputText
+                                            id="IdVariableGraph"
+                                            value="#{indicatorsRateMB.currentVariableGraph}"/>
+                                        <!--h:selectOneMenu 
+                                            id="IdVariableGraph" value="# {indicatorsRateMB.currentVariableGraph}"> 
+                                            <f:selectItems value="# {indicatorsRateMB.variablesGraph}"/>
+                                            <f:ajax 
+                                                event="change"
+                                                listener="# {indicatorsRateMB.loadValuesGraph}"
+                                                render="IdImageChart IdValueGraph"/>
+                                        </h:selectOneMenu -->
+                                        <h:selectOneMenu 
+                                            id="IdValueGraph" value="#{indicatorsRateMB.currentValueGraph}"> 
+                                            <f:selectItems value="#{indicatorsRateMB.valuesGraph}"/>
+                                            <f:ajax 
+                                                event="change"
+                                                listener="#{indicatorsRateMB.createImage}"
+                                                render="IdImageChart"/>
+                                        </h:selectOneMenu>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        Mostrar Items
+                                    </p:column>
+                                    <p:column>
+                                        <h:selectBooleanCheckbox value="#{indicatorsRateMB.showItems}" >
+                                            <f:ajax 
+                                                event="change"
+                                                listener="#{indicatorsRateMB.createImage}"
+                                                render="IdImageChart"/>
+                                        </h:selectBooleanCheckbox>
+                                    </p:column>      
+                                    <p:column styleClass="ui-widget-header">
+                                        Tramas
+                                    </p:column>
+                                    <p:column >
+                                        <h:selectBooleanCheckbox value="#{indicatorsRateMB.showFrames}" >
+                                            <f:ajax 
+                                                event="change"
+                                                listener="#{indicatorsRateMB.createImage}"
+                                                render="IdImageChart"/>
+                                        </h:selectBooleanCheckbox>
+                                    </p:column>
+                                    <p:column styleClass="ui-widget-header">
+                                        Tamaño
+                                    </p:column>
+                                    <p:column colspan="2">
+                                        Alto: 
+                                        <p:spinner 
+                                            value="#{indicatorsRateMB.heightGraph}"
+                                            min="1"
+                                            stepFactor="100"
+                                            size="5">
+                                            <f:ajax 
+                                                event="change"
+                                                listener="#{indicatorsRateMB.createImage}"
+                                                render="IdImageChart"/>
+                                        </p:spinner> 
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        Largo: 
+                                        <p:spinner 
+                                            value="#{indicatorsRateMB.widthGraph}"
+                                            min="1"
+                                            stepFactor="100"
+                                            size="5">
+                                            <f:ajax 
+                                                event="change"
+                                                listener="#{indicatorsRateMB.createImage}"
+                                                render="IdImageChart"/>
+                                        </p:spinner> 
+                                    </p:column>
+                                </p:row>                                
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        Fuente
+                                    </p:column>
+                                    <p:column>
+                                        <p:spinner 
+                                            value="#{indicatorsRateMB.sizeFont}"
+                                            min="1"
+                                            max="20"
+                                            stepFactor="1"
+                                            size="5">
+                                            <f:ajax 
+                                                event="change"
+                                                listener="#{indicatorsRateMB.createImage}"
+                                                render="IdImageChart"/>
+                                        </p:spinner> 
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>                                
+                            <br/>
+                            <div style="width: 680px; height: 480px; overflow: scroll">
+                                <p:graphicImage id="IdImageChart" value="#{indicatorsRateMB.chartImage}"/>
+                            </div>
+                            <br/>
+                        </p:fieldset>
+                        <br/>
+                        <br/>
+                    </h:form>
+                    <!-- =========================FORMULARIO MAPAS============================= -->                    
+                    <h:form target="_blank" id="maps_form">                        
+                        <p:fieldset legend="MAPAS" rendered="false" > 
+                            <br/>
+                            <p:panelGrid>
+                                <p:row>                                    
+                                    <p:column styleClass="ui-widget-header">
+                                        Divisiones
+                                    </p:column>
+                                    <p:column>
+                                        <p:spinner min="1" max="#{geoDBConnectionMB.gap}" value="#{geoDBConnectionMB.bins}" id="cat_spinner" >
+                                            <f:ajax event="change" 
+                                                    listener="#{geoDBConnectionMB.createRanges}" 
+                                                    render="rangeTable" />
+                                        </p:spinner>
+                                    </p:column>
+                                    <p:column styleClass="ui-widget-header">
+                                        Método
+                                    </p:column>
+                                    <p:column>
+                                        <p:selectOneMenu id="splitMethod" 
+                                                         value="#{geoDBConnectionMB.splitMethod}" >
+                                            <f:selectItem itemValue="2"
+                                                          itemLabel="EqualFrequency"/>
+                                            <f:selectItem itemValue="0"
+                                                          itemLabel="EqualWidth"/>
+                                            <f:selectItem itemValue="1"
+                                                          itemLabel="Jenks"/>
+                                            <f:selectItem itemValue="3"
+                                                          itemLabel="KMeans"/>
+                                            <f:ajax event="change" 
+                                                    listener="#{geoDBConnectionMB.createRanges}" 
+                                                    render="rangeTable" />
+                                        </p:selectOneMenu>
+                                    </p:column>
+                                    <p:column styleClass="ui-widget-header">
+                                        Paleta
+                                    </p:column>
+                                    <p:column>
+                                        <p:selectOneMenu id="ramp"
+                                                         value="#{geoDBConnectionMB.selectedRamp}" 
+                                                         converter="#{rampConverter}"
+                                                         effect="fade" var="r">
+                                            <f:selectItems value="#{geoDBConnectionMB.ramps}" var="ramp" itemLabel="#{ramp.name}" itemValue="#{ramp}"/>
+                                            <p:column>
+                                                <p:graphicImage value="#{r.image}" />                     
+                                                <h:outputText value="#{r.name}" />
+                                            </p:column>
+                                            <f:ajax event="change" 
+                                                    listener="#{geoDBConnectionMB.createRanges}" 
+                                                    render="rangeTable" />                
+                                        </p:selectOneMenu>                
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <br/>
+                            <p:dataTable 
+                                id="rangeTable" 
+                                value="#{geoDBConnectionMB.ranges}" 
+                                var="range" 
+                                rowKey="#{range}" 
+                                editable="true">
+                                <p:column headerText="Color" style="width:5%">
+                                    <p:colorPicker id="cpRangeTable" value="#{range.hexcolor}"></p:colorPicker>
+                                </p:column>
+
+                                <p:column headerText="Limite Inferior" style="width:10%">
+                                    <h:outputText value="#{range.start}" />
+                                </p:column>
+                                <p:column headerText="Limite Superior" style="width:10%">
+                                    <h:outputText value="#{range.end}" />
+                                </p:column>
+                                <p:column headerText="Etiqueta" style="width:50%">
+                                    <p:cellEditor>
+                                        <f:facet name="output">
+                                            <h:outputText value="#{range.label}" />
+                                        </f:facet>
+                                        <f:facet name="input">
+                                            <p:inputText value="#{range.label}" style="width:100%"/>
+                                        </f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+                                <p:column headerText="Conteo" style="width:10%">
+                                    <h:outputText value="#{range.count}" />
+                                </p:column>                    
+                                <p:column headerText="Editar" style="width:10%">
+                                    <p:rowEditor />
+                                </p:column>
+
+                            </p:dataTable>
+                            <br/>
+
+                            <h:commandButton styleClass="ui-widget-header ui-corner-all" style="width: 140px; height: 30px;" value="Generar Mapa" action="#{geoDBConnectionMB.crearURL}" />
+                            <br/>
+                            <div id="mainpanel"></div>
+                            <br/>
+                        </p:fieldset>
+                    </h:form>
+                </p:tab>
+            </p:tabView>
+        </ui:define>
+        <ui:define name="dialogs">
+            <h:form id="IdForm2">
+                <p:dialog                     
+                    id="IdSaveConfigurationsDialog"  
+                    modal="true"
+                    header="Guardar configuración"
+                    resizable="false"                    
+                    widgetVar="saveConfigurationDialog">  
+                    <br/>                    
+                    Nombre para La configuración
+                    <br/>                    
+                    <br/>
+                    <h:inputText                         
+                        value="#{indicatorsRateMB.newConfigurationName}" 
+                        size="70"/>
+                    <br/>
+                    <br/>
+                    <p:commandButton                                                            
+                        value="Guardar"
+                        style="margin:0;"
+                        oncomplete="saveConfigurationDialog.hide()"
+                        actionListener="#{indicatorsRateMB.btnSaveConfigurationClick}"
+                        update="IdConfigurationsList :IdTabView:IdForm:message"/>
+                    <br/>
+                    <br/>
+                </p:dialog>
+                <p:dialog 
+                    id="IdOpenConfigurationsDialog"  
+                    modal="true"
+                    header="Cargar configuración"         
+                    resizable="false"                    
+                    widgetVar="openConfigurationDialog"> 
+                    <br/>
+                    <h:selectManyListbox 
+                        id="IdConfigurationsList"
+                        value="#{indicatorsRateMB.currentConfigurationSelected}"
+                        style="height:110px; width: 360px;"
+                        converterMessage="Fallo de comunicación, por favor intente nuevamente.">
+                        <f:selectItems value="#{indicatorsRateMB.configurationsList}"/>
+                    </h:selectManyListbox>
+                    <br/>
+                    <br/>
+                    <p:commandButton     
+                        rendered="#{loginMB.userSystem}"
+                        value="Cargar"
+                        style="margin:0;"
+                        oncomplete="openConfigurationDialog.hide()"
+                        actionListener="#{indicatorsRateMB.btnOpenConfigurationClick}"
+                        update="IdSelectManyListCategoryValues IdConfigurationsList :IdTabView:IdForm:message"/>
+                    <p:commandButton                                                            
+                        value="Eliminar"
+                        style="margin:0;"
+                        oncomplete="openConfigurationDialog.hide()"
+                        actionListener="#{indicatorsRateMB.btnRemoveConfigurationClick}"
+                        update="IdSelectManyListCategoryValues IdConfigurationsList :IdTabView:IdForm:message"/>  
+                    <br/>
+                    <br/>
+
+                </p:dialog>
+                <p:dialog 
+                    id="IdConfigurationsDialog"  
+                    modal="true"
+                    header="Configuración de variable: #{indicatorsRateMB.firstVariablesCrossSelected}"         
+                    resizable="false"                    
+                    widgetVar="configurationsDialog">  
+                    <br/>
+                    <p:panelGrid rendered="#{!indicatorsRateMB.btnAddCategoricalValueDisabled}">
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                Nueva categoria
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                Valor inicial &nbsp;                            
+                                <h:inputText 
+                                    id="IdA" 
+                                    disabled="#{indicatorsRateMB.btnAddCategoricalValueDisabled}"
+                                    value="#{indicatorsRateMB.initialValue}" 
+                                    maxlength="4" 
+                                    size="4"/>
+                                &nbsp; &nbsp;                                 
+                                Valor Final &nbsp;                                
+                                <h:inputText 
+                                    id="IdB" 
+                                    disabled="#{indicatorsRateMB.btnAddCategoricalValueDisabled}"
+                                    value="#{indicatorsRateMB.endValue}" 
+                                    maxlength="4" 
+                                    size="4"/>
+                                &nbsp; &nbsp;
+                                <p:commandButton                        
+                                    id="IdBtnAddCategory"
+                                    value="Agregar"
+                                    style="margin:0;"
+                                    disabled="#{indicatorsRateMB.btnAddCategoricalValueDisabled}"
+                                    actionListener="#{indicatorsRateMB.btnAddCategoricalValueClick}"
+                                    update="IdSelectManyListCategoryValues :IdTabView:IdForm:message IdA IdB"/>  
+
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <br/>
+                    <p:panelGrid>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                Categorias actuales    
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <h:selectManyListbox 
+                                    id="IdSelectManyListCategoryValues" 
+                                    value="#{indicatorsRateMB.currentCategoricalValuesSelected}"
+                                    style="height:110px; width: 360px;"
+                                    converterMessage="Fallo de comunicación, por favor intente nuevamente.">
+                                    <f:selectItems value="#{indicatorsRateMB.currentCategoricalValuesList}"/>                                                                                                
+
+                                </h:selectManyListbox>
+                                <br/>
+                                <br/>
+                                <p:commandButton                        
+                                    id="IdBtnRemoveCategory"
+                                    value="Quitar"
+                                    style="margin:0;"                                    
+                                    actionListener="#{indicatorsRateMB.btnRemoveCategoryValueClick}"                                                
+                                    update="IdBtnRemoveCategory IdSelectManyListCategoryValues"/>  
+                                <p:commandButton                        
+                                    id="IdBtnResetCategory"
+                                    rendered="false"
+                                    value="Reiniciar"
+                                    style="margin:0;"                                                
+                                    actionListener="#{indicatorsRateMB.btnResetCategoryListClick}"                                                
+                                    update="IdBtnRemoveCategory IdSelectManyListCategoryValues"/>  
+                                <p:commandButton   
+                                    rendered="#{loginMB.userSystem}"
+                                    value="Guardar"
+                                    style="margin:0;"
+                                    onclick="saveConfigurationDialog.show();"/>  
+                                <p:commandButton                                                            
+                                    value="Cargar/Eliminar"
+                                    rendered="#{loginMB.userSystem}"
+                                    style="margin:0;"                    
+                                    oncomplete="openConfigurationDialog.show()"
+                                    />  
+                                <br/>
+                                <br/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <br/>
+                    <br/>                    
+                </p:dialog>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
+

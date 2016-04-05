@@ -1,0 +1,80 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="shortcut icon" href="resources/img/icon.gif"/>
+        <title>
+
+        </title>        
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script type="text/javascript"> 
+            function leerGET(){ 
+                var cadGET = location.search.substr(1,location.search.length);                
+                document.getElementById('IdEndSession').style.display ='none';
+                document.getElementById('IdCloseSession').style.display ='none';
+                document.getElementById('IdNoSession').style.display ='none';                
+                if(cadGET.indexOf("timeout") !== -1){
+                    document.getElementById('IdEndSession').style.display ='block';
+                }
+                if(cadGET.indexOf("close") !== -1){
+                    document.getElementById('IdCloseSession').style.display ='block';
+                }
+                if(cadGET.indexOf("nosession") !== -1){
+                    document.getElementById('IdNoSession').style.display ='block';
+                }
+            } 
+        </script> 
+    </head>
+    <body onload="leerGET();">
+        <div style=" 
+             position:absolute;
+             width: 500px; 
+             height: 380px; 
+             left: 50%; 
+             margin-left: -250px;  
+             top: 50%;
+             margin-top: -190px;
+             background-image:url(resources/img/img_index.png);">
+            <div style="
+                 margin-top: 195px;
+                 margin-left: 250px;">                
+                <a href="faces/indexUser.xhtml">                     
+                    <img src="resources/img/btn_inicio_1.png" />                
+                </a>
+                <a href="faces/indexInvited.xhtml">                     
+                    <img src="resources/img/btn_inicio_2.png" />                
+                </a>
+                <a href="./" style="margin-left: 40px;">                     
+                    <img src="resources/img/regresar.png" />                
+                </a>
+            </div>
+        </div>
+        <div style="
+             display: none;
+             position: absolute;
+             top: 10px;
+             right: 10px;"
+             id="IdEndSession">
+            <img src="resources/img/timeout_sesion.png" />                
+        </div>
+        <div style="
+             display: none;
+             position: absolute;
+             top: 10px;
+             right: 10px;"
+             id="IdCloseSession">
+            <img src="resources/img/close_sesion.png" />                
+        </div>
+        <div style="
+             display: none;
+             position: absolute;
+             top: 10px;
+             right: 10px;"
+             id="IdNoSession">
+            <img src="resources/img/no_sesion.png" />                
+        </div>
+    </body>
+</html>

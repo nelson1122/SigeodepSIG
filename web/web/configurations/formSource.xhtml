@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+
+    <ui:composition template="../templates/layoutTemplate.xhtml">
+        <!--==================================================================-->
+        <!--========================CABECERA SCRIPTS==========================-->                    
+        <ui:define name="head">
+            <link href="../../resources/css/style.css" rel="stylesheet" type="text/css" />               
+            <script type="text/javascript">
+            </script> 
+        </ui:define>
+        <!--=================================================================-->
+        <!--================================TITULOS==========================-->
+        <ui:define name="titlePage">
+            SIGEODEP -  EDICION DE VARIABLES CATEGORICAS
+        </ui:define>
+        <ui:define name="title">
+            SIGEODEP -  EDICION DE VARIABLES CATEGORICAS
+        </ui:define>
+        <!--=================================================================-->
+        <!--==============================CONTENIDO==========================-->
+        <ui:define name="content">
+            <h:outputText 
+                value="No se puede mostrar esta sección por que no cuenta con los permisos suficientes"
+                style=" color: red;"
+                rendered="#{!loginMB.permissionAdministrator}"/> 
+            <h:form enctype="multipart/form-data" id="IdForm1" rendered="#{loginMB.permissionAdministrator}">
+                <p:growl id="message"  showDetail="true" sticky="true" autoUpdate="true" life="1000"  />
+                <!--===================================================================================-->
+                <br/>
+                <p:panelGrid id="IdPanel1" style="position: absolute;  width: 750px;  margin-left: -375px; left: 50%;" >                            
+                    <p:row>  
+                        <p:column styleClass="ui-widget-header" style="text-align: center;">
+                            <h:outputLabel value="OBSERVATORIO DEL DELITO - ALCALDA DE PASTO"/><br/>  
+                            <h:outputLabel value="FUENTES DE DATOS PARA CADA FICHA"/>  
+                        </p:column>                                       
+                    </p:row>
+                    <p:row>  
+                        <p:column>
+                            <br/>
+                            <p:dataTable 
+                                id="IdSearchTable" var="rowX" 
+                                value="#{formSourceMB.rowDataTableList}" 
+                                rowKey="#{rowX.column1}"  
+                                selection="#{formSourceMB.selectedRowDataTable}" 
+                                paginator="true"
+                                rows="10"                                    
+                                paginatorPosition="bottom"                                
+                                emptyMessage="Vacio"
+                                scrollable="true"
+                                scrollWidth="730"                                    
+                                paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                rowsPerPageTemplate="5,10,15"
+                                pageLinks="5"
+                                selectionMode="single"
+                                resizableColumns="true">                                
+                                <p:ajax
+                                    event="rowSelect"
+                                    listener="#{formSourceMB.load}"                                    
+                                    update=":IdForm1:IdControls :IdForm2:IdDialogEdit :IdForm2:display :IdForm1:message" />
+                                <p:column headerText="CODIGO" width="140">  
+                                    #{rowX.column1}  
+                                </p:column>  
+                                <p:column headerText="NOMBRE" width="546">  
+                                    #{rowX.column2}  
+                                </p:column>  
+                            </p:dataTable>                            
+                            <br/>
+                            <p:panelGrid id="IdControls" style="width: 730px;">
+                                <p:row>  
+                                    <p:column styleClass="ui-widget-header" colspan="5">
+                                        <p:commandButton 
+                                            id="IdEdit"
+                                            disabled="#{formSourceMB.btnEditDisabled}"
+                                            value="Editar fuentes de datos"                                 
+                                            icon="ui-icon-pencil"                                            
+                                            oncomplete="dialogEdit.show()"                                            
+                                            update=":IdForm2:IdDialogEdit :IdForm2:display :IdForm1:message"/>                                                                                                                        
+                                    </p:column>                            
+                                </p:row>
+                            </p:panelGrid>
+                            <br/>
+                        </p:column>                                       
+                    </p:row>
+                </p:panelGrid>
+            </h:form>
+        </ui:define>
+        <ui:define name="dialogs">
+            <h:form id="IdForm2">
+                <!--   DIALOGO EDITAR -->
+                <p:dialog id="IdDialogEdit" header="FUENTES DE DATOS PARA : #{formSourceMB.name}" widgetVar="dialogEdit" resizable="false" modal="true">  
+                    <p:panelGrid id="display">                          
+                        <p:row>
+                            <p:column>
+                                Fuentes disponibles:<br/> 
+                                <h:selectManyMenu 
+                                    id="IdCurrentSources"
+                                    value="#{formSourceMB.selectedAvailableSources}"
+                                    style="height:120px; width: 200px;">                                    
+                                    <f:selectItems value="#{formSourceMB.availableSources}"/>                                                                                        
+                                </h:selectManyMenu>           
+                            </p:column>
+                            <p:column>
+                                <br/>
+                                <br/>
+                                <p:commandButton 
+                                    value="+"                                    
+                                    actionListener="#{formSourceMB.addSourceClick}"  
+                                    update="IdCurrentSources IdAddSources"/>
+                                <p:commandButton 
+                                    value="-"
+                                    actionListener="#{formSourceMB.removeSourceClick}"  
+                                    update="IdCurrentSources IdAddSources"/> 
+                            </p:column>
+                            <p:column>
+                                Fuentes agregadas:<br/>
+                                <h:selectManyMenu 
+                                    id="IdAddSources"
+                                    value="#{formSourceMB.selectedAvailableAddSources}"
+                                    style="height:120px; width: 200px;">
+                                    <f:selectItems value="#{formSourceMB.availableAddSources}"/>
+                                </h:selectManyMenu> 
+                            </p:column>
+                        </p:row>                        
+
+                        <p:row>
+                            <p:column colspan="3" styleClass="ui-widget-header">
+                                <p:commandButton 
+                                    value="Guardar" 
+                                    icon="ui-icon-disk"
+                                    oncomplete="dialogEdit.hide()"
+                                    actionListener="#{formSourceMB.updateRegistry}"
+                                    update=":IdForm1:IdSearchTable :IdForm1:IdControls :IdForm1:message"/>
+                                <p:commandButton 
+                                    value="Cancelar" 
+                                    icon="ui-icon-close"
+                                    actionListener="#{formSourceMB.load}"
+                                    oncomplete="dialogEdit.hide()"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>  
+                </p:dialog> 
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
+

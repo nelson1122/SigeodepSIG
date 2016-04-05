@@ -1,0 +1,305 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html">
+    <body>
+        <ui:composition template="template.xhtml">
+            
+            <ui:define name="indexTitle">
+                ANALISIS ESPACIAL LESIONES FATALES
+            </ui:define>
+
+            <ui:define name="centerPanel">
+
+                <p:toolbar style="margin-top: -3px; margin-bottom: 2px;">
+                    <f:facet name="left">
+                        <p:commandButton type="button" value="Seleccionar area" onclick="activate()"  />
+                    </f:facet>
+                </p:toolbar>
+
+                <p:outputPanel id="panelMap">
+                    <div id="fatalInjuriesMap"></div>
+                    <script type="text/javascript">
+
+                        var map, gmaps, osm, heat;
+                        var featurecollection, injuriesLayer;
+                        var boxLayer, box;
+
+                        $(function () {
+
+                            map = new OpenLayers.Map('fatalInjuriesMap');
+
+                            gmaps = new OpenLayers.Layer.Google(
+                                    "Google Hybrid",
+                                    {
+                                        type: google.maps.MapTypeId.HYBRID,
+                                        numZoomLevels: 20
+                                    }
+                            );
+
+                            osm = new OpenLayers.Layer.OSM();
+
+                            //AGREGO LA CAPA DE PUNTOS
+                            featurecollection = #{injuriesCountMB.fatalInjuriesFeatures};
+                            
+                            var geojson_format = new OpenLayers.Format.GeoJSON();
+                            var injuriesLayer = new OpenLayers.Layer.Vector('Puntos', {
+                                strategies: [new OpenLayers.Strategy.Fixed()]
+                            });
+                            injuriesLayer.addFeatures(geojson_format.read(featurecollection));
+
+
+                            //AGREGO EL MAPA DE CALOR
+                            heat = new Heatmap.Layer("Heatmap");
+
+                            for (var i = 0; i &lt; featurecollection.features.length; i++) {
+                                var x = featurecollection.features[i].geometry.coordinates[0];
+                                var y = featurecollection.features[i].geometry.coordinates[1];
+                                heat.addSource(new Heatmap.Source(
+                                        new OpenLayers.LonLat(x, y).transform(new OpenLayers.Projection("EPSG:3857")))
+                                        );
+                            }
+
+                            heat.defaultIntensity = 0.5;
+                            heat.defaultRadius = 10;
+                            heat.setOpacity(0.7);
+                            heat.redraw();
+                            heat.setVisibility(true);
+                            injuriesLayer.setVisibility(false);
+
+                            //CREO LA CAPA PARA SELECCIONAR AREA
+                            boxLayer = new OpenLayers.Layer.Vector("Box layer");
+
+                            box = new OpenLayers.Control.DrawFeature(
+                                    boxLayer,
+                                    OpenLayers.Handler.RegularPolygon, {
+                                        handlerOptions: {
+                                            sides: 4,
+                                            irregular: true
+                                        },
+                                        callbacks: {
+                                            done: doneHandler
+                                        }
+
+                                    }
+                            );
+
+                            //AGREGO LAYERS Y CONFIGURO EL MAPA
+                            map.addLayers([osm, gmaps, injuriesLayer, heat, boxLayer]);
+                            map.addControl(new OpenLayers.Control.LayerSwitcher());
+                            map.addControl(box);
+                            box.deactivate();
+
+                            map.setBaseLayer(gmaps);
+
+                            map.setCenter(new OpenLayers.LonLat(-77.280, 1.21289).transform(
+                                    new OpenLayers.Projection("EPSG:4326"),
+                                    map.getProjectionObject()
+                                    ), 14);
+                        });
+
+                        // called when the feature is complete (double-clicked)
+                        function doneHandler(lineGeom) {
+                            //alert("DONE:" + lineGeom.getVertices());
+                            document.getElementById("formInjuries:txtCoordinates").value = lineGeom.getVertices();
+                        }
+
+                        //activar/desactivar la seleccion de area
+                        function activate() {
+                            if (box.deactivate() === false) {
+                                box.activate();
+                            }
+                        }
+
+
+                    </script>
+                </p:outputPanel>
+
+            </ui:define>
+            <ui:define name="leftPanel">
+
+                <p:layoutUnit position="east" size="45%">
+
+                    <p:fieldset legend="CONFIGURACION" >
+                        
+                        <p:tabView style="height: 180px;">
+                            
+                            <p:tab title="Categorias">
+                                <h:panelGroup layout="block" style="margin: 25px 0px 0px 140px;">
+                                    <h:outputText value="Seleccione lesion de causa externa: "/>
+                                    <br/>
+                                    <br/>
+                                    <p:selectOneMenu id="category" value="#{injuriesCountMB.fatalInjuriesSelectedCategory}">
+                                        <f:selectItem itemLabel="General" itemValue="1"/>
+                                        <f:selectItem itemLabel="Muertes por homicidios" itemValue="12"/>
+                                        <f:selectItem itemLabel="Muertes por suicidios" itemValue="19"/>
+                                        <f:selectItem itemLabel="Muertes no intencionales" itemValue="5"/>
+                                        <f:selectItem itemLabel="Muertes por accidentes de transito" itemValue="26"/>
+                                    </p:selectOneMenu>
+                                </h:panelGroup>
+                            </p:tab>
+                            
+                            <p:tab title="Rango de Fechas">
+                                <h:panelGroup layout="block" style="margin: 10px 0px 0px 0px;">
+                                    <h:outputText value="Seleccione rango de fechas: "/>
+                                    <br/>
+                                    <br/>
+                                    <br/>
+                                    <h:outputText value="Fecha Inicial:" />
+
+                                    <p:calendar id="idInitialDate"
+                                                pattern="yyyy/MM/dd"
+                                                value="#{injuriesCountMB.initialDate}"
+                                                showOn="button">
+                                    </p:calendar>
+                                    &#160;&#160;
+                                    <h:outputText value="Fecha Final:" />
+
+                                    <p:calendar id="idEndDate"
+                                                pattern="yyyy/MM/dd"
+                                                value="#{injuriesCountMB.endDate}"
+                                                showOn="button">
+                                    </p:calendar>
+                                </h:panelGroup>
+                            </p:tab>
+                                
+                            <p:tab title="Seleccion de Variables">
+                                <p:panelGrid>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header" style="width: 150px;">
+                                            Variables disponibles                                            
+                                        </p:column>    
+                                        <p:column styleClass="ui-widget-header">
+
+                                        </p:column>    
+                                        <p:column styleClass="ui-widget-header" style="width: 170px;">
+                                            Variables a cruzar
+                                        </p:column>    
+                                    </p:row>
+                                    <p:row>
+                                        <p:column>
+
+                                        </p:column>
+                                        <p:column>
+
+                                            <p:commandButton 
+                                                value="Agregar"
+                                                style="width: 120px;"
+                                                id="IdBtnAdd"
+                                                
+                                                icon="ui-icon-arrowthick-1-e"
+                                                disabled="true"
+                                                /> 
+                                            <br/>
+                                            <p:commandButton 
+                                                value="Eliminar"
+                                                style="width: 120px;"
+                                                id="IdBtnRemove" 
+                                                icon="ui-icon-arrowthick-1-w"
+                                                disabled="true"
+                                                />
+                                            <br/>
+                                            <p:commandButton
+                                                value="Configuracion"
+                                                style="width: 120px;"
+                                                id="IdBtnOptions" 
+                                                icon="ui-icon-wrench"
+                                                disabled="true"
+
+                                                />
+
+
+                                        </p:column>
+                                        <p:column>
+
+                                        </p:column>
+                                    </p:row>
+
+                                </p:panelGrid>
+                            </p:tab>
+                            
+                            <p:tab title="Mapa">
+                                
+                            </p:tab>
+                            
+                        </p:tabView>
+                        
+                        
+                        
+                        <p:commandButton value="Generar mapa"
+                                         style="margin: 6px 0px 0px 220px;"
+
+                                         actionListener="#{injuriesCountMB.injuriesVisualizationProcess}"
+                                         update="formInjuries:panelMap formInjuries:msg1"
+                                         />
+
+                    </p:fieldset>
+                    <p:fieldset legend="ANALISIS ESTADISTICO">
+
+                        <p:inputText id="txtCoordinates" 
+                                     value="#{injuriesCountMB.selectedAreaPoints}"
+                                     style="width: 380px;"
+                                     />
+                        <p:commandButton value="Generar grafico"
+                                         actionListener="#{injuriesCountMB.statisticsGenerationProcess}"
+                                         update="formInjuries:panelChart formInjuries:msg1"
+
+                                         />
+
+                        <p:outputPanel id="panelChart">
+                            <div id="fatalInjuriesChart" style="min-width: 310px; height: 400px; margin: 0 auto;"></div>
+                            <script type="text/javascript">
+                                $(function () {
+                                    $('#fatalInjuriesChart').highcharts({
+                                        chart: {
+                                            type: 'column'
+                                        },
+                                        title: {
+                                            text: 'Lesiones de Causa Externa Fatales - Conteo general'
+                                        },
+                                        subtitle: {
+                                            text: 'Observatorio del delito - Alcaldia de Pasto'
+                                        },
+                                        xAxis: {
+                                            categories: #{injuriesCountMB.categoriesData},
+                                            crosshair: true
+                                        },
+                                        yAxis: {
+                                            min: 0,
+                                            title: {
+                                                text: 'Totales'
+                                            }
+                                        },
+                                        tooltip: {
+                                            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                                            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                                                    '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+                                            footerFormat: '</table>',
+                                            shared: true,
+                                            useHTML: true
+                                        },
+                                        plotOptions: {
+                                            column: {
+                                                pointPadding: 0.1,
+                                                borderWidth: 0
+                                            }
+                                        },
+                                        series: #{injuriesCountMB.seriesData}
+                                    });
+                                });
+                                
+                                
+                            </script>
+                        </p:outputPanel>
+                    </p:fieldset>
+
+                </p:layoutUnit>
+
+            </ui:define>
+
+        </ui:composition>
+    </body>
+</html>
+

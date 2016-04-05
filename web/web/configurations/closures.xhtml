@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    <ui:composition template="../templates/layoutTemplate.xhtml">
+        <!--==================================================================-->
+        <!--========================CABECERA SCRIPTS==========================-->                    
+        <ui:define name="head">
+            <link href="../../resources/css/style.css" rel="stylesheet" type="text/css" />               
+
+        </ui:define>
+        <!--=================================================================-->
+        <!--================================TITULOS==========================-->
+        <ui:define name="titlePage">
+            SIGEODEP -  CIERRES 
+        </ui:define>
+        <ui:define name="title">
+            SIGEODEP -  CIERRES
+        </ui:define>
+        <!--=================================================================-->
+        <!--==============================CONTENIDO==========================-->
+        <ui:define name="content">
+            <h:outputText 
+                value="No se puede mostrar esta sección por que no cuenta con los permisos suficientes"
+                style=" color: red;"
+                rendered="#{!loginMB.permissionAdministrator}"/> 
+            <h:form enctype="multipart/form-data" id="IdForm1" rendered="#{loginMB.permissionAdministrator}">
+                <p:growl id="message"  showDetail="true" sticky="true" autoUpdate="true" life="1000"  />                
+                <!--===================================================================================-->
+                <br/>
+                <p:panelGrid id="IdPanel1" style="position: absolute;  width: 750px;  margin-left: -375px; left: 50%;" >                            
+                    <p:row>  
+                        <p:column styleClass="ui-widget-header" style="text-align: center;">
+                            <h:outputLabel value="OBSERVATORIO DEL DELITO - ALCALDA DE PASTO"/><br/>  
+                            <h:outputLabel value="CIERRES"/>  
+                        </p:column>                                       
+                    </p:row>
+                    <p:row>  
+                        <p:column>
+                            <br/>
+                            <p:panelGrid style="width: 730px;">                                                        
+                                <p:row>  
+                                    <p:column styleClass="ui-widget-header">
+                                        <h:outputLabel value="LESION"/>
+                                    </p:column>                            
+                                    <p:column>
+                                        <p:selectOneMenu id="IdInjury" value="#{closuresMB.currentInjury}" disabled="#{closuresMB.disabledInjury}" >                                             
+                                            <f:selectItems value="#{closuresMB.injuriesList}"/>
+                                            <f:ajax 
+                                                event="change"                                                                                                            
+                                                render="IdDateClosure message"
+                                                listener="#{closuresMB.reset}"/>                                        
+                                        </p:selectOneMenu>                                        
+                                    </p:column>                                    
+                                    <p:column styleClass="ui-widget-header">
+                                        <h:outputLabel value="FECHA DE CIERRE"/>
+                                    </p:column>                            
+                                    <p:column>
+                                        <h:outputLabel id="IdDateClosure" value="#{closuresMB.currentDateClosure}"/>
+                                    </p:column>
+                                </p:row>                        
+                            </p:panelGrid>
+                            <br/>
+                            <p:commandButton  
+                                id="IdBtnAnalysis"                                
+                                value="Realizar Análisis" 
+                                rendered="#{closuresMB.renderedBtnAnalysis}"
+                                oncomplete="dialogConfirm.show()"
+                                update=":IdForm2:IdDialogConfirm"/>
+                            <br/>
+                            <p:tabView rendered="#{closuresMB.renderedAnalysisResult}">               
+                                <p:tab title="Homicidios" rendered="#{closuresMB.renderedAnalysisFatalInjuryMurder}">  
+                                    <p:panelGrid>                                
+                                        <p:row>                                                            
+                                            <p:column styleClass="ui-widget-header" style="width: 310px;">
+                                                Datos a cargar
+                                            </p:column>
+                                            <p:column styleClass="ui-widget-header" style="width: 320px;">
+                                                Datos a cargar y Cache
+                                            </p:column>
+                                        </p:row>   
+                                        <p:row>                                                            
+                                            <p:column colspan="2">
+                                                <div style="overflow: scroll; width: 700px; height: 200px; ">
+                                                    <h:outputText
+                                                        value="#{closuresMB.outputTextAnalysisFatalInjuryMurder}"
+                                                        escape="false"/>    
+                                                </div>    
+                                            </p:column>
+                                        </p:row>   
+                                    </p:panelGrid>
+                                </p:tab>
+                                <p:tab title="Muerte en Accidente de Tránsito" rendered="#{closuresMB.renderedAnalysisFatalInjuryTraffic}">  
+                                    <p:panelGrid>                                
+                                        <p:row>                                                            
+                                            <p:column styleClass="ui-widget-header" style="width: 310px;">
+                                                Datos a cargar
+                                            </p:column>
+                                            <p:column styleClass="ui-widget-header" style="width: 320px;">
+                                                Datos a cargar y Cache
+                                            </p:column>
+                                        </p:row>   
+                                        <p:row>                                                            
+                                            <p:column colspan="2">
+                                                <div style="overflow: scroll; width: 700px; height: 200px; ">
+                                                    <h:outputText
+                                                        value="#{closuresMB.outputTextAnalysisFatalInjuryTraffic}"
+                                                        escape="false"/>    
+                                                </div>    
+                                            </p:column>
+                                        </p:row>   
+                                    </p:panelGrid>
+                                </p:tab>
+                                <p:tab title="Suicidio" rendered="#{closuresMB.renderedAnalysisFatalInjurySuicide}">  
+                                    <p:panelGrid>                                
+                                        <p:row>                                                            
+                                            <p:column styleClass="ui-widget-header" style="width: 310px;">
+                                                Datos a cargar
+                                            </p:column>
+                                            <p:column styleClass="ui-widget-header" style="width: 320px;">
+                                                Datos a cargar y Cache
+                                            </p:column>
+                                        </p:row>   
+                                        <p:row>                                                            
+                                            <p:column colspan="2">
+                                                <div style="overflow: scroll; width: 700px; height: 200px; ">
+                                                    <h:outputText
+                                                        value="#{closuresMB.outputTextAnalysisFatalInjurySuicide}"
+                                                        escape="false"/>    
+                                                </div>    
+                                            </p:column>
+                                        </p:row>   
+                                    </p:panelGrid>
+                                </p:tab>
+                                <p:tab title="Muerte Accidental" rendered="#{closuresMB.renderedAnalysisFatalInjuryAccident}">  
+                                    <p:panelGrid>                                
+                                        <p:row>                                                            
+                                            <p:column styleClass="ui-widget-header" style="width: 310px;">
+                                                Datos a cargar
+                                            </p:column>
+                                            <p:column styleClass="ui-widget-header" style="width: 320px;">
+                                                Datos a cargar y Cache
+                                            </p:column>
+                                        </p:row>   
+                                        <p:row>                                                            
+                                            <p:column colspan="2">
+                                                <div style="overflow: scroll; width: 700px; height: 200px; ">
+                                                    <h:outputText
+                                                        value="#{closuresMB.outputTextAnalysisFatalInjuryAccident}"
+                                                        escape="false"/>    
+                                                </div>    
+                                            </p:column>
+                                        </p:row>   
+                                    </p:panelGrid>
+                                </p:tab>
+                                <p:tab title="Interpersonal" rendered="#{closuresMB.renderedAnalysisNonFatalInterpersonal}">  
+                                    <p:panelGrid>                                
+                                        <p:row>                                                            
+                                            <p:column styleClass="ui-widget-header" style="width: 310px;">
+                                                Datos a cargar
+                                            </p:column>
+                                            <p:column styleClass="ui-widget-header" style="width: 320px;">
+                                                Datos a cargar y Cache
+                                            </p:column>
+                                        </p:row>   
+                                        <p:row>                                                            
+                                            <p:column colspan="2">
+                                                <div style="overflow: scroll; width: 700px; height: 200px; ">
+                                                    <h:outputText
+                                                        value="#{closuresMB.outputTextAnalysisNonFatalInterpersonal}"
+                                                        escape="false"/>    
+                                                </div>    
+                                            </p:column>
+                                        </p:row>   
+                                    </p:panelGrid>
+                                </p:tab>
+                                <p:tab title="Tránsito" rendered="#{closuresMB.renderedAnalysisNonFatalTransport}">  
+                                    <p:panelGrid>                                
+                                        <p:row>                                                            
+                                            <p:column styleClass="ui-widget-header" style="width: 310px;">
+                                                Datos a cargar
+                                            </p:column>
+                                            <p:column styleClass="ui-widget-header" style="width: 320px;">
+                                                Datos a cargar y Cache
+                                            </p:column>
+                                        </p:row>   
+                                        <p:row>                                                            
+                                            <p:column colspan="2">
+                                                <div style="overflow: scroll; width: 700px; height: 200px; ">
+                                                    <h:outputText
+                                                        value="#{closuresMB.outputTextAnalysisNonFatalTransport}"
+                                                        escape="false"/>    
+                                                </div>    
+                                            </p:column>
+                                        </p:row>   
+                                    </p:panelGrid>
+                                </p:tab>
+                                <p:tab title="Autoinflingida" rendered="#{closuresMB.renderedAnalysisNonFatalSelfInflicted}">  
+                                    <p:panelGrid>                                
+                                        <p:row>                                                            
+                                            <p:column styleClass="ui-widget-header" style="width: 310px;">
+                                                Datos a cargar
+                                            </p:column>
+                                            <p:column styleClass="ui-widget-header" style="width: 320px;">
+                                                Datos a cargar y Cache
+                                            </p:column>
+                                        </p:row>   
+                                        <p:row>                                                            
+                                            <p:column colspan="2">
+                                                <div style="overflow: scroll; width: 700px; height: 200px; ">
+                                                    <h:outputText
+                                                        value="#{closuresMB.outputTextAnalysisNonFatalSelfInflicted}"
+                                                        escape="false"/>    
+                                                </div>    
+                                            </p:column>
+                                        </p:row>   
+                                    </p:panelGrid>
+                                </p:tab>
+                                <p:tab title="Intrafamiliar" rendered="#{closuresMB.renderedAnalysisNonFatalDomesticViolence}">  
+                                    <p:panelGrid>                                
+                                        <p:row>                                                            
+                                            <p:column styleClass="ui-widget-header" style="width: 310px;">
+                                                Datos a cargar
+                                            </p:column>
+                                            <p:column styleClass="ui-widget-header" style="width: 320px;">
+                                                Datos a cargar y Cache
+                                            </p:column>
+                                        </p:row>   
+                                        <p:row>                                                            
+                                            <p:column colspan="2">
+                                                <div style="overflow: scroll; width: 700px; height: 200px; ">
+                                                    <h:outputText
+                                                        value="#{closuresMB.outputTextAnalysisNonFatalDomesticViolence}"
+                                                        escape="false"/>    
+                                                </div>    
+                                            </p:column>
+                                        </p:row>   
+                                    </p:panelGrid>
+                                </p:tab>
+                                <p:tab title="No intencional" rendered="#{closuresMB.renderedAnalysisNonFatalNonIntentional}">  
+                                    <p:panelGrid>                                
+                                        <p:row>                                                            
+                                            <p:column styleClass="ui-widget-header" style="width: 310px;">
+                                                Datos a cargar
+                                            </p:column>
+                                            <p:column styleClass="ui-widget-header" style="width: 320px;">
+                                                Datos a cargar y Cache
+                                            </p:column>
+                                        </p:row>   
+                                        <p:row>                                                            
+                                            <p:column colspan="2">
+                                                <div style="overflow: scroll; width: 700px; height: 200px; ">
+                                                    <h:outputText
+                                                        value="#{closuresMB.outputTextAnalysisNonFatalNonIntentional}"
+                                                        escape="false"/>    
+                                                </div>    
+                                            </p:column>
+                                        </p:row>   
+                                    </p:panelGrid>
+                                </p:tab>
+                                <p:tab title="SIVIGILA-VIF" rendered="#{closuresMB.renderedAnalysisSivigila}">  
+                                    <p:panelGrid>                                
+                                        <p:row>                                                            
+                                            <p:column styleClass="ui-widget-header" style="width: 310px;">
+                                                Datos a cargar
+                                            </p:column>
+                                            <p:column styleClass="ui-widget-header" style="width: 320px;">
+                                                Datos a cargar y Cache
+                                            </p:column>
+                                        </p:row>   
+                                        <p:row>                                                            
+                                            <p:column colspan="2">
+                                                <div style="overflow: scroll; width: 700px; height: 200px; ">
+                                                    <h:outputText
+                                                        value="#{closuresMB.outputTextAnalysisSivigila}"
+                                                        escape="false"/>    
+                                                </div>    
+                                            </p:column>
+                                        </p:row>   
+                                    </p:panelGrid>
+                                </p:tab>
+                            </p:tabView>
+                            <br/>
+                            <p:commandButton
+                                id="IdBtnImputation"
+                                value="Realizar Imputación"                                 
+                                onclick="pageInactive();
+                                        messageInactive();"
+                                oncomplete="pageActive(); messageActive();"
+                                rendered="#{closuresMB.renderedBtnImputation}"
+                                actionListener="#{closuresMB.startImputation}"                                
+                                update=":IdForm1"/>                            
+                            <br/>
+                            <p:tabView rendered="#{closuresMB.renderedImputationResult}">               
+                                <p:tab title="Homicidios" rendered="#{closuresMB.renderedImputationFatalInjuryMurder}">  
+                                    <h:outputText 
+                                        value="#{closuresMB.outputTextImputationFatalInjuryMurder}"
+                                        escape="false"/>
+                                </p:tab>
+                                <p:tab title="Muerte en Accidente de Tránsito" rendered="#{closuresMB.renderedImputationFatalInjuryTraffic}">  
+                                    <h:outputText 
+                                        value="#{closuresMB.outputTextImputationFatalInjuryTraffic}"
+                                        escape="false"/>
+                                </p:tab>
+                                <p:tab title="Suicidio" rendered="#{closuresMB.renderedImputationFatalInjurySuicide}">  
+                                    <h:outputText 
+                                        value="#{closuresMB.outputTextImputationFatalInjurySuicide}"
+                                        escape="false"/>
+                                </p:tab>
+                                <p:tab title="Muerte Accidental" rendered="#{closuresMB.renderedImputationFatalInjuryAccident}">  
+                                    <h:outputText 
+                                        value="#{closuresMB.outputTextImputationFatalInjuryAccident}"
+                                        escape="false"/>
+                                </p:tab>
+                                <p:tab title="Interpersonal" rendered="#{closuresMB.renderedImputationNonFatalInterpersonal}">  
+                                    <h:outputText 
+                                        value="#{closuresMB.outputTextImputationNonFatalInterpersonal}"
+                                        escape="false"/>
+                                </p:tab>
+                                <p:tab title="Tránsito" rendered="#{closuresMB.renderedImputationNonFatalTransport}">  
+                                    <h:outputText 
+                                        value="#{closuresMB.outputTextImputationNonFatalTransport}"
+                                        escape="false"/>
+                                </p:tab>
+                                <p:tab title="Autoinflingida" rendered="#{closuresMB.renderedImputationNonFatalSelfInflicted}">  
+                                    <h:outputText 
+                                        value="#{closuresMB.outputTextImputationNonFatalSelfInflicted}"
+                                        escape="false"/>
+                                </p:tab>
+                                <p:tab title="Intrafamiliar" rendered="#{closuresMB.renderedImputationNonFatalDomesticViolence}">  
+                                    <h:outputText 
+                                        value="#{closuresMB.outputTextImputationNonFatalDomesticViolence}"
+                                        escape="false"/>
+                                </p:tab>
+                                <p:tab title="No intencional" rendered="#{closuresMB.renderedImputationNonFatalNonIntentional}">  
+                                    <h:outputText 
+                                        value="#{closuresMB.outputTextImputationNonFatalNonIntentional}"
+                                        escape="false"/>
+                                </p:tab>
+                                <p:tab title="SIVIGILA-VIF" rendered="#{closuresMB.renderedImputationSivigila}">  
+                                    <h:outputText 
+                                        value="#{closuresMB.outputTextImputationSivigila}"
+                                        escape="false"/>
+                                </p:tab>
+                            </p:tabView>
+                            <br/>
+                            <p:commandButton                                 
+                                value="Cargar Datos a la Bodega"                                 
+                                onclick="pageInactive();
+                                        messageInactive();"
+                                oncomplete="pageActive(); messageActive();"
+                                rendered="#{closuresMB.renderedBtnStoreData}"
+                                actionListener="#{closuresMB.startStoreData}"
+                                update=":IdForm1"/>
+                            <br/>
+                            <p:panelGrid rendered="#{closuresMB.renderedStoreDataResult}">
+                                <p:row>
+                                    <p:column>
+                                        <h:outputText 
+                                            value="#{closuresMB.outputTextStoreData}"
+                                            escape="false"/>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>                            
+                            <br/>
+                            <p:commandButton                                 
+                                value="Reiniciar Proceso"                                 
+                                rendered="#{closuresMB.renderedBtnReset}"
+                                actionListener="#{closuresMB.reset}"                                                                
+                                update=":IdForm1"
+                                />
+                        </p:column>                                       
+                    </p:row>
+                </p:panelGrid>
+            </h:form>
+        </ui:define>
+        <ui:define name="dialogs">
+            <h:form id="IdForm2">
+                <!--   DIALOGO CONFIRMAR -->
+                <p:dialog                                                         
+                    id="IdDialogConfirm"
+                    modal="true"
+                    resizable="false"
+                    header="Confirmacion" 
+                    widgetVar="dialogConfirm"> 
+                    <p:panelGrid >
+                        <p:row>  
+                            <p:column >
+                                <div style="width: 250px; text-align: center; background: #fbef9a;">
+                                    <h:outputText 
+                                        id="IdMessageAnalysis" 
+                                        value="#{closuresMB.outputTextConfirmationMessage}"
+                                        escape="false"/>
+                                    <br/> 
+                                </div>
+                            </p:column>
+                        </p:row>
+                        <p:row>  
+                            <div></div>
+                            <p:column  styleClass="ui-widget-header">
+                                <p:commandButton                                                           
+                                    oncomplete="pageActive(); messageActive();"
+                                    onclick="dialogConfirm.hide();
+                                        pageInactive();
+                                        messageInactive();"
+                                    actionListener="#{closuresMB.startClosure}"
+                                    value="Continuar" 
+                                    update=":IdForm1"/>   
+                                <p:commandButton
+                                    value="Cancelar" 
+                                    onclick="dialogConfirm.hide();"/> 
+
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:dialog>
+
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
+

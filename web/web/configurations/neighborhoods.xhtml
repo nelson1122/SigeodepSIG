@@ -1,0 +1,613 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    <ui:composition template="../templates/layoutTemplate.xhtml">
+        <!--==================================================================-->
+        <!--========================CABECERA SCRIPTS==========================-->                    
+        <ui:define name="head">
+            <link href="../../resources/css/style.css" rel="stylesheet" type="text/css" />               
+            <script type="text/javascript" src="../../resources/js/OpenLayers.js"></script>
+            <script type="text/javascript">
+                var map, controls;
+
+                function displayWKT(feature) {
+                    var str = wkt.write(feature);
+                    //alert(str);
+                    document.getElementById('IdForm1:hiddenButton').value = str;
+                    remoteChangeCommand();
+                }
+                function paintMap(nameFile) {
+                    $('#map').html("");//limpia el mapa                    
+                    OpenLayers.Feature.Vector.style['default']['strokeWidth'] = 2;
+                    var options = {
+                        projection: new OpenLayers.Projection("EPSG:900913"),
+                        displayProjection: new OpenLayers.Projection("EPSG:4326")
+                    };
+                    map = new OpenLayers.Map('map', options);
+                    var vectors = new OpenLayers.Layer.Vector("KML", {
+                        projection: map.displayProjection,
+                        strategies: [new OpenLayers.Strategy.Fixed()],
+                        protocol: new OpenLayers.Protocol.HTTP({
+                            url: "maps/" + nameFile,
+                            format: new OpenLayers.Format.KML({
+                                extractStyles: false,
+                                extractAttributes: true,
+                                maxDepth: 2
+                            })
+                        })
+                    });
+                    osm = new OpenLayers.Layer.OSM("Base");
+                    map.addLayers([osm, vectors]);
+
+                    var report = function(e) {
+                        OpenLayers.Console.log(e.type, e.feature.id);
+                    };
+
+                    var highlightCtrl = new OpenLayers.Control.SelectFeature(vectors, {
+                        hover: true,
+                        highlightOnly: true,
+                        renderIntent: "temporary",
+                        eventListeners: {
+                            beforefeaturehighlighted: report,
+                            featurehighlighted: report,
+                            featureunhighlighted: report
+                        }
+                    });
+
+                    var selectCtrl = new OpenLayers.Control.SelectFeature(vectors,
+                            {clickout: true,
+                                onSelect: displayWKT
+                            }
+                    );
+                    map.addControl(highlightCtrl);
+                    map.addControl(selectCtrl);
+                    highlightCtrl.activate();
+                    selectCtrl.activate();
+                    wkt = new OpenLayers.Format.WKT();
+                    map.setCenter(new OpenLayers.LonLat(-8601323.09512, 133593.156062), 13);
+                }
+            </script> 
+        </ui:define>
+        <!--=================================================================-->
+        <!--================================TITULOS==========================-->
+        <ui:define name="titlePage">
+            SIGEODEP -  EDICION DE VARIABLES CATEGORICAS
+        </ui:define>
+        <ui:define name="title">
+            SIGEODEP -  EDICION DE VARIABLES CATEGORICAS
+        </ui:define>
+        <!--=================================================================-->
+        <!--==============================CONTENIDO==========================-->
+        <ui:define name="content">
+            <h:outputText 
+                value="No se puede mostrar esta sección por que no cuenta con los permisos suficientes"
+                style=" color: red;"
+                rendered="#{!loginMB.permissionAdministrator}"/> 
+            <h:form enctype="multipart/form-data" id="IdForm1" rendered="#{loginMB.permissionAdministrator}">
+                <h:inputHidden id="hiddenButton" value="#{neighborhoodsVariableMB.poligonText}"/>
+                <p:remoteCommand name="remoteChangeCommand" process="hiddenButton"/>
+                <p:growl id="message"  showDetail="true" sticky="true" autoUpdate="true" life="1000"  />
+                <!--===================================================================================-->
+                <br/>
+                <p:panelGrid id="IdPanel1" style="position: absolute;  width: 750px;  margin-left: -375px; left: 50%;" >                            
+                    <p:row>  
+                        <p:column styleClass="ui-widget-header" style="text-align: center;">
+                            <h:outputLabel value="OBSERVATORIO DEL DELITO - ALCALDA DE PASTO"/><br/>  
+                            <h:outputLabel value="BARRIOS"/>  
+                        </p:column>                                       
+                    </p:row>
+                    <p:row>  
+                        <p:column>
+                            <br/>
+                            <p:panelGrid style="width: 730px;">
+                                <p:row>  
+                                    <p:column styleClass="ui-widget-header" colspan="5">
+                                        <h:outputLabel value="FILTRAR DATOS"/>
+                                    </p:column>                            
+                                </p:row>
+                                <p:row>  
+                                    <p:column styleClass="ui-widget-header ui-state-focus" colspan="1">
+                                        <h:outputLabel value="Variable"/>
+                                    </p:column>
+                                    <p:column colspan="1">
+                                        <p:selectOneMenu id="IdSearchCriteria" value="#{neighborhoodsVariableMB.currentSearchCriteria}" > 
+                                            <f:selectItem itemLabel="NOMBRE" itemValue="2" />
+                                            <f:selectItem itemLabel="CODIGO" itemValue="1" />
+                                        </p:selectOneMenu>
+                                    </p:column>                                                                        
+                                    <p:column styleClass="ui-widget-header ui-state-focus" colspan="1">
+                                        <h:outputLabel value="Valor"/>
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText 
+                                            id="IdSearcValue"
+                                            value="#{neighborhoodsVariableMB.currentSearchValue}"/>
+                                    </p:column>
+                                    <p:column colspan="1" styleClass="ui-widget-header ui-state-focus">
+                                        <p:commandButton 
+                                            value="Buscar" 
+                                            icon="ui-icon-search"                                                
+                                            actionListener="#{neighborhoodsVariableMB.createDynamicTable}"
+                                            update="IdSearchTable :IdForm1:message"/>                                                                        
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <br/>
+                            <p:dataTable 
+                                id="IdSearchTable" var="rowX" 
+                                value="#{neighborhoodsVariableMB.rowDataTableList}" 
+                                rowKey="#{rowX.column1}"  
+                                selection="#{neighborhoodsVariableMB.selectedRowDataTable}" 
+                                paginator="true"
+                                rows="10"                                    
+                                paginatorPosition="bottom"                                
+                                emptyMessage="Vacio"
+                                scrollable="true"
+                                scrollWidth="730"                                    
+                                paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                rowsPerPageTemplate="5,10,15"
+                                pageLinks="5"
+                                selectionMode="single"
+                                resizableColumns="true">                                
+                                <p:ajax
+                                    event="rowSelect"
+                                    listener="#{neighborhoodsVariableMB.loadRegistry}"                                    
+                                    update=":IdForm1:IdControls :IdForm2:IdDialogEdit :IdForm1:message" />
+                                <!--    -->
+                                <p:column headerText="CODIGO" width="140">  
+                                    #{rowX.column1}  
+                                </p:column>  
+                                <p:column headerText="NOMBRE" width="386">  
+                                    #{rowX.column2}  
+                                </p:column>  
+                                <p:column headerText="ZONA" width="140">  
+                                    #{rowX.column3}  
+                                </p:column>  
+                            </p:dataTable>          
+                            <br/>
+                            <p:panelGrid id="IdControls" style="width: 730px;">
+                                <p:row>  
+                                    <p:column styleClass="ui-widget-header" colspan="5">
+                                        <p:commandButton 
+                                            id="IdEdit"
+                                            disabled="#{neighborhoodsVariableMB.btnEditDisabled}"
+                                            value="Editar"                                 
+                                            icon="ui-icon-pencil"                                            
+                                            oncomplete="dialogEdit.show()"                                            
+                                            update=":IdForm2:IdDialogEdit :IdForm1:message"/>
+                                        <p:commandButton 
+                                            id="IdRemove" 
+                                            disabled="#{neighborhoodsVariableMB.btnRemoveDisabled}"
+                                            value="Eliminar" 
+                                            icon="ui-icon-close"
+                                            oncomplete="dialogDelete.show()"                                            
+                                            update=":IdForm2:IdDialogDelete :IdForm1:message"/>
+                                        <p:commandButton 
+                                            id="IdNew" 
+                                            value="Nuevo" 
+                                            icon="ui-icon-document"
+                                            actionListener="#{neighborhoodsVariableMB.newRegistry}"
+                                            oncomplete="dialogNew.show()"
+                                            update=":IdForm2:displayNew IdSearchTable IdControls"/>
+                                        <h:commandLink>                                              
+                                            <p:button value="Exportar"/>
+                                            <p:dataExporter type="xls" target="IdSearchTable" fileName="BARRIOS" postProcessor="#{neighborhoodsVariableMB.postProcessXLS}"/>  
+                                        </h:commandLink>
+                                    </p:column>                            
+                                </p:row>
+                            </p:panelGrid>
+                            <br/>
+                        </p:column>                                       
+                    </p:row>
+                </p:panelGrid>
+            </h:form>
+        </ui:define>
+        <ui:define name="dialogs">
+            <h:form id="IdForm2">
+
+                <!--   DIALOGO NUEVO -->                
+                <p:dialog id="IdDialogNew" header="NUEVO BARRIO" widgetVar="dialogNew" resizable="false" modal="true">  
+                    <p:panelGrid id="displayNew">  
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="NOMBRE" />  
+                            </p:column>
+                            <p:column colspan="3">
+                                <p:inputText size="70" value="#{neighborhoodsVariableMB.newNeighborhoodName}" /> 
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="CODIGO" />  
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="IdNeighborhoodCode" size="20" value="#{neighborhoodsVariableMB.newNeighborhoodId}" >
+                                    <f:ajax 
+                                        event="change"                                                                                                            
+                                        render="IdNeighborhoodCode"
+                                        listener="#{neighborhoodsVariableMB.changeNewCode}"/>                                            
+                                </p:inputText>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="ZONA" />  
+                            </p:column>
+                            <p:column>
+                                <p:selectOneMenu value="#{neighborhoodsVariableMB.newNeighborhoodType}" > 
+                                    <f:selectItem itemLabel="ZONA URBANA" itemValue="1" />  
+                                    <f:selectItem itemLabel="ZONA RURAL" itemValue="2" />                                                                                                                  
+                                    <f:ajax 
+                                        event="change"                                                                                                            
+                                        render="IdNeighborhoodCode IdNeighborhoodSuburb2"                                        
+                                        listener="#{neighborhoodsVariableMB.changeNewArea}"/>                                            
+                                </p:selectOneMenu>
+                            </p:column>                            
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="ESTRATO" />  
+                            </p:column>
+                            <p:column>
+                                <p:selectOneMenu value="#{neighborhoodsVariableMB.newNeighborhoodLevel}" > 
+                                    <f:selectItem itemLabel="1" itemValue="1" />  
+                                    <f:selectItem itemLabel="2" itemValue="2" />
+                                    <f:selectItem itemLabel="3" itemValue="3" />
+                                    <f:selectItem itemLabel="4" itemValue="4" />
+                                    <f:selectItem itemLabel="5" itemValue="5" />
+                                    <f:selectItem itemLabel="6" itemValue="6" />
+                                </p:selectOneMenu>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="COMUNA" />
+                            </p:column>
+                            <p:column>                                
+                                <p:selectOneMenu 
+                                    id="IdNeighborhoodSuburb2"
+                                    value="#{neighborhoodsVariableMB.newNeighborhoodSuburbId}" >                                     
+                                    <f:selectItems value="#{neighborhoodsVariableMB.newCommunesList}"/>
+                                    <f:ajax 
+                                        event="change"                                                                                                            
+                                        render="IdNeighborhoodCode"
+                                        listener="#{neighborhoodsVariableMB.calculateCode}"/>                                            
+                                </p:selectOneMenu>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="POBLACION" />  
+                            </p:column>
+                            <p:column>                                
+                                <p:inputText id="IdNewPopulation" size="20" value="#{neighborhoodsVariableMB.newPopuation}" >
+                                    <f:ajax                                         
+                                        event="change"                                                                                                            
+                                        render="IdNewPopulation"
+                                        listener="#{neighborhoodsVariableMB.changeNewPopulation}"/>                                            
+                                </p:inputText>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="CORREDOR" />  
+                            </p:column>
+                            <p:column>
+                                <p:selectOneMenu                                     
+                                    value="#{neighborhoodsVariableMB.newNeighborhoodCorridor}" >                                     
+                                    <f:selectItems value="#{neighborhoodsVariableMB.corridorsList}"/>
+                                </p:selectOneMenu>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="CUADRANTE(S)" />
+                            </p:column>
+                            <p:column > 
+                                Disponibles
+                                <h:inputText 
+                                    id="IdNewQuadrantsFilter"                                                                                         
+                                    value="#{neighborhoodsVariableMB.newQuadrantsFilter}"
+                                    size="20">
+                                    <f:ajax 
+                                        event="keyup"
+                                        listener="#{neighborhoodsVariableMB.changeNewQuadrantsFilter}"
+                                        render="IdCurrentQuadrants"/>
+                                </h:inputText>
+                                <br/>
+                                <h:selectManyMenu 
+                                    id="IdCurrentQuadrants"
+                                    value="#{neighborhoodsVariableMB.newSelectedAvailableQuadrants}"
+                                    style="height:120px; width: 200px;">                                    
+                                    <f:selectItems value="#{neighborhoodsVariableMB.newAvailableQuadrants}"/>                                                                                        
+                                </h:selectManyMenu> 
+                            </p:column>
+                            <p:column>
+                                <br/>
+                                <br/>
+                                <p:commandButton 
+                                    value="+"                                    
+                                    actionListener="#{neighborhoodsVariableMB.addQuadrantInNewNeighborhoodClick}"  
+                                    update="IdCurrentQuadrants IdAddQuadrants IdNewQuadrantsFilter"/>
+                                <p:commandButton 
+                                    value="-"
+                                    actionListener="#{neighborhoodsVariableMB.removeQuadrantInNewNeighborhoodClick}"  
+                                    update="IdCurrentQuadrants IdAddQuadrants IdNewQuadrantsFilter"/> 
+                            </p:column>
+                            <p:column>
+                                Agregados<br/>
+                                <h:selectManyMenu 
+                                    id="IdAddQuadrants"
+                                    value="#{neighborhoodsVariableMB.newSelectedAvailableAddQuadrants}"
+                                    style="height:120px; width: 200px;">
+                                    <f:selectItems value="#{neighborhoodsVariableMB.newAvailableAddQuadrants}"/>
+                                </h:selectManyMenu> 
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="GEOMETRIA"/>
+                            </p:column>
+                            <p:column colspan="3"> 
+                                <h:outputText 
+                                    id="IdNewGeomText" 
+                                    value="#{neighborhoodsVariableMB.geomText}"
+                                    escape="false"/>
+                                <p:fileUpload
+                                    fileUploadListener="#{neighborhoodsVariableMB.handleFileUpload}"                                                                                  
+                                    mode="advanced"                                           
+                                    cancelLabel="Cancelar"
+                                    uploadLabel="Subir"                       
+                                    label="Archivo"
+                                    sizeLimit="50000000"
+                                    update=":IdForm1:message IdShowNewMapFile IdNewGeomText"
+                                    invalidFileMessage="Tipo de archivo no aceptado"
+                                    invalidSizeMessage="El tamaño del archivo debe ser inferior a 5MB"
+                                    allowTypes="/(\.|\/)(kml|txt)$/">                                        
+                                </p:fileUpload>
+                                <p:commandButton 
+                                    value="Visualizar Archivo"
+                                    id="IdShowNewMapFile"
+                                    disabled="#{neighborhoodsVariableMB.disabledShowGeomFile}"
+                                    oncomplete="paintMap('#{neighborhoodsVariableMB.nameGeomFile}'); dialogMap.show();"/>                               
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="4" styleClass="ui-widget-header">
+                                <p:commandButton 
+                                    value="Guardar" 
+                                    icon="ui-icon-disk"
+                                    actionListener="#{neighborhoodsVariableMB.saveRegistry}"
+                                    update=":IdForm1:IdSearchTable displayNew :IdForm1:IdControls :IdForm1:message"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>  
+                </p:dialog>                 
+                <!--   DIALOGO EDITAR -->
+                <p:dialog id="IdDialogEdit" header="EDICION DE BARRIO" widgetVar="dialogEdit" resizable="false" modal="true">  
+                    <p:panelGrid id="display">  
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="NOMBRE" />  
+
+                            </p:column>
+                            <p:column colspan="3">
+                                <p:inputText size="70" value="#{neighborhoodsVariableMB.neighborhoodName}" /> 
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="CODIGO" />  
+                            </p:column>
+                            <p:column>
+                                <p:inputText 
+                                    id="IdNeighborhoodCode2" 
+                                    size="20" 
+                                    value="#{neighborhoodsVariableMB.neighborhoodId}" 
+                                    disabled="true">
+                                    <f:ajax 
+                                        event="change"                                                                                                            
+                                        render="IdNeighborhoodCode2"
+                                        listener="#{neighborhoodsVariableMB.changeCode}"/>                                            
+                                </p:inputText>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="ZONA" />  
+                            </p:column>
+                            <p:column>
+                                <p:selectOneMenu value="#{neighborhoodsVariableMB.neighborhoodType}" > 
+                                    <f:selectItem itemLabel="ZONA URBANA" itemValue="1" />  
+                                    <f:selectItem itemLabel="ZONA RURAL" itemValue="2" />                                                                                                                  
+                                    <f:ajax 
+                                        event="change"                                                                                                            
+                                        render="IdNeighborhoodCode2 IdNeighborhoodSuburb"                                        
+                                        listener="#{neighborhoodsVariableMB.changeArea}"/>                                            
+                                </p:selectOneMenu>
+                            </p:column>                            
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="ESTRATO" />  
+                            </p:column>
+                            <p:column>
+                                <p:selectOneMenu value="#{neighborhoodsVariableMB.neighborhoodLevel}" > 
+                                    <f:selectItem itemLabel="1" itemValue="1" />  
+                                    <f:selectItem itemLabel="2" itemValue="2" />
+                                    <f:selectItem itemLabel="3" itemValue="3" />
+                                    <f:selectItem itemLabel="4" itemValue="4" />
+                                    <f:selectItem itemLabel="5" itemValue="5" />
+                                    <f:selectItem itemLabel="6" itemValue="6" />
+                                </p:selectOneMenu>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="COMUNA" />
+                            </p:column>
+                            <p:column>                                
+                                <p:selectOneMenu 
+                                    id="IdNeighborhoodSuburb"
+                                    value="#{neighborhoodsVariableMB.neighborhoodSuburbId}" >                                     
+                                    <f:selectItems value="#{neighborhoodsVariableMB.communesList}"/>
+                                </p:selectOneMenu>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="POBLACION" />  
+                            </p:column>
+                            <p:column>                                
+                                <p:inputText id="IdPopulation" size="20" value="#{neighborhoodsVariableMB.popuation}" >
+                                    <f:ajax                                         
+                                        event="change"                                                                                                            
+                                        render="IdPopulation"
+                                        listener="#{neighborhoodsVariableMB.changePopulation}"/>                                            
+                                </p:inputText>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="CORREDOR" />  
+                            </p:column>
+                            <p:column>
+                                <p:selectOneMenu                                     
+                                    value="#{neighborhoodsVariableMB.neighborhoodCorridor}" >                                     
+                                    <f:selectItems value="#{neighborhoodsVariableMB.corridorsList}"/>
+                                </p:selectOneMenu>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="CUADRANTE(S)" />
+                            </p:column>
+                            <p:column > 
+                                Disponibles
+                                <h:inputText 
+                                    id="IdQuadrantsFilter"                                                                                         
+                                    value="#{neighborhoodsVariableMB.quadrantsFilter}"
+                                    size="20">
+                                    <f:ajax 
+                                        event="keyup"
+                                        listener="#{neighborhoodsVariableMB.changeQuadrantsFilter}"
+                                        render="IdCurrentQuadrants2"/>
+                                </h:inputText>
+                                <br/>
+                                <h:selectManyMenu 
+                                    id="IdCurrentQuadrants2"
+                                    value="#{neighborhoodsVariableMB.selectedAvailableQuadrants}"
+                                    style="height:120px; width: 200px;">                                    
+                                    <f:selectItems value="#{neighborhoodsVariableMB.availableQuadrants}"/>                                                                                        
+                                </h:selectManyMenu> 
+                            </p:column>
+                            <p:column>
+                                <br/>
+                                <br/>
+                                <p:commandButton 
+                                    value="+"                                    
+                                    actionListener="#{neighborhoodsVariableMB.addQuadrantInExistingNeighborhoodClick}"  
+                                    update="IdCurrentQuadrants2 IdAddQuadrants2 IdQuadrantsFilter"/> 
+                                <p:commandButton 
+                                    value="-"
+                                    actionListener="#{neighborhoodsVariableMB.removeQuadrantInExistingNeighborhoodClick}"  
+                                    update="IdCurrentQuadrants2 IdAddQuadrants2 IdQuadrantsFilter"/> 
+                            </p:column>
+                            <p:column>
+                                Agregados<br/>
+                                <h:selectManyMenu 
+                                    id="IdAddQuadrants2"
+                                    value="#{neighborhoodsVariableMB.selectedAvailableAddQuadrants}"
+                                    style="height:120px; width: 200px;">
+                                    <f:selectItems value="#{neighborhoodsVariableMB.availableAddQuadrants}"/>
+                                </h:selectManyMenu> 
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="GEOMETRIA"/>
+                            </p:column>
+                            <p:column colspan="3">                                
+                                <h:outputText 
+                                    id="IdCurrentGeomText" 
+                                    value="#{neighborhoodsVariableMB.geomText}"
+                                    escape="false"/>
+                                <p:fileUpload                                                                                 
+                                    fileUploadListener="#{neighborhoodsVariableMB.handleFileUpload}"
+                                    mode="advanced"                                           
+                                    cancelLabel="Cancelar"
+                                    uploadLabel="Subir"                                        
+                                    label="Archivo"
+                                    sizeLimit="50000000"
+                                    update=":IdForm1:message IdShowCurrentMapFile IdCurrentGeomText"
+                                    invalidFileMessage="Tipo de archivo no aceptado"
+                                    invalidSizeMessage="El tamaño del archivo debe ser inferior a 5MB"
+                                    allowTypes="/(\.|\/)(kml|txt)$/">                                        
+                                </p:fileUpload>
+                                <p:commandButton 
+                                    value="Visualizar Archivo"
+                                    id="IdShowCurrentMapFile"
+                                    disabled="#{neighborhoodsVariableMB.disabledShowGeomFile}"
+                                    oncomplete="paintMap('#{neighborhoodsVariableMB.nameGeomFile}'); dialogMap.show();"
+                                    update=""/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="4" styleClass="ui-widget-header">
+                                <p:commandButton 
+                                    value="Guardar" 
+                                    icon="ui-icon-disk"
+                                    oncomplete="dialogEdit.hide()"
+                                    actionListener="#{neighborhoodsVariableMB.updateRegistry}"
+                                    update=":IdForm1:IdSearchTable :IdForm1:IdControls :IdForm1:IdControls :IdForm1:message"/>
+                                <p:commandButton 
+                                    value="Cancelar" 
+                                    icon="ui-icon-close"
+                                    oncomplete="dialogEdit.hide()"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>                    
+                </p:dialog> 
+                <!-- DIALOGO ELIMINAR-->
+                <p:dialog                                                         
+                    id="IdDialogDelete"
+                    modal="true"
+                    resizable="false"
+                    header="ELIMINAR BARRIO" 
+                    widgetVar="dialogDelete"> 
+                    <p:panelGrid id="displayDelete">
+                        <p:row>  
+                            <p:column style="width: 200px; height: 80px; text-align: center; background: #fbef9a;">
+                                Confirma la Eliminacion de este registro?
+                            </p:column>
+                        </p:row>
+                        <p:row>  
+                            <p:column styleClass="ui-widget-header">
+                                <p:commandButton                                                           
+                                    oncomplete="dialogDelete.hide()"
+                                    actionListener="#{neighborhoodsVariableMB.deleteRegistry}"
+                                    value="Eliminar" 
+                                    update=":IdForm1:IdSearchTable :IdForm1:IdControls :IdForm1:message"/>   
+                                <p:commandButton
+                                    value="Cancelar" 
+                                    onclick="dialogDelete.hide();"/> 
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:dialog>   
+                <!-- DIALOGO MAPA-->
+                <p:dialog                                                         
+                    id="IdDialogMap"
+                    modal="true"
+                    resizable="false"
+                    header="Mapa" 
+                    widgetVar="dialogMap"
+                    height="550"
+                    width="650">                    
+                    <p:commandButton
+                        value="Cargar Geometría Seleccionada" 
+                        oncomplete="dialogMap.hide();"
+                        update=":IdForm2:displayNew :IdForm2:display"
+                        actionListener="#{neighborhoodsVariableMB.loadGeometrySelected}"/> 
+                    <br/>
+                    <div id="map" style="width: 625px; height: 515px;">
+                    </div>                    
+
+                </p:dialog>   
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
+

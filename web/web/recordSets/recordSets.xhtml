@@ -1,0 +1,542 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    <ui:composition template="../templates/layoutTemplate.xhtml">
+        <!--==================================================================-->
+        <!--========================CABECERA SCRIPTS==========================-->                    
+        <ui:define name="head">
+            <link href="../../resources/css/style.css" rel="stylesheet" type="text/css" />               
+            <script type="text/javascript">
+            </script> 
+        </ui:define>
+        <!--=================================================================-->
+        <!--================================TITULOS==========================-->
+        <ui:define name="titlePage">
+            SIGEODEP -  CONJUNTOS DE REGISTROS
+        </ui:define>
+        <ui:define name="title">
+            SIGEODEP -  CONJUNTOS DE REGISTROS
+        </ui:define>
+        <!--=================================================================-->
+        <!--==============================CONTENIDO==========================-->
+        <ui:define name="content">
+            <h:outputText 
+                value="No se puede mostrar esta sección por que no cuenta con los permisos suficientes"
+                style=" color: red;"
+                rendered="#{!loginMB.permissionAdministrator}"/> 
+            <h:form enctype="multipart/form-data" id="IdForm1" rendered="#{loginMB.permissionAdministrator}">
+                <!--===================================================================================-->
+                <p:growl id="message"  showDetail="true" sticky="true" autoUpdate="true" life="1000"  />                
+                <br/>
+                <p:panelGrid id="IdPanel1" style="position: absolute;  width: 750px;  margin-left: -375px; left: 50%;" >                            
+                    <p:row>  
+                        <p:column styleClass="ui-widget-header" style="text-align: center;">
+                            <h:outputLabel value="OBSERVATORIO DEL DELITO - ALCALDA DE PASTO"/><br/>  
+                            <h:outputLabel value="GESTION DE CONJUNTOS DE REGISTROS"/>  
+                        </p:column>                                       
+                    </p:row>
+                    <p:row>  
+                        <p:column>
+                            <p:tabView id="IdTabRecordSets">
+                                <p:tab title="CONJUNTOS">
+                                    <!-- ////////////////////////////////////////////////// -->
+                                    <br/>                            
+                                    <p:panelGrid style="width: 730px;">
+                                        <p:row>  
+                                            <p:column styleClass="ui-widget-header" colspan="5">
+                                                <h:outputLabel value="FILTRAR DATOS"/>
+                                            </p:column>                            
+                                        </p:row>
+                                        <p:row>  
+                                            <p:column styleClass="ui-widget-header ui-state-focus" colspan="1">
+                                                <h:outputLabel value="Variable"/>
+                                            </p:column>
+                                            <p:column colspan="1">
+                                                <p:selectOneMenu id="IdSearchCriteria" value="#{recordSetsMB.currentSearchCriteria}" > 
+
+                                                    <f:selectItem itemLabel="NOMBRE" itemValue="2" />
+                                                    <f:selectItem itemLabel="FICHA" itemValue="3" />
+                                                </p:selectOneMenu>
+                                            </p:column>                                                                        
+                                            <p:column styleClass="ui-widget-header ui-state-focus" colspan="1">
+                                                <h:outputLabel value="Valor"/>
+                                            </p:column>
+                                            <p:column>
+                                                <p:inputText 
+                                                    id="IdSearcValue"
+                                                    value="#{recordSetsMB.currentSearchValue}"/>
+                                            </p:column>
+                                            <p:column colspan="1" styleClass="ui-widget-header ui-state-focus">
+                                                <p:commandButton 
+                                                    value="Buscar" 
+                                                    icon="ui-icon-search"                                                
+                                                    actionListener="#{recordSetsMB.createDynamicTable}"
+                                                    update=":IdForm1:IdTabRecordSets:IdSearchTable :IdForm1:message :IdForm1:IdTabRecordSets:IdControls"/>                                                                        
+                                            </p:column>
+                                        </p:row>                        
+                                    </p:panelGrid>
+                                    <br/>
+                                    <p:dataTable 
+                                        id="IdSearchTable" var="rowX" 
+                                        value="#{recordSetsMB.rowDataTableList}" 
+                                        rowKey="#{rowX.column1}"  
+                                        selection="#{recordSetsMB.selectedRowsDataTable}" 
+                                        paginator="true"
+                                        rows="10" 
+                                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                        rowsPerPageTemplate="5,10,15,20,25,30"
+                                        paginatorPosition="bottom"                                
+                                        emptyMessage="Vacio"
+                                        scrollable="true"
+                                        scrollWidth="730"                                    
+                                        pageLinks="3"
+                                        selectionMode="multiple"
+                                        resizableColumns="true">                                
+                                        <p:ajax
+                                            event="rowSelect"
+                                            listener="#{recordSetsMB.load}"                                    
+                                            update=":IdForm1:IdTabRecordSets:IdControls :IdForm1:message :IdForm2:IdDialogDuplicate" />
+
+                                        <p:column headerText="CODIGO" width="100">  
+                                            #{rowX.column3}
+                                        </p:column>                                  
+                                        <p:column headerText="NOMBRE DEL CONJUNTO" width="475">  
+                                            #{rowX.column2}  
+                                        </p:column>                                  
+                                        <p:column headerText="FICHA" width="300">  
+                                            #{rowX.column4}  
+                                        </p:column>
+                                    </p:dataTable>                            
+                                    <br/>
+                                    <p:panelGrid id="IdControls" style="width: 730px;">
+                                        <p:row>  
+                                            <p:column styleClass="ui-widget-header" colspan="5">                                                
+                                                <p:commandButton 
+                                                    id="IdEdit" 
+                                                    value="Renombrar"
+                                                    oncomplete="dialogEdit.show()"                                            
+                                                    disabled="#{recordSetsMB.btnEditDisabled}"
+                                                    update=":IdForm2:IdDialogEdit :IdForm1:message"/>
+                                                <p:commandButton 
+                                                    id="IdRemove" 
+                                                    value="Eliminar"
+                                                    disabled="#{recordSetsMB.btnRemoveDisabled}"
+                                                    oncomplete="dialogDelete.show()"                                            
+                                                    update=":IdForm2:IdDialogDelete :IdForm1:message"/>                                                
+                                                <p:commandButton 
+                                                    id="IdView"                                                                                                
+                                                    disabled="#{recordSetsMB.btnViewDisabled}"
+                                                    value="Mostrar Datos"
+                                                    oncomplete="dialogView.show()"
+                                                    update=":IdForm2:IdDialogView :IdForm1:message"/>
+                                                <!--  -->
+                                                <p:commandButton 
+                                                    id="IdViewDuplicate"                                            
+                                                    value="Detectar duplicados"
+                                                    disabled="#{recordSetsMB.btnDuplicateDisabled}"
+                                                    oncomplete="dialogDuplicate.show()"
+                                                    update=":IdForm2:IdDialogView :IdForm1:message"/>                                        
+                                                <!--  -->
+                                                <p:commandButton 
+                                                    id="IdJoinSets"
+                                                    oncomplete="dialogJoin.show()"
+                                                    disabled="#{recordSetsMB.btnJoinDisabled}"
+                                                    value="Agrupar conjuntos"/>
+                                                <!-- disabled="# {recordSetsMB.btnJoinDisabled}" -->
+                                            </p:column>
+                                        </p:row>
+                                    </p:panelGrid>
+                                    <br/>
+                                    <!-- ////////////////////////////////////////////////// -->
+                                </p:tab>
+                                <p:tab title="AGRUPACIONES">
+                                    <!-- ////////////////////////////////////////////////// -->
+                                    <br/>                            
+                                    <p:panelGrid style="width: 730px;">
+                                        <p:row>  
+                                            <p:column styleClass="ui-widget-header" colspan="5">
+                                                <h:outputLabel value="FILTRAR DATOS"/>
+                                            </p:column>                            
+                                        </p:row>
+                                        <p:row>  
+                                            <p:column styleClass="ui-widget-header ui-state-focus" colspan="1">
+                                                <h:outputLabel value="Variable"/>
+                                            </p:column>
+                                            <p:column colspan="1">
+                                                <p:selectOneMenu value="#{recordSetsMB.currentSearchCriteria2}" >                                                     
+                                                    <f:selectItem itemLabel="NOMBRE CONJUNTO" itemValue="1" />
+                                                    <f:selectItem itemLabel="AGRUPADO EN" itemValue="2" />
+                                                </p:selectOneMenu>
+                                            </p:column>                                                                        
+                                            <p:column styleClass="ui-widget-header ui-state-focus" colspan="1">
+                                                <h:outputLabel value="Valor"/>
+                                            </p:column>
+                                            <p:column>
+                                                <p:inputText 
+                                                    value="#{recordSetsMB.currentSearchValue2}"/>
+                                            </p:column>
+                                            <p:column colspan="1" styleClass="ui-widget-header ui-state-focus">
+                                                <p:commandButton 
+                                                    value="Buscar" 
+                                                    icon="ui-icon-search"                                                
+                                                    actionListener="#{recordSetsMB.createDynamicTable2}"
+                                                    update=":IdForm1:IdTabRecordSets:IdSearchTable2 :IdForm1:message"/>                                                                        
+                                            </p:column>
+                                        </p:row>                        
+                                    </p:panelGrid>
+                                    <br/>
+                                    <p:dataTable 
+                                        id="IdSearchTable2" var="rowX" 
+                                        value="#{recordSetsMB.rowDataTableList2}" 
+                                        rowKey="#{rowX.column1}"  
+                                        selection="#{recordSetsMB.selectedRowsDataTable2}" 
+                                        paginator="true"
+                                        rows="10" 
+                                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                        rowsPerPageTemplate="5,10,15,20,25,30"
+                                        paginatorPosition="bottom"                                
+                                        emptyMessage="Vacio"
+                                        scrollable="true"
+                                        scrollWidth="730"                                    
+                                        pageLinks="3"
+                                        selectionMode="single"
+                                        resizableColumns="true">                                                                        
+                                        <!-- p:column headerText="CODIGO" width="90">  
+                                            # {rowX.column1}  
+                                        </p:column -->  
+                                        <p:column headerText="FECHA CREACION" width="150">  
+                                            #{rowX.column3}  
+                                        </p:column>                                  
+                                        <p:column headerText="NOMBRE CONJUNTO" width="256">  
+                                            #{rowX.column5}
+                                        </p:column>                                                                          
+                                        <p:column headerText="AGRUPADO EN" width="260">  
+                                            #{rowX.column2}  
+                                        </p:column>
+                                    </p:dataTable>                            
+                                    <br/>
+                                    <p:panelGrid style="width: 730px;">
+                                        <p:row>  
+                                            <p:column styleClass="ui-widget-header" colspan="5">
+                                                <p:commandButton
+                                                    value="Desagrupar"
+                                                    oncomplete="dialogUngroup.show()"/>
+                                            </p:column>
+                                        </p:row>
+                                    </p:panelGrid>
+                                    <br/>
+                                    <!-- ////////////////////////////////////////////////// -->
+                                </p:tab>
+                            </p:tabView>
+                        </p:column>                                       
+                    </p:row>
+                </p:panelGrid>
+
+            </h:form>
+        </ui:define>
+        <ui:define name="dialogs">
+            <h:form id="IdForm2">
+                <!-- DIALOGO COMBINAR-->
+                <p:dialog                                                         
+                    id="dialogUngroup"
+                    modal="true"
+                    resizable="false"
+                    header="DESAGRUPAR CONJUNTOS" 
+                    widgetVar="dialogUngroup"> 
+                    <br/>
+                    <p:inputTextarea 
+                        value="Confirma la desagrupación del conjunto seleccionados?" 
+                        readonly="true" 
+                        style="text-align: center; background: #ebf4fb; font-size: 13px; font-weight: 900; width: 250px; height: 68px;"/>
+                    <br/>
+                    <p:commandButton                                                           
+                        oncomplete="dialogUngroup.hide()"
+                        actionListener="#{recordSetsMB.ungroupTags}"                        
+                        value="Desagrupar"                        
+                        update=":IdForm1:IdTabRecordSets:IdSearchTable :IdForm1:IdTabRecordSets:IdSearchTable2 :IdForm1:message"/>                       
+                </p:dialog>
+                <!-- DIALOGO COMBINAR-->
+                <p:dialog                                                         
+                    id="IdDialogJoin"
+                    modal="true"
+                    resizable="false"
+                    header="AGRUPACION DE CONJUNTOS" 
+                    widgetVar="dialogJoin"> 
+                    <br/>
+                    <p:inputTextarea 
+                        value="Confirma que los conjuntos seleccionados formen uno solo?" 
+                        readonly="true" 
+                        style="text-align: center; background: #ebf4fb; font-size: 13px; font-weight: 900; width: 250px; height: 68px;"/>
+                    <br/>
+                    <p:commandButton                                                           
+                        oncomplete="dialogJoin.hide()"
+                        actionListener="#{recordSetsMB.joinTags}"                        
+                        value="Agrupar"                        
+                        update=":IdForm1:IdTabRecordSets:IdSearchTable :IdForm1:IdTabRecordSets:IdSearchTable2 :IdForm1:IdTabRecordSets:IdControls :IdForm1:message"/>                       
+                </p:dialog>
+                <!-- DIALOGO NUEVO-->
+                <p:dialog                                                         
+                    id="IdDialogNew"
+                    modal="true"
+                    resizable="false"
+                    header="NUEVO CONJUNTO" 
+                    widgetVar="dialogNew"> 
+                    <p:panelGrid id="displayNew">                          
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="NOMBRE:" />
+                            </p:column>
+                            <p:column>                                
+                                <p:inputText size="40" value="#{recordSetsMB.groupName}" /> 
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="FICHA:" />
+                            </p:column>
+                            <p:column>                                
+                                <h:selectOneMenu 
+                                    value="#{recordSetsMB.formName}"> 
+                                    <f:selectItems value="#{recordSetsMB.forms}"/>                                    
+                                </h:selectOneMenu>
+                            </p:column>
+                        </p:row>                        
+                        <p:row>
+                            <p:column colspan="2" styleClass="ui-widget-header">
+                                <p:commandButton                                                           
+                                    oncomplete="dialogNew.hide()"                                    
+                                    actionListener="#{recordSetsMB.saveRegistry}"
+                                    value="Crear"                                     
+                                    update=":IdForm1:IdTabRecordSets:IdSearchTable :IdForm1:IdTabRecordSets:IdControls :IdForm1:message"/>                       
+                                <p:commandButton
+                                    value="Cancelar" 
+                                    onclick="dialogNew.hide()"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid> 
+                </p:dialog>  
+                <!-- DIALOGO EDITAR-->
+                <p:dialog                                                         
+                    id="IdDialogEdit"
+                    modal="true"
+                    resizable="false"
+                    header="RENOMBRAR CONJUNTO" 
+                    widgetVar="dialogEdit"> 
+                    <p:panelGrid >                          
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="NOMBRE:" />
+                            </p:column>
+                            <p:column>                                
+                                <p:inputText size="40" value="#{recordSetsMB.editGroupName}" /> 
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="FICHA:" />
+                            </p:column>
+                            <p:column>                                
+                                <h:selectOneMenu 
+                                    value="#{recordSetsMB.editFormName}"
+                                    disabled="true"> 
+                                    <f:selectItems value="#{recordSetsMB.forms}"/>                                    
+                                </h:selectOneMenu>                                
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="2" styleClass="ui-widget-header">
+                                <p:commandButton                                                           
+                                    oncomplete="dialogEdit.hide()"
+                                    actionListener="#{recordSetsMB.updateRegistry}"
+                                    value="Modificar"                                     
+                                    update=":IdForm1:IdTabRecordSets:IdSearchTable :IdForm1:IdTabRecordSets:IdControls :IdForm1:message"/>                       
+                                <p:commandButton
+                                    value="Cancelar" 
+                                    onclick="dialogEdit.hide()"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>                     
+                </p:dialog>                  
+                <p:dialog                                                         
+                    id="IdDialogView"
+                    modal="true"
+                    resizable="false"
+                    header="Rango a mostrar" 
+                    widgetVar="dialogView"> 
+                    <p:panelGrid >                          
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="Fecha Inicial:" />                                
+                            </p:column>
+                            <p:column>                                                 
+                                <p:calendar 
+                                    value="#{recordSetsMB.initialDateView}" 
+                                    converterMessage="La fecha inicial no es válida, por favor corríjala." 
+                                    showOn="button" 
+                                    pattern="dd/MM/yyyy"/> 
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="Fecha Final:" />
+                            </p:column>
+                            <p:column>                                
+                                <p:calendar 
+                                    value="#{recordSetsMB.endDateView}" 
+                                    converterMessage="La fecha final no es válida, por favor corríjala." 
+                                    showOn="button"                                     
+                                    pattern="dd/MM/yyyy"/> 
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="2" styleClass="ui-widget-header">
+                                <p:commandButton 
+                                    action="#{recordSetsMB.openRecordSets}"
+                                    actionListener="#{recordSetsMB.selectTagClick}"                                    
+                                    value="Mostrar Datos"/>
+                                <p:commandButton
+                                    value="Cancelar" 
+                                    onclick="dialogView.hide()"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>                     
+                </p:dialog>  
+                <!-- DIALOGO DETECTAR DUPLICADOS-->
+                <p:dialog                          
+                    id="IdDialogDuplicate"
+                    modal="true"
+                    resizable="false"
+                    header="Rango a detectar duplicados" 
+                    widgetVar="dialogDuplicate"> 
+                    <p:panelGrid >                          
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="Numero de registros:" />                                
+                            </p:column>
+                            <p:column>  
+                                <p:inputTextarea 
+                                    id="sizeData"
+                                    value="#{recordSetsMB.sizeData}" 
+                                    readonly="true" 
+                                    style="text-align: match-parent; background: #ebf4fb; font-size: 13px; font-weight: 900; height: 60px; width: 200px;"/>                                
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="Fecha Inicial:" />                                
+                            </p:column>
+                            <p:column>                                                 
+                                <p:calendar 
+                                    value="#{recordSetsMB.initialDateDuplicate}" 
+                                    converterMessage="La fecha inicial no es válida, por favor corríjala."                                     
+                                    showOn="button" 
+                                    pattern="dd/MM/yyyy">
+                                    <f:ajax
+                                        event="change"
+                                        listener="#{recordSetsMB.determineSizeData}"                                    
+                                        render="sizeData"/>
+                                </p:calendar> 
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="Fecha Final:" />
+                            </p:column>
+                            <p:column>                                
+                                <p:calendar 
+                                    value="#{recordSetsMB.endDateDuplicate}" 
+                                    converterMessage="La fecha final no es válida, por favor corríjala." 
+                                    showOn="button"                                     
+                                    pattern="dd/MM/yyyy"> 
+                                    <f:ajax
+                                        event="change"
+                                        listener="#{recordSetsMB.determineSizeData}"                                    
+                                        render="sizeData"/>
+                                </p:calendar>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="2">
+                                <p:progressBar 
+                                    id="IdProgresValidate" 
+                                    interval="500" 
+                                    widgetVar="pbAjaxValidate" 
+                                    ajax="true" 
+                                    value="#{recordSetsMB.progress}" 
+                                    labelTemplate="{value}%">                                              
+                                    <p:ajax 
+                                        event="complete" 
+                                        listener="#{recordSetsMB.onCompleteLoad}" 
+                                        update="IdProgresValidate"/>  
+                                </p:progressBar>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="2" styleClass="ui-widget-header">                                
+                                <p:commandButton
+                                    action="#{recordSetsMB.openDuplicateSets}"
+                                    actionListener="#{recordSetsMB.detectDuplicateClick}"                                    
+                                    onclick="pbAjaxValidate.start();
+                                        btnStarDetection.disable();
+                                        pageInactive();"
+                                    oncomplete="btnStarDetection.enable(); pageActive();"
+                                    widgetVar="btnStarDetection"
+                                    value="Iniciar detección"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>                     
+                </p:dialog>  
+                <!-- DIALOGO ELIMINAR-->
+                <p:dialog                                                         
+                    id="IdDialogDelete"
+                    modal="true"
+                    resizable="false"
+                    header="ELIMINACION DE CONJUNTOS" 
+                    widgetVar="dialogDelete"> 
+                    <br/>
+                    <p:inputTextarea 
+                        value="                                                       Confirma la eliminación del o los conjuntos seleccionados?" 
+                        readonly="true" 
+                        style="text-align: center; background: #ebf4fb; font-size: 13px; font-weight: 900; width: 250px; height: 68px;"/>
+                    <br/>
+                    <br/>
+                    <p:progressBar 
+                        id="IdProgresDelete" 
+                        interval="500" 
+                        widgetVar="pbAjaxDelete" 
+                        ajax="true" 
+                        value="#{recordSetsMB.progressDelete}" 
+                        labelTemplate="{value}%">          
+                        <p:ajax 
+                            event="complete" 
+                            listener="#{recordSetsMB.onCompleteDelete}" 
+                            update=":IdForm1:IdTabRecordSets:IdSearchTable :IdForm1:IdTabRecordSets:IdSearchTable2 :IdForm1:IdTabRecordSets:IdControls :IdForm1:message IdProgresDelete"/>  
+                    </p:progressBar>
+                    <br/>
+
+                    <p:commandButton                                                           
+                        oncomplete="dialogDelete.hide(); pageActive();"
+                        actionListener="#{recordSetsMB.deleteTag}"
+                        onclick="pbAjaxDelete.start();
+                            pageInactive();
+                            btnDelete.disable();
+                            btnCancelDelete.disable();"  
+                        value="Eliminar"                        
+                        widgetVar="btnDelete"/>   
+                    <p:commandButton
+                        widgetVar="btnCancelDelete"
+                        value="Cancelar" 
+                        onclick="dialogDelete.hide()"
+                        /> 
+                </p:dialog>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
+
+
+

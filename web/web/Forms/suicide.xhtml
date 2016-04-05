@@ -1,0 +1,1155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+
+    <ui:composition template="../templates/layoutTemplate.xhtml">
+        <!--==================================================================-->
+        <!--========================CABECERA SCRIPTS==========================-->                    
+        <ui:define name="head">
+            <link href="../../resources/css/style.css" rel="stylesheet" type="text/css" />               
+            <script type="text/javascript">  
+                $('*').live("keypress", function(e) 
+                {    
+                    if (e.keyCode === 13) {                        
+                        return false;
+                    }
+                });
+                function goNextFocus(current, next, len)
+                {
+                    if((current.value.length) === len){
+                        next.focus();
+                        next.select();
+                    }
+                }
+                function goFirstFocus()
+                {
+                    document.getElementById('IdForm1:IdCode').focus();
+                }
+            </script> 
+        </ui:define>
+        <!--=================================================================-->
+        <!--================================TITULOS==========================-->
+        <ui:define name="titlePage">
+            SIGEODEP - FICHA PARA SUICIDIOS
+        </ui:define>
+        <ui:define name="title">
+            SIGEODEP - FICHA PARA SUICIDIOS
+        </ui:define>
+        <!--=================================================================-->
+        <!--==============================CONTENIDO==========================-->
+        <ui:define name="content">
+            <h:outputText 
+                value="No se puede mostrar esta sección por que no cuenta con los permisos suficientes"
+                style=" color: red;"
+                rendered="#{!loginMB.permissionFatal}"/> 
+            <h:form enctype="multipart/form-data" id="IdForm1" rendered="#{loginMB.permissionFatal}"> 
+                <p:growl id="message"  showDetail="true" sticky="true" />
+                <!--================================== FILTRADO DE REGISTROS ===========================================-->
+                <br/>
+                <p:panelGrid style="position: absolute;  margin-left: -375px; left: 50%;" >
+                    <p:row>  
+                        <p:column styleClass="ui-widget-header">
+                            <h:outputLabel value="Conjunto"/>    
+                        </p:column>                                    
+                        <p:column>
+                            <h:selectOneMenu id="IdRecordSets" value="#{suicideMB.currentTag}" > 
+                                <f:selectItems value="#{suicideMB.tags}"/>
+                                <f:ajax 
+                                    event="change"
+                                    listener="#{suicideMB.changeTag}"
+                                    render="@form"/>
+                            </h:selectOneMenu>
+                        </p:column>                                    
+                    </p:row>
+                </p:panelGrid>
+                <!--===================================================================================-->
+                <br/>
+                <p:panelGrid style="position: absolute; width: 750px; margin-top: 30px;  margin-left: -375px; left: 50%;" >
+                    <p:row>  
+                        <p:column styleClass="ui-widget-header" style="text-align: center;">
+                            <h:outputLabel value="ALCALDIA DE PASTO - SECRETERIA DE GOBIERNO"/><br/>  
+                            <h:outputLabel value="SUBSECRETARIA DE JUSTICIA Y SEGURIDAD - OBSERVATORIO DEL DELITO"/>  <br/>
+                            <h:outputLabel value="FICHA PARA  SUICIDIOS"/>                              
+                        </p:column>                                       
+                    </p:row>
+                    <p:row>  
+                        <p:column style="background-color: #ebf4fb;">                            
+                            <br/>
+                            <!--=====================================INFORMACION DEL HECHO==============================================-->
+                            <p:panelGrid> 
+                                <p:row>  
+                                    <p:column styleClass="ui-widget-header" style="text-align: center;" colspan="2">
+                                        <h:outputLabel value="INFORMACION DEL HECHO"/>                                          
+                                    </p:column>  
+                                </p:row>
+                                <p:row>  
+                                    <p:column>CODIGO:</p:column>
+                                    <p:column >
+                                        <h:inputText                                            
+                                            value="#{suicideMB.currentCode}"
+                                            id="IdCode" >  
+                                            <f:ajax 
+                                                event="change"
+                                                listener="#{suicideMB.changeForm}"/>
+                                            <f:ajax 
+                                                event="blur"                                                
+                                                render="IdControls message"/>
+                                        </h:inputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="2">
+                                        <p:panelGrid>                            
+                                            <p:row>  
+                                                <p:column>
+                                                    FECHA HECHO:
+                                                </p:column>
+                                                <p:column>
+                                                    <p:panelGrid> 
+                                                        <p:row>  
+                                                            <p:column>
+                                                                DIA:  
+                                                            </p:column>
+                                                            <p:column>
+                                                                MES:  
+                                                            </p:column>
+                                                            <p:column>
+                                                                AÑO:
+                                                            </p:column>
+                                                        </p:row>
+                                                        <p:row>  
+                                                            <p:column>
+                                                                <h:inputText 
+                                                                    id="IdDayEvent"
+                                                                    disabled="#{suicideMB.currentDayEventDisabled}" 
+                                                                    value="#{suicideMB.currentDayEvent}" 
+                                                                    onkeyup="goNextFocus(this, document.getElementById('IdForm1:IdMonthEvent'), 2);"
+                                                                    maxlength="2"
+                                                                    size="2">                                                                      
+                                                                    <f:ajax 
+                                                                        event="blur"  
+                                                                        listener="#{suicideMB.changeDayEvent}"
+                                                                        render="IdDayEvent IdDateEvent IdWeekdayEvent IdControls message"/>
+                                                                    <f:ajax 
+                                                                        event="change"
+                                                                        listener="#{suicideMB.changeForm}"/>
+                                                                </h:inputText>  
+                                                            </p:column>
+                                                            <p:column>
+                                                                <h:inputText 
+                                                                    id="IdMonthEvent"
+                                                                    disabled="#{suicideMB.currentMonthEventDisabled}"                                                                     
+                                                                    value="#{suicideMB.currentMonthEvent}" 
+                                                                    onkeyup="goNextFocus(this, document.getElementById('IdForm1:IdYearEvent'), 2);"
+                                                                    size="2" 
+                                                                    maxlength="2">
+                                                                    <f:ajax 
+                                                                        event="blur"  
+                                                                        listener="#{suicideMB.changeMonthEvent}"
+                                                                        render="IdMonthEvent IdDateEvent IdWeekdayEvent IdControls message"/> 
+                                                                    <f:ajax 
+                                                                        event="change"
+                                                                        listener="#{suicideMB.changeForm}"/>
+                                                                </h:inputText>   
+                                                            </p:column>
+                                                            <p:column>
+                                                                <h:inputText 
+                                                                    id="IdYearEvent"
+                                                                    disabled="#{suicideMB.currentYearEventDisabled}" 
+                                                                    value="#{suicideMB.currentYearEvent}" 
+                                                                    onkeyup="goNextFocus(this, document.getElementById('IdForm1:IdHourEvent'), 4);"
+                                                                    size="5" 
+                                                                    maxlength="4">
+                                                                    <f:ajax 
+                                                                        event="blur"  
+                                                                        listener="#{suicideMB.changeYearEvent}"
+                                                                        render="IdYearEvent IdDateEvent IdWeekdayEvent IdControls message"/> 
+                                                                    <f:ajax 
+                                                                        event="change"
+                                                                        listener="#{suicideMB.changeForm}"/>
+                                                                </h:inputText>
+                                                            </p:column>
+                                                        </p:row>
+                                                    </p:panelGrid>
+                                                </p:column>
+                                                <p:column >
+                                                    <p:panelGrid> 
+                                                        <p:row>  
+                                                            <p:column>
+                                                                FECHA HECHO<br/>(dd/mm/yyyy):  
+                                                            </p:column>
+                                                            <p:column>
+                                                                <h:inputText 
+                                                                    disabled="true" 
+                                                                    id="IdDateEvent" 
+                                                                    value="#{suicideMB.currentDateEvent}"/> 
+                                                            </p:column>
+                                                        </p:row>
+                                                        <p:row>  
+                                                            <p:column>
+                                                                DIA EN SEMANA  
+                                                            </p:column>
+                                                            <p:column>
+                                                                <h:inputText 
+                                                                    disabled="true" 
+                                                                    id="IdWeekdayEvent" 
+                                                                    value="#{suicideMB.currentWeekdayEvent}" 
+                                                                    size="9"/> 
+                                                            </p:column>
+                                                        </p:row>
+                                                    </p:panelGrid>
+                                                </p:column>
+                                            </p:row>                                            
+
+                                            <p:row>                                                
+                                                <p:column>
+                                                    HORA HECHO:
+                                                </p:column>
+                                                <p:column>
+                                                    <p:panelGrid> 
+                                                        <p:row>  
+                                                            <p:column>
+                                                                HORAS:  
+                                                            </p:column>
+                                                            <p:column>
+                                                                MINUTOS:  
+                                                            </p:column>
+                                                            <p:column>
+                                                                AMPM:
+                                                            </p:column>
+                                                        </p:row>                                            
+                                                        <p:row>                                                
+                                                            <p:column>
+                                                                <h:inputText 
+                                                                    id="IdHourEvent"
+                                                                    disabled="#{suicideMB.currentHourEventDisabled}" 
+                                                                    value="#{suicideMB.currentHourEvent}" 
+                                                                    onkeyup="goNextFocus(this, document.getElementById('IdForm1:IdMinuteEvent'), 2);"
+                                                                    maxlength="2"
+                                                                    size="2">
+                                                                    <f:ajax 
+                                                                        event="blur"  
+                                                                        listener="#{suicideMB.changeHourEvent}"
+                                                                        render="IdHourEvent IdTimeEvent IdControls message"/>   
+                                                                    <f:ajax 
+                                                                        event="change"
+                                                                        listener="#{suicideMB.changeForm}"/>
+                                                                </h:inputText>
+                                                            </p:column>
+                                                            <p:column>
+                                                                <h:inputText 
+                                                                    id="IdMinuteEvent"
+                                                                    disabled="#{suicideMB.currentMinuteEventDisabled}" 
+                                                                    value="#{suicideMB.currentMinuteEvent}" 
+                                                                    onkeyup="goNextFocus(this, document.getElementById('IdForm1:IdAmPmEvent'), 2);"
+                                                                    maxlength="2"
+                                                                    size="2">
+                                                                    <f:ajax 
+                                                                        event="blur"  
+                                                                        listener="#{suicideMB.changeMinuteEvent}"
+                                                                        render="IdMinuteEvent IdTimeEvent IdControls message"/> 
+                                                                    <f:ajax 
+                                                                        event="change"
+                                                                        listener="#{suicideMB.changeForm}"/>
+                                                                </h:inputText> 
+                                                            </p:column>
+                                                            <p:column>
+                                                                <h:selectOneMenu 
+                                                                    id="IdAmPmEvent"
+                                                                    disabled="#{suicideMB.currentAmPmEventDisabled}"
+                                                                    value="#{suicideMB.currentAmPmEvent}" >                                                                     
+                                                                    <f:selectItem itemLabel="AM" itemValue="AM" />  
+                                                                    <f:selectItem itemLabel="PM" itemValue="PM" />
+                                                                    <f:selectItem itemLabel="SIN DATO" itemValue="SIN DATO" />
+                                                                    <f:ajax 
+                                                                        event="change"                                                                                                            
+                                                                        render="IdTimeEvent IdControls message IdMinuteEvent IdHourEvent"
+                                                                        listener="#{suicideMB.changeAmPmEvent}"/>
+                                                                </h:selectOneMenu>
+                                                            </p:column>
+                                                        </p:row> 
+                                                    </p:panelGrid>
+                                                </p:column>
+                                                <p:column>
+                                                    HORA MILITAR HECHO:&nbsp;                                                    
+                                                    <h:inputText 
+                                                        id="IdTimeEvent" 
+                                                        disabled="true" 
+                                                        value="#{suicideMB.currentMilitaryHourEvent}" 
+                                                        maxlength="4" 
+                                                        size="4"/>
+                                                </p:column>
+                                            </p:row>
+                                        </p:panelGrid>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <br/>
+                            <!--=====================================LUGAR DE OCURRENCIA DE LOS HECHOS==============================================-->
+                            <p:panelGrid>  
+                                <p:row>  
+                                    <p:column styleClass="ui-widget-header" style="text-align: center;" colspan="2">
+                                        <h:outputLabel value="LUGAR DE OCURRENCIA DE LOS HECHOS"/>                                          
+                                    </p:column>  
+                                </p:row>
+                                <p:row>  
+                                    <p:column>
+                                        <h:outputLabel value="DIRECCION:   "/>   
+                                    </p:column>
+                                    <p:column>                                        
+                                        <h:inputText 
+                                            value="#{suicideMB.currentDirectionEvent}" 
+                                            size="40">
+                                            <f:ajax 
+                                                event="change"
+                                                listener="#{suicideMB.changeForm}"/>
+                                            <f:ajax 
+                                                event="blur"                                                
+                                                render="IdControls message"/>
+                                        </h:inputText>
+                                    </p:column>   
+                                </p:row>
+                                <p:row>  
+                                    <p:column>BARRIO / VEREDA:&nbsp; </p:column>
+                                    <p:column>
+                                        <p:autoComplete 
+                                            value="#{suicideMB.currentNeighborhoodEvent}"                                                                    
+                                            completeMethod="#{suicideMB.suggestNeighborhoods}" 
+                                            forceSelection="true"
+                                            size="40" >                                                        
+                                            <p:ajax 
+                                                event="itemSelect" 
+                                                listener="#{suicideMB.changeNeighborhoodEvent}" 
+                                                update="IdNeighborhoodsEventCode IdArea IdControls message IdQuadrant" process="@this"/>                                            
+                                            <f:ajax 
+                                                event="change"
+                                                listener="#{suicideMB.changeForm}"/>
+                                        </p:autoComplete>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>CODIGO BARRIO:&nbsp;  </p:column>
+                                    <p:column>
+                                        <h:inputText 
+                                            id="IdNeighborhoodsEventCode"
+                                            disabled="true"
+                                            value="#{suicideMB.currentNeighborhoodEventCode}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>CUADRANTE:&nbsp;  </p:column>
+                                    <p:column>
+                                        <h:selectOneMenu
+                                            id="IdQuadrant"
+                                            value="#{suicideMB.currentQuadrantEvent}"> 
+                                            <f:selectItems value="#{suicideMB.quadrantsEvent}"/>
+                                            <f:ajax 
+                                                event="change"                                                                                                            
+                                                render="IdControls message"
+                                                listener="#{suicideMB.changeForm}"/>
+                                        </h:selectOneMenu>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>AREA DEL HECHO:&nbsp;  </p:column>
+                                    <p:column>
+                                        <h:selectOneMenu 
+                                            id="IdArea"
+                                            value="#{suicideMB.currentArea}" 
+                                            disabled="true" > 
+                                            <f:selectItems value="#{suicideMB.areas}"/>
+
+                                        </h:selectOneMenu>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>CLASE DEL LUGAR DE LOS HECHOS:&nbsp;  </p:column>
+                                    <p:column>
+                                        <h:selectOneMenu value="#{suicideMB.currentPlace}" > 
+                                            <f:selectItems value="#{suicideMB.places}"/>
+                                            <f:ajax 
+                                                event="change"                                                                                                            
+                                                render="IdControls message"
+                                                listener="#{suicideMB.changeForm}"/>
+                                        </h:selectOneMenu>
+                                    </p:column>
+                                </p:row>                                
+                                <p:row>
+                                    <p:column>NUMERO DE VICTIMAS FATALES EN EL MISMO HECHO:&nbsp;  </p:column>
+                                    <p:column>
+
+                                        <h:inputText 
+                                            id="IdNumberVictims"
+                                            value="#{suicideMB.currentNumberVictims}" >
+                                            <f:ajax 
+                                                event="blur"  
+                                                listener="#{suicideMB.changeNumberVictims}"
+                                                render="IdNumberVictims IdControls message"/> 
+                                            <f:ajax 
+                                                event="change"
+                                                listener="#{suicideMB.changeForm}"/>
+                                        </h:inputText>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <br/>
+                            <!--=====================================INFORMACION DE LA VICTIMA==============================================-->
+                            <p:panelGrid>  
+                                <p:row>  
+                                    <p:column styleClass="ui-widget-header" style="text-align: center;" colspan="2">
+                                        <h:outputLabel value="INFORMACION DE LA VICTIMA"/>                                          
+                                    </p:column>  
+                                </p:row>
+                                <p:row>  
+                                    <p:column>
+                                        <h:outputLabel value="NOMBRES Y APELLIDOS"/>   
+                                    </p:column>
+                                    <p:column>                                        
+                                        <h:inputText 
+                                            id="IdName"
+                                            value="#{suicideMB.currentName}" 
+                                            size="60">
+                                            <f:ajax 
+                                                event="change"
+                                                listener="#{suicideMB.changeForm}"/>
+                                            <f:ajax 
+                                                event="blur"                       
+                                                render="IdControls message"/> 
+                                        </h:inputText>
+                                    </p:column>   
+                                </p:row>
+                                <!--p:row>
+                                    <p:column>
+                                        <h:outputLabel value="APELLIDOS:   "/>                                          
+                                    </p:column>
+                                    <p:column>
+                                        <h:inputText 
+                                            id="IdSurname"
+                                            value="{suicideMB.currentSurname}" 
+                                            size="60">
+                                            <f:ajax 
+                                                event="change"
+                                                listener="{suicideMB.changeForm}"/>
+                                            <f:ajax 
+                                                event="blur"                       
+                                                render="IdControls message"/> 
+                                        </h:inputText>                                         
+                                    </p:column>  
+                                </p:row-->
+                                <p:row>
+                                    <p:column>
+                                        <h:outputLabel value="SEXO:   "/>    
+                                    </p:column>
+                                    <p:column>                                        
+                                        <h:selectOneMenu value="#{suicideMB.currentGender}" > 
+                                            <f:selectItems value="#{suicideMB.genders}"/>
+                                            <f:ajax 
+                                                event="change"                                                                                                            
+                                                render="IdControls message"
+                                                listener="#{suicideMB.changeForm}"/>
+                                        </h:selectOneMenu>                                        
+                                    </p:column>
+                                </p:row>
+                                <p:row>  
+                                    <p:column >
+                                        <h:outputLabel value="TIPO EDAD:   "/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:selectOneMenu value="#{suicideMB.currentMeasureOfAge}" > 
+                                            <f:selectItems value="#{suicideMB.measuresOfAge}"/>
+                                            <f:ajax 
+                                                event="change"                                            
+                                                listener="#{suicideMB.changeMeasuresOfAge}" 
+                                                render="IdValueAge IdControls message"/>
+                                        </h:selectOneMenu>                                        
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column  >
+                                        <h:outputLabel value="EDAD CANTIDAD:   "/>                                          
+                                    </p:column>
+                                    <p:column>                                        
+                                        <h:inputText 
+                                            id="IdValueAge"
+                                            value="#{suicideMB.currentAge}" 
+                                            disabled="#{suicideMB.valueAgeDisabled}" 
+                                            size="3">
+                                            <f:ajax 
+                                                event="blur"  
+                                                listener="#{suicideMB.changeValueAge}"
+                                                render="IdValueAge IdControls message"/> 
+                                            <f:ajax 
+                                                event="change"
+                                                listener="#{suicideMB.changeForm}"/>
+                                        </h:inputText>
+                                    </p:column>                                                                                             
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <h:outputLabel value="OCUPACION:   "/>                                          
+                                    </p:column>
+                                    <p:column>                                        
+                                        <p:autoComplete                                                                                                                 
+                                            id="IdJob"
+                                            value="#{suicideMB.currentJob}"                                                                    
+                                            completeMethod="#{suicideMB.suggestJobs}" 
+                                            size="105" 
+                                            forceSelection="true">  
+                                            <p:ajax 
+                                                event="itemSelect" 
+                                                listener="#{suicideMB.changeForm}" 
+                                                update="IdControls" 
+                                                process="@this"/>
+                                        </p:autoComplete>
+                                        <!--h:selectOneMenu value="# {suicideMB.currentJob}" > 
+                                            <f:selectItems value="#  {suicideMB.jobs}"/>
+                                            <f:ajax 
+                                                event="change"                                                                                                            
+                                                render="IdControls message"
+                                                listener="# {suicideMB.changeForm}"/>
+                                        </h:selectOneMenu-->
+                                    </p:column>
+
+                                </p:row>
+                                <p:row>  
+                                    <p:column>
+                                        <h:outputLabel value="TIPO DE IDENTIFICACION:   "/>                                          
+                                    </p:column>
+                                    <p:column>                                        
+                                        <h:selectOneMenu 
+                                            value="#{suicideMB.currentIdentification}" 
+                                            id="IdIdentificationType"> 
+                                            <f:selectItems value="#{suicideMB.identifications}"/>
+                                            <f:ajax 
+                                                event="change"                                                                                                            
+                                                render="IdControls message IdIdentificationNumber IdStranger"
+                                                listener="#{suicideMB.changeIdentificationType}"/>
+                                        </h:selectOneMenu>
+                                    </p:column>
+                                </p:row>
+                                <p:row>  
+                                    <p:column>
+                                        <h:outputLabel value="NUMERO DE IDENTIFICACION:   "/>                                          
+                                    </p:column>
+                                    <p:column>
+                                        <h:inputText 
+                                            value="#{suicideMB.currentIdentificationNumber}"
+                                            disabled="#{suicideMB.identificationNumberDisabled}"
+                                            id="IdIdentificationNumber">
+                                            <f:ajax 
+                                                event="change"
+                                                listener="#{suicideMB.changeForm}"/>
+                                            <f:ajax 
+                                                event="blur"                                                
+                                                render="IdControls message"/>
+                                        </h:inputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>  
+                                    <p:column>EXTRANJERO:&nbsp;</p:column>
+                                    <p:column>
+                                        <h:selectBooleanCheckbox 
+                                            value="#{suicideMB.stranger}"
+                                            disabled="#{suicideMB.strangerDisabled}"
+                                            id="IdStranger">
+                                            <f:ajax 
+                                                event="change"
+                                                listener="#{suicideMB.changeStranger}"
+                                                render="IdControls IdDepartamentHome IdMunicipalitieList IdNeighborhoodHomeName IdMunicipalitiesHomeCode"/>
+                                        </h:selectBooleanCheckbox>
+                                    </p:column>
+                                </p:row>
+                                <p:row>  
+                                    <p:column>DEPARTAMENTO DE RESIDENCIA:&nbsp;</p:column>
+                                    <p:column>
+                                        <h:selectOneMenu 
+                                            id="IdDepartamentHome" 
+                                            disabled="#{suicideMB.currentDepartamentHomeDisabled}"
+                                            value="#{suicideMB.currentDepartamentHome}" > 
+                                            <f:selectItems value="#{suicideMB.homeDepartaments}"/>
+                                            <f:ajax 
+                                                event="change"                                                            
+                                                listener="#{suicideMB.changeDepartamentHome}"
+                                                render="IdMunicipalitieList IdNeighborhoodHomeName IdNeighborhoodsHomeCode IdControls message"/>
+                                        </h:selectOneMenu>
+                                    </p:column>
+                                </p:row>
+                                <p:row>  
+                                    <p:column>MUNICIPIO DE  RESIDENCIA:&nbsp;</p:column>
+                                    <p:column>
+                                        <h:selectOneMenu 
+                                            id="IdMunicipalitieList"
+                                            disabled="#{suicideMB.currentMunicipalitieDisabled}"
+                                            value="#{suicideMB.currentMunicipalitie}"  > 
+                                            <f:selectItems value="#{suicideMB.municipalities}"/>
+                                            <f:ajax 
+                                                event="change"   							    
+                                                listener="#{suicideMB.changeMunicipalitieHome}"
+                                                render="IdMunicipalitiesHomeCode IdNeighborhoodHomeName IdNeighborhoodsHomeCode IdControls message"/>                                        
+                                        </h:selectOneMenu>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>CODIGO MUNICIPIO:&nbsp;</p:column>
+                                    <p:column>
+                                        <h:inputText 
+                                            id="IdMunicipalitiesHomeCode"                                                        
+                                            disabled="true"
+                                            value="#{suicideMB.currentMunicipalitie}"/>
+
+                                    </p:column>
+                                </p:row>
+                                <p:row>  
+                                    <p:column>BARRIO / VEREDA:&nbsp; </p:column>
+                                    <p:column>                                        
+                                        <p:autoComplete 
+                                            id="IdNeighborhoodHomeName"                                                        
+                                            value="#{suicideMB.currentNeighborhoodHome}"                                                                    
+                                            completeMethod="#{suicideMB.suggestNeighborhoods}" 
+                                            disabled="#{suicideMB.neighborhoodHomeNameDisabled}"
+                                            size="40" 
+                                            forceSelection="true">                                                        
+                                            <p:ajax 
+                                                event="itemSelect" 
+                                                listener="#{suicideMB.changeNeighborhoodHomeName}" 
+                                                update="IdNeighborhoodsHomeCode IdControls message" process="@this"/>                                            
+                                            <f:ajax 
+                                                event="change"
+                                                listener="#{suicideMB.changeForm}"/>
+                                        </p:autoComplete>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>CODIGO BARRIO:&nbsp;  </p:column>
+                                    <p:column>
+                                        <h:inputText
+                                            id="IdNeighborhoodsHomeCode"
+                                            disabled="true"
+                                            value="#{suicideMB.currentNeighborhoodHomeCode}"/>
+                                    </p:column>
+                                </p:row>
+
+                                <p:row>  
+                                    <p:column>
+                                        <h:outputLabel value="PROCEDENCIA:   "/>                                          
+                                    </p:column>
+                                    <p:column>                                        
+                                        <p:panelGrid>   
+                                            <p:row>  
+                                                <p:column>PAIS:&nbsp;</p:column>
+                                                <p:column>
+                                                    <h:selectOneMenu id="IdCountrySource" value="#{suicideMB.currentSourceCountry}" > 
+                                                        <f:selectItems value="#{suicideMB.sourceCountries}"/>
+                                                        <f:ajax 
+                                                            event="change"                                                            
+                                                            listener="#{suicideMB.findSourceDepartaments}"
+                                                            render="IdDepartamentSource IdMunicipalitieSource IdControls message"/>                                                        
+                                                    </h:selectOneMenu>
+                                                </p:column>                                                
+                                            </p:row>
+                                            <p:row>  
+                                                <p:column>DEPARTAMENTO:&nbsp;</p:column>
+                                                <p:column>
+                                                    <h:selectOneMenu id="IdDepartamentSource" value="#{suicideMB.currentSourceDepartament}" > 
+                                                        <f:selectItems value="#{suicideMB.sourceDepartaments}"/>
+                                                        <f:ajax 
+                                                            event="change"                                                            
+                                                            listener="#{suicideMB.findSourceMunicipalities}"
+                                                            render="IdMunicipalitieSource IdControls message"/>                                                        
+                                                    </h:selectOneMenu>
+                                                </p:column>                                                
+                                            </p:row>
+                                            <p:row>  
+                                                <p:column>MUNICIPIO:&nbsp;</p:column>
+                                                <p:column>                                                    
+                                                    <h:selectOneMenu 
+                                                        id="IdMunicipalitieSource"
+                                                        value="#{suicideMB.currentSourceMunicipalitie}"  > 
+                                                        <f:selectItems value="#{suicideMB.sourceMunicipalities}"/>
+                                                        <f:ajax 
+                                                            event="change"   							    
+                                                            listener="#{suicideMB.changeForm}"
+                                                            render="IdControls message"/>
+                                                    </h:selectOneMenu>
+                                                </p:column>                                                
+                                            </p:row>
+                                        </p:panelGrid>                                        
+                                    </p:column>
+                                </p:row> 
+
+                            </p:panelGrid>
+                            <br/>
+                            <!--=====================================DATOS DEL HECHO==============================================-->
+                            <p:panelGrid>  
+                                <p:row>  
+                                    <p:column styleClass="ui-widget-header" style="text-align: center;" colspan="2">
+                                        <h:outputLabel value="DATOS DEL HECHO"/>                                          
+                                    </p:column>  
+                                </p:row>
+                                <p:row>  
+                                    <p:column>
+                                        <h:outputLabel value="ARMA O CAUSA DE MUERTE:   "/>                                          
+                                    </p:column>
+                                    <p:column>                                        
+                                        <h:selectOneMenu 
+                                            value="#{suicideMB.currentSuicideMechanismsType}" 
+                                            id="IdWeaponType"> 
+                                            <f:selectItems value="#{suicideMB.suicideMechanisms}"/>
+                                            <f:ajax 
+                                                event="change"                                                                                                            
+                                                render="IdControls message"
+                                                listener="#{suicideMB.changeForm}"/>
+                                        </h:selectOneMenu>
+                                    </p:column>
+                                </p:row>
+                                <p:row>  
+                                    <p:column>
+                                        <h:outputLabel value="EVENTOS RELACIONADOS CON EL HECHO:   "/>                                          
+                                    </p:column>
+                                    <p:column>
+                                        <h:selectOneMenu value="#{suicideMB.currentRelatedEvent}"  > 
+                                            <f:selectItems value="#{suicideMB.relatedEvents}"/>	
+                                            <f:ajax 
+                                                event="change"                                                                                                            
+                                                render="IdControls message"
+                                                listener="#{suicideMB.changeForm}"/>
+                                        </h:selectOneMenu>
+                                    </p:column>
+                                </p:row> 
+                                <p:row>  
+                                    <p:column>
+                                        <h:outputLabel value="INTENTOS PREVIOS DE SUICIDIO:"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:selectOneMenu value="#{suicideMB.currentPreviousIntent}"  > 
+                                            <f:selectItems value="#{suicideMB.booleans}"/>	
+                                            <f:ajax 
+                                                event="change"                                                                                                            
+                                                render="IdControls message"
+                                                listener="#{suicideMB.changeForm}"/>
+                                        </h:selectOneMenu>
+                                    </p:column>
+                                </p:row> 				
+                                <p:row>  
+                                    <p:column>
+                                        <h:outputLabel value="ANTECEDENTES DE SALUD MENTAL"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:selectOneMenu value="#{suicideMB.currentMentalAntecedents}"  > 
+                                            <f:selectItems value="#{suicideMB.booleans}"/>	
+                                            <f:ajax 
+                                                event="change"                                                                                                            
+                                                render="IdControls message"
+                                                listener="#{suicideMB.changeForm}"/>
+                                        </h:selectOneMenu>
+                                    </p:column>
+                                </p:row> 
+                                <p:row>  
+                                    <p:column>
+                                        <h:outputLabel value="NARRACION DEL HECHO:   "/>
+                                    </p:column>
+                                    <p:column>                                        
+                                        <p:inputTextarea 
+                                            value="#{suicideMB.currentNarrative}" 
+                                            style="width: 250px; height: 150px;"
+                                            id="IdNarrative">
+                                            <f:ajax 
+                                                event="change"
+                                                listener="#{suicideMB.changeForm}"/>
+                                            <f:ajax 
+                                                event="blur"                                                
+                                                render="IdControls message"/>
+                                        </p:inputTextarea>
+                                    </p:column>
+                                </p:row>
+                                <p:row>  
+                                    <p:column colspan="2">
+                                        <p:panelGrid> 
+                                            <p:row>  
+                                                <p:column colspan="4" styleClass="ui-widget-header">
+                                                    NIVEL DE ALCOHOL DE LA VICTIMA:
+                                                </p:column>
+                                            </p:row> 
+                                            <p:row>  
+                                                <p:column>
+                                                    NIVEL 
+                                                </p:column>
+                                                <p:column colspan="3">
+                                                    <h:inputText 
+                                                        value="#{suicideMB.currentAlcoholLevel}"
+                                                        id="IdcurrentAlcoholLevel"
+                                                        disabled="#{suicideMB.currentAlcoholLevelDisabled}">
+                                                        <f:ajax 
+                                                            event="blur"  
+                                                            listener="#{suicideMB.changeAlcoholLevelNumber}"
+                                                            render="IdControls message"/> 
+                                                        <f:ajax 
+                                                            event="change"
+                                                            listener="#{suicideMB.changeForm}"/>
+                                                    </h:inputText>
+                                                </p:column>                                    
+                                            </p:row> 
+                                            <p:row>  
+                                                <p:column>
+                                                    <h:outputLabel value="sin dato"/>&nbsp;  
+                                                    <h:selectBooleanCheckbox 
+                                                        value="#{suicideMB.isNoDataAlcoholLevel}"
+                                                        id="IdNoDataAlcoholLevel"
+                                                        disabled="#{suicideMB.isNoDataAlcoholLevelDisabled}">
+                                                        <f:ajax 
+                                                            event="change"
+                                                            listener="#{suicideMB.changeAlcoholLevel}"
+                                                            render="IdcurrentAlcoholLevel IdNegativeAlcoholLevel IdPendentAlcoholLevel IdUnknownAlcoholLevel IdControls message"/>
+                                                    </h:selectBooleanCheckbox>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputLabel value="Pendiente"/>&nbsp;                                        
+                                                    <h:selectBooleanCheckbox 
+                                                        value="#{suicideMB.isPendentAlcoholLevel}"
+                                                        id="IdPendentAlcoholLevel"
+                                                        disabled="#{suicideMB.isPendentAlcoholLevelDisabled}">
+                                                        <f:ajax 
+                                                            event="change"
+                                                            listener="#{suicideMB.changeAlcoholLevel}"
+                                                            render="IdcurrentAlcoholLevel IdNoDataAlcoholLevel IdNegativeAlcoholLevel IdUnknownAlcoholLevel IdControls message"/>
+                                                    </h:selectBooleanCheckbox>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputLabel value="ns"/>&nbsp;                                        
+                                                    <h:selectBooleanCheckbox 
+                                                        value="#{suicideMB.isUnknownAlcoholLevel}"
+                                                        id="IdUnknownAlcoholLevel"
+                                                        disabled="#{suicideMB.isUnknownAlcoholLevelDisabled}">
+                                                        <f:ajax 
+                                                            event="change"
+                                                            listener="#{suicideMB.changeAlcoholLevel}"
+                                                            render="IdcurrentAlcoholLevel IdNoDataAlcoholLevel IdNegativeAlcoholLevel IdPendentAlcoholLevel IdControls message"/>
+                                                    </h:selectBooleanCheckbox>
+                                                </p:column>                                                
+                                                <p:column>
+                                                    <h:outputLabel value="negativo"/>&nbsp;                                                                            
+                                                    <h:selectBooleanCheckbox 
+                                                        value="#{suicideMB.isNegativeAlcoholLevel}"
+                                                        id="IdNegativeAlcoholLevel"
+                                                        disabled="#{suicideMB.isNegativeAlcoholLevelDisabled}">
+                                                        <f:ajax 
+                                                            event="change"
+                                                            listener="#{suicideMB.changeAlcoholLevel}"
+                                                            render="IdcurrentAlcoholLevel IdNoDataAlcoholLevel IdPendentAlcoholLevel IdUnknownAlcoholLevel IdControls message"/>
+                                                    </h:selectBooleanCheckbox>
+                                                </p:column>
+                                            </p:row>
+                                        </p:panelGrid>						
+                                    </p:column>
+                                </p:row>
+
+                            </p:panelGrid>
+                            <!--===================================================================================-->
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                        </p:column>                                     
+                    </p:row>
+                </p:panelGrid>
+                <!--===========CONTROLES: PRIMERO SIGUIENTE ANTERIOR ULTIMO REGISTRO ===========================-->
+                <div style="position:fixed; bottom: 3px; right: 20px; ">                    
+                    <p:panelGrid id="IdControls" style="width: 600px;">
+                        <p:row >
+                            <p:column styleClass="ui-widget-header">
+                                <p:column styleClass="ui-widget-header">
+                                    <p:commandButton 
+                                        icon="ui-icon-plus" 
+                                        title="Nuevo"
+                                        actionListener="#{suicideMB.newForm}"
+                                        oncomplete="#{suicideMB.openDialogNew}"
+                                        update="IdForm1"/>
+                                    <p:commandButton 
+                                        icon="ui-icon-close" 
+                                        title="Eliminar"  
+                                        actionListener="#{suicideMB.nada}"
+                                        oncomplete="#{suicideMB.openDialogDelete}"                                    
+                                        update="IdForm1"/>
+                                    <p:commandButton 
+                                        icon="ui-icon-search" 
+                                        title="Buscar"  
+                                        actionListener="#{suicideMB.clearSearch}"
+                                        oncomplete="dialogFind.show();"/>
+                                </p:column>
+                                <p:commandButton
+                                    icon="ui-icon-seek-first" 
+                                    title="Primero"
+                                    actionListener="#{suicideMB.first}"
+                                    oncomplete="#{suicideMB.openDialogFirst}"
+                                    update="IdForm1"/>
+                                <p:commandButton 
+                                    icon="ui-icon-seek-prev" 
+                                    title="Anterior"
+                                    actionListener="#{suicideMB.previous}"
+                                    oncomplete="#{suicideMB.openDialogPrevious}"
+                                    update="IdForm1"/>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header">
+                                <h:inputText 
+                                    id="IdPosition"
+                                    style="#{suicideMB.stylePosition}"
+                                    value="#{suicideMB.currentPosition}"
+                                    readonly="true"/>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header">
+                                <p:commandButton  
+                                    icon="ui-icon-seek-next" 
+                                    title="Siguiente"
+                                    actionListener="#{suicideMB.next}"
+                                    oncomplete="#{suicideMB.openDialogNext}"                                    
+                                    update="IdForm1"/>                             
+                                <p:commandButton  
+                                    icon="ui-icon-seek-end" 
+                                    title="Ultimo"
+                                    actionListener="#{suicideMB.last}"
+                                    oncomplete="#{suicideMB.openDialogLast}"
+                                    update="IdForm1"/>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header">
+                                <h:outputLabel id="IdFormId">CODIGO: #{suicideMB.currentIdForm}</h:outputLabel>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>                   
+                </div>
+            </h:form>
+        </ui:define>
+        <!--================================= CUADROS DE DIALOGO ==============================================-->
+        <ui:define name="dialogs">
+            <h:form id="IdForm2">
+                <p:dialog                                                         
+                    id="dialogFind"
+                    modal="true"
+                    resizable="false"
+                    header="Buscar registro" 
+                    widgetVar="dialogFind"> 
+                    <br/>
+                    <h:outputLabel value="Variable"/>
+                    <h:selectOneMenu id="IdSearchCriteria" value="#{suicideMB.currentSearchCriteria}" > 
+                        <f:selectItems value="#{suicideMB.searchCriteriaList}"/>                                    
+                    </h:selectOneMenu>
+                    <h:outputLabel value="Valor"/>
+                    <h:inputText 
+                        id="IdSearcValue"
+                        value="#{suicideMB.currentSearchValue}"/>                    
+                    <p:commandButton 
+                        value="Buscar" 
+                        icon="ui-icon-search"                                                
+                        actionListener="#{suicideMB.createDynamicTable}"
+                        update="IdSearchTable :IdForm1:message"/>                                
+                    <br/><br/>
+                    <p:dataTable 
+                        id="IdSearchTable" var="rowX" 
+                        value="#{suicideMB.rowDataTableList}" 
+                        rowKey="#{rowX.column1}"  
+                        selection="#{suicideMB.selectedRowDataTable}" 
+                        selectionMode="single"
+                        paginator="true"
+                        rows="5"                                    
+                        paginatorPosition="bottom"
+                        scrollable="true"
+                        scrollWidth="525"                                    
+                        emptyMessage="Vacio"
+                        pageLinks="3"
+                        resizableColumns="true"> 
+                        <p:column headerText="CODIGO" width="50">  
+                            #{rowX.column1}  
+                        </p:column>  
+                        <p:column headerText="IDENTIFICACION" width="200">  
+                            #{rowX.column2}  
+                        </p:column>  
+                        <p:column headerText="NOMBRES APELLIDOS" width="450">  
+                            #{rowX.column3}  
+                        </p:column>                                      
+                        <!--p:column headerText="FECHA REGISTRO"  width="150">  
+                            {rowX.column4}  
+                        </p:column-->
+                    </p:dataTable> 
+                    <br/>
+                    <p:commandButton 
+                        id="IdLoadButton" 
+                        value="Cargar" 
+                        icon="ui-icon-document"  
+                        update=":IdForm1 :IdForm2" 
+                        actionListener="#{suicideMB.openForm}"
+                        oncomplete="dialogFind.hide(); goFirstFocus();"
+                        style=""/>
+                    <p:commandButton 
+                        id="IdCancelFind" 
+                        value="Cancelar" 
+                        icon="ui-icon-close"  
+                        oncomplete="dialogFind.hide()"
+                        style=""/>
+                    <br/><br/>
+                </p:dialog>
+                <p:dialog                                                         
+                    id="dialogFirst"
+                    modal="true"
+                    resizable="false"
+                    header="Guardar" 
+                    widgetVar="dialogFirst"> 
+                    <br/>
+                    <p:inputTextarea 
+                        value="El registro ha sido modificado, desea guardar los cambios?" 
+                        readonly="true" 
+                        style="text-align: center; background: #ebf4fb; font-size: 13px; font-weight: 900; height: 48px;"/>
+                    <br/>
+                    <br/>
+                    <p:commandButton                                        
+                        oncomplete="dialogFirst.hide(); goFirstFocus();"
+                        value="Si" 
+                        actionListener="#{suicideMB.saveAndGoFirst}"
+                        update=":IdForm1"/>   
+                    <p:commandButton
+                        value="No" 
+                        oncomplete="dialogFirst.hide(); goFirstFocus();"
+                        actionListener="#{suicideMB.noSaveAndGoFirst}"
+                        update=":IdForm1"/> 
+                    <p:commandButton
+                        value="Cancelar" 
+                        onclick="dialogFirst.hide();"/> 
+                </p:dialog>
+                <p:dialog                                                         
+                    id="dialogPrevious"
+                    modal="true"
+                    resizable="false"
+                    header="Guardar" 
+                    widgetVar="dialogPrevious"> 
+                    <br/>
+                    <p:inputTextarea 
+                        value="El registro ha sido modificado, desea guardar los cambios?" 
+                        readonly="true" 
+                        style="text-align: center; background: #ebf4fb; font-size: 13px; font-weight: 900; height: 48px;"/>
+                    <br/>
+                    <br/>
+                    <p:commandButton                                        
+                        oncomplete="dialogPrevious.hide(); goFirstFocus();"
+                        value="Si" 
+                        actionListener="#{suicideMB.saveAndGoPrevious}"
+                        update=":IdForm1"/>   
+                    <p:commandButton
+                        value="No" 
+                        oncomplete="dialogPrevious.hide(); goFirstFocus();"
+                        actionListener="#{suicideMB.noSaveAndGoPrevious}"
+                        update=":IdForm1"/> 
+                    <p:commandButton
+                        value="Cancelar" 
+                        onclick="dialogPrevious.hide();"/> 
+                </p:dialog>
+                <p:dialog                                                         
+                    id="dialogNext"
+                    modal="true"
+                    resizable="false"
+                    header="Guardar" 
+                    widgetVar="dialogNext"> 
+                    <br/>
+                    <p:inputTextarea 
+                        value="El registro ha sido modificado, desea guardar los cambios?" 
+                        readonly="true" 
+                        style="text-align: center; background: #ebf4fb; font-size: 13px; font-weight: 900; height: 48px;"/>
+                    <br/>
+                    <br/>
+                    <p:commandButton                                        
+                        oncomplete="dialogNext.hide(); goFirstFocus();"
+                        value="Si" 
+                        actionListener="#{suicideMB.saveAndGoNext}"
+                        update=":IdForm1"/>   
+                    <p:commandButton
+                        value="No" 
+                        oncomplete="dialogNext.hide(); goFirstFocus();"
+                        actionListener="#{suicideMB.noSaveAndGoNext}"
+                        update=":IdForm1"/> 
+                    <p:commandButton
+                        value="Cancelar" 
+                        onclick="dialogNext.hide();"/> 
+                </p:dialog>
+                <p:dialog                                                         
+                    id="dialogLast"
+                    modal="true"
+                    resizable="false"
+                    header="Guardar" 
+                    widgetVar="dialogLast"> 
+                    <br/>
+                    <p:inputTextarea 
+                        value="El registro ha sido modificado, desea guardar los cambios?" 
+                        readonly="true" 
+                        style="text-align: center; background: #ebf4fb; font-size: 13px; font-weight: 900; height: 48px;"/>
+                    <br/>
+                    <br/>
+                    <p:commandButton                                        
+                        oncomplete="dialogLast.hide(); goFirstFocus();"
+                        value="Si" 
+                        actionListener="#{suicideMB.saveAndGoLast}"
+                        update=":IdForm1"/>   
+                    <p:commandButton
+                        value="No" 
+                        oncomplete="dialogLast.hide(); goFirstFocus();"
+                        actionListener="#{suicideMB.noSaveAndGoLast}"
+                        update=":IdForm1"/> 
+                    <p:commandButton
+                        value="Cancelar" 
+                        onclick="dialogLast.hide();"/>
+                </p:dialog>
+                <p:dialog                                                         
+                    id="dialogNew"
+                    modal="true"
+                    resizable="false"
+                    header="Guardar" 
+                    widgetVar="dialogNew"> 
+                    <br/>
+                    <p:inputTextarea 
+                        value="El registro ha sido modificado, desea guardar los cambios?" 
+                        readonly="true" 
+                        style="text-align: center; background: #ebf4fb; font-size: 13px; font-weight: 900; height: 48px;"/>
+                    <br/>
+                    <br/>
+                    <p:commandButton                                        
+                        oncomplete="dialogNew.hide(); goFirstFocus();"
+                        value="Si" 
+                        actionListener="#{suicideMB.saveAndGoNew}"
+                        update=":IdForm1"/>   
+                    <p:commandButton
+                        value="No" 
+                        oncomplete="dialogNew.hide(); goFirstFocus();"
+                        actionListener="#{suicideMB.noSaveAndGoNew}"
+                        update=":IdForm1"/> 
+                    <p:commandButton
+                        value="Cancelar" 
+                        onclick="dialogNew.hide();"/> 
+                </p:dialog>
+                <p:dialog                                                         
+                    id="dialogDelete"
+                    modal="true"
+                    resizable="false"
+                    header="Eliminar Registro" 
+                    widgetVar="dialogDelete"> 
+                    <br/>
+                    <p:inputTextarea 
+                        value="Confirma la eliminación de este registro?" 
+                        readonly="true" 
+                        style="text-align: center; background: #ebf4fb; font-size: 13px; font-weight: 900; height: 48px;"/>
+                    <br/>
+                    <br/>
+                    <p:commandButton                                                           
+                        oncomplete="dialogDelete.hide(); goFirstFocus();"
+                        actionListener="#{suicideMB.deleteRegistry}"
+                        value="Eliminar" 
+                        update=":IdForm1"/>   
+                    <p:commandButton
+                        value="Cancelar" 
+                        onclick="dialogDelete.hide();"/> 
+                </p:dialog>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

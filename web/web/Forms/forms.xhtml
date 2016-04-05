@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+
+    <ui:composition template="../templates/layoutTemplate.xhtml">
+        <!--==================================================================-->
+        <!--========================CABECERA SCRIPTS==========================-->                    
+        <ui:define name="head">
+            <link href="../../resources/css/style.css" rel="stylesheet" type="text/css" />               
+            <script type="text/javascript">  
+                
+            </script> 
+        </ui:define>
+        <!--=================================================================-->
+        <!--================================TITULOS==========================-->
+        <ui:define name="titlePage">
+            SIGEODEP -  FORMULARIOS PARA EL REGISTRO MANUAL DE FICHAS
+        </ui:define>
+        <ui:define name="title">
+            SIGEODEP -  FORMULARIOS PARA EL REGISTRO MANUAL DE FICHAS
+        </ui:define>
+        <!--=================================================================-->
+        <!--==============================CONTENIDO==========================-->
+        <ui:define name="content">
+            <h:form enctype="multipart/form-data" id="IdForm2"> 
+                <p:growl id="message"  showDetail="true" sticky="true" autoUpdate="true" life="1000"  />
+                <!--===================================================================================-->
+                <br/>
+                <p:panelGrid style="position: absolute;  width: 750px;  margin-left: -375px; left: 50%;" >                            
+                    <p:row>  
+                        <p:column styleClass="ui-widget-header" style="text-align: center;">
+                            <h:outputLabel value="OBSERVATORIO DEL DELITO - ALCALDA DE PASTO"/><br/>  
+                            <h:outputLabel value="FORMULARIOS PARA EL REGISTRO MANUAL DE FICHAS"/>  
+                        </p:column>                                       
+                    </p:row>
+                    <p:row>  
+                        <p:column style="text-align: center;">
+                            <!--=====================================DATOS DEL REGISTO==============================================-->
+                            <br/>
+                            <p:commandButton 
+                                rendered="#{loginMB.permissionFatal}"
+                                style="width: 350px;" 
+                                value="HOMICIDIOS" 
+                                actionListener="#{homicideMB.reset}"
+                                action="homicide"/>
+                            <p:separator rendered="#{loginMB.permissionFatal}" style="width: 350px"/> 
+                            <p:commandButton 
+                                rendered="#{loginMB.permissionFatal}"
+                                style="width: 350px;" 
+                                value="MUERTES POR ACCIDENTES DE TRANSITO"
+                                actionListener="#{transitMB.reset}"
+                                action="transit"/>
+                            <p:separator rendered="#{loginMB.permissionFatal}" style="width: 350px"/> 
+                            <p:commandButton 
+                                rendered="#{loginMB.permissionFatal}"
+                                style="width: 350px;" 
+                                value="SUICIDIOS"
+                                actionListener="#{suicideMB.reset}"
+                                action="suicide"/>
+                            <p:separator rendered="#{loginMB.permissionFatal}" style="width: 350px"/> 
+                            <p:commandButton 
+                                rendered="#{loginMB.permissionFatal}"
+                                style="width: 350px;" 
+                                value="MUERTES ACCIDENTALES"
+                                actionListener="#{accidentalMB.reset}"
+                                action="accidental"/>
+                            <p:separator rendered="#{loginMB.permissionFatal}" style="width: 350px"/> 
+                            <p:commandButton 
+                                rendered="#{loginMB.permissionNonFatal}"
+                                style="width: 350px;" 
+                                value="LESIONES DE CAUSA EXTERNA NO FATALES"
+                                actionListener="#{lcenfMB.reset}"
+                                action="LCENF"/>
+                            <p:separator rendered="#{loginMB.permissionNonFatal}" style="width: 350px"/> 
+                            <p:commandButton 
+                                rendered="#{loginMB.permissionVif}"
+                                style="width: 350px;" 
+                                value="VIOLENCIA INTRAFAMILIAR"
+                                actionListener="#{vifMB.reset}"
+                                action="VIF"/>
+                            <br/>
+                            <br/>
+                        </p:column>                                       
+                    </p:row>
+                </p:panelGrid>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

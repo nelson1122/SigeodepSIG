@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+
+    <ui:composition template="../templates/layoutTemplate.xhtml">
+        <!--==================================================================-->
+        <!--========================CABECERA SCRIPTS==========================-->                    
+        <ui:define name="head">
+            <link href="../../resources/css/style.css" rel="stylesheet" type="text/css" />               
+            <script type="text/javascript">  
+                
+            </script> 
+        </ui:define>
+        <!--=================================================================-->
+        <!--================================TITULOS==========================-->
+        <ui:define name="titlePage">
+            SIGEODEP -  INDICADORES PARA HOMICIDIOS
+        </ui:define>
+        <ui:define name="title">
+            SIGEODEP -  INDICADORES PARA HOMICIDIOS
+        </ui:define>
+        <!--=================================================================-->
+        <!--==============================CONTENIDO==========================-->
+        <ui:define name="content">
+            <h:form enctype="multipart/form-data" id="IdForm2"> 
+                <p:growl id="message"  showDetail="true" sticky="true" autoUpdate="true" life="1000"  />
+                <!--===================================================================================-->
+                <br/>
+                <p:panelGrid style="position: absolute;  width: 750px;  margin-left: -375px; left: 50%;" >                            
+                    <p:row>  
+                        <p:column styleClass="ui-widget-header" style="text-align: center;">
+                            <h:outputLabel value="OBSERVATORIO DEL DELITO - ALCALDA DE PASTO"/><br/>  
+                            <h:outputLabel value="INDICADORES PARA HOMICIDIOS"/>  
+                        </p:column>                                       
+                    </p:row>
+                    <p:row>  
+                        <p:column style="text-align: center;">                            
+                            <br/>  
+                            <p:commandButton 
+                                style="width: 500px;" 
+                                value="CASOS DE HOMICIDIOS" 
+                                actionListener="#{indicatorsCountMB.loadIndicator12}"
+                                action="countIndicator"/>
+                            <p:separator style="width: 500px"/> 
+                            <p:commandButton 
+                                style="width: 500px;" 
+                                value="PORCENTAJE DE HOMICIDIOS" 
+                                actionListener="#{indicatorsPercentageMB.loadIndicator18}"
+                                action="percentageIndicator"/>
+                            <p:separator style="width: 500px"/> 
+                            <p:commandButton 
+                                style="width: 500px;" 
+                                value="VARIACION DE HOMICIDIOS" 
+                                actionListener="#{indicatorsVariationMB.loadIndicator13}"
+                                action="variationIndicator"/>        
+                            <p:separator style="width: 500px"/> 
+                            <p:commandButton 
+                                style="width: 500px;" 
+                                value="VARIACION PORCENTUAL DE HOMICIDIOS" 
+                                actionListener="#{indicatorsPercentageVariationMB.loadIndicator14}"
+                                action="percentageVariationIndicator"/>       
+                            <p:separator style="width: 500px"/> 
+                            <p:commandButton 
+                                style="width: 500px;" 
+                                value="PROMEDIO DE HOMICIDIOS" 
+                                actionListener="#{indicatorsAverageMB.loadIndicator15}"
+                                action="averageIndicator"/>       
+                            <p:separator style="width: 500px"/> 
+                            <p:commandButton 
+                                style="width: 500px;" 
+                                value="TASA DE HOMICIDIOS" 
+                                actionListener="#{indicatorsRateMB.loadIndicator16}"
+                                action="rateIndicator"/>
+                            <p:separator style="width: 500px"/> 
+                            <p:commandButton 
+                                style="width: 500px;" 
+                                value="TASA ESPECIFICA DE HOMICIDIOS" 
+                                actionListener="#{indicatorsSpecifiedRateMB.loadIndicator17}"
+                                action="specifiedRateIndicator"/>                              
+                            <br/><br/>  
+                        </p:column>                                       
+                    </p:row>
+                </p:panelGrid>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

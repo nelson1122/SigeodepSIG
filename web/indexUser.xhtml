@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <link rel="shortcut icon" href="resources/img/icon.gif"/>
+        <title>INICIO</title>	        
+        
+    </h:head>
+    <h:body  style="font-size: 10px;">
+        <h:form id="IdForm">    
+            <div style=" 
+                 position:absolute;
+                 width: 500px; 
+                 height: 380px; 
+                 left: 50%; 
+                 margin-left: -250px;  
+                 top: 50%;
+                 margin-top: -190px;">
+                <p:growl id="message"  showDetail="true" sticky="true" />                
+                <h:graphicImage id="IdImgCarga" value="resources/img/ajaxloading.gif"  style="display: none" />
+                <p:graphicImage value="../resources/img/img_login.png" />
+                #{applicationControlMB.reset()}
+                <p:panelGrid style="margin-left: 160px; ">                     
+                    <p:row>  
+                        <p:column styleClass="ui-widget-header" ><h:outputText value="USUARIO: " /></p:column>
+                        <p:column ><h:inputText id="loginname" value="#{loginMB.loginname}" />
+
+                        </p:column>
+                    </p:row>  
+                    <p:row>
+                        <p:column styleClass="ui-widget-header" ><h:outputText value="CLAVE: " /></p:column>
+                        <p:column ><h:inputSecret id="password" value="#{loginMB.password}" /></p:column>
+                    </p:row>                      
+                    <p:row>
+                        <p:column colspan="2" style="text-align: center;" >
+
+                            <p:commandButton 
+                                value="INGRESAR" 												
+                                action="#{loginMB.CheckValidUser}"
+                                update="message password" />
+                        </p:column>
+                    </p:row>  
+                </p:panelGrid>
+
+                <p:dialog 
+                    id="IdCloseSessionDialog"  
+                    modal="true"
+                    header="Otra Session Iniciada"         
+                    resizable="false"                    
+                    widgetVar="closeSessionDialog">  
+                    <br/>
+                    <p:inputTextarea 
+                        value="Este usuario tiene otra session en uso, desea cerrar la otra session e iniciar una nueva en este momento?" 
+                        readonly="true" 
+                        style="text-align: match-parent; background: #ebf4fb; font-size: 13px; font-weight: 900; height: 60px; width: 320px;"/>
+                    <br/>                    
+                    <br/>
+                    <p:commandButton                        
+                        value="Continuar"
+                        style="margin:0;"
+                        action="#{loginMB.closeSessionAndLogin}"
+                        oncomplete="closeSessionDialog.hide()"
+                        update="@form"/>                      
+                </p:dialog>
+
+            </div>
+
+        </h:form>  
+
+    </h:body>
+</html>

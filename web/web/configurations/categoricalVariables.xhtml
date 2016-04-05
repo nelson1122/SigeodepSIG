@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+
+    <ui:composition template="../templates/layoutTemplate.xhtml">
+        <!--==================================================================-->
+        <!--========================CABECERA SCRIPTS==========================-->                    
+        <ui:define name="head">
+            <link href="../../resources/css/style.css" rel="stylesheet" type="text/css" />               
+            <script type="text/javascript">
+
+            </script> 
+        </ui:define>
+        <!--=================================================================-->
+        <!--================================TITULOS==========================-->
+        <ui:define name="titlePage">
+            SIGEODEP -  EDICION DE VARIABLES CATEGORICAS
+        </ui:define>
+        <ui:define name="title">
+            SIGEODEP -  EDICION DE VARIABLES CATEGORICAS
+        </ui:define>        
+        <!--=================================================================-->
+        <!--==============================CONTENIDO==========================-->
+        <ui:define name="content">
+            <h:outputText 
+                value="No se puede mostrar esta sección por que no cuenta con los permisos suficientes"
+                style=" color: red;"
+                rendered="#{!loginMB.permissionAdministrator}"/> 
+            <h:form enctype="multipart/form-data" id="IdForm1" rendered="#{loginMB.permissionAdministrator}">
+                <p:growl id="message"  showDetail="true" sticky="true" autoUpdate="true" life="1000"  />
+
+                <!--===================================================================================-->
+                <br/>
+                <p:panelGrid style="position: absolute;  width: 750px;  margin-left: -375px; left: 50%;" >                            
+                    <p:row>  
+                        <p:column styleClass="ui-widget-header" style="text-align: center;">
+                            <h:outputLabel value="OBSERVATORIO DEL DELITO - ALCALDA DE PASTO"/><br/>  
+                            <h:outputLabel value="GESTION DE VARIABLES CATEGORICAS"/>  
+                        </p:column>                                       
+                    </p:row>
+                    <p:row>  
+                        <p:column>
+                            <br/>
+                            <br/>
+                            <h:outputLabel value="FILTRO DE DATOS:   "/>
+                            <br/>
+                            <br/>
+                            <h:outputLabel value="Tipo de lesión:  "/>
+                            <h:selectOneMenu id="IdInjuries" value="#{categoricalVariablesMB.currentInjury}" > 
+                                <f:selectItems value="#{categoricalVariablesMB.injuries}"/>
+                                <f:ajax 
+                                    event="change"
+                                    listener="#{categoricalVariablesMB.createDynamicTable}"
+                                    render="IdSearchTable"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="   Nombre:   "/>
+                            <p:inputText 
+                                id="IdSearcValue"
+                                value="#{categoricalVariablesMB.currentSearchValue}"/>                                    
+                            <p:commandButton 
+                                value="Buscar" 
+                                icon="ui-icon-search"                                                
+                                actionListener="#{categoricalVariablesMB.createDynamicTable}"
+                                update="IdSearchTable :IdForm1:message"/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <p:dataTable 
+                                id="IdSearchTable" var="rowX" 
+                                value="#{categoricalVariablesMB.rowDataTableList}" 
+                                rowKey="#{rowX.column1}"  
+                                selection="#{categoricalVariablesMB.selectedRowDataTable}" 
+                                paginator="true"
+                                rows="10"                                    
+                                paginatorPosition="bottom"                                
+                                emptyMessage="Vacio"
+                                scrollable="true"
+                                scrollWidth="730"                                    
+                                paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                rowsPerPageTemplate="5,10,15"
+                                pageLinks="5"
+                                selectionMode="single"
+                                resizableColumns="true">                                                                
+                                <p:column headerText="VARIABLES DISPONIBLES" width="707">  
+                                    #{rowX.column2}  
+                                </p:column>                                                                  
+                            </p:dataTable>                            
+                            <br/>
+                            <p:commandButton 
+                                id="IdEdit"
+                                value="ABRIR"                                 
+                                icon="ui-icon-pencil"
+                                actionListener="#{categoricalVariablesMB.open}"
+                                update="IdSearchTable"/>  
+                            
+                            <div style="display: none;">
+                                <p:commandButton 
+                                    style="width: 340px;" 
+                                    value="ASEGURADORAS" 
+                                    actionListener="#{insurancesVariableMB.reset}"
+                                    action="insurances"/>
+                                <p:commandButton 
+                                    style="width: 340px;" 
+                                    value="ACTIVIDAD DURANTE EL HECHO" 
+                                    actionListener="#{activitiesVariableMB.reset}"
+                                    action="activities"/>
+                                <p:commandButton 
+                                    style="width: 340px;" 
+                                    value="ARMA O CAUSA DE MUERTE" 
+                                    actionListener="#{weaponTypeVariableMB.reset}"
+                                    action="weaponType"/>
+                                <p:commandButton 
+                                    style="width: 340px;" 
+                                    value="BARRIOS" 
+                                    actionListener="#{neighborhoodsVariableMB.reset}"
+                                    action="neighborhoods"/>
+                                <p:commandButton 
+                                    style="width: 340px;" 
+                                    value="CARACTERISTICAS DE LA VICTIMA" 
+                                    actionListener="#{victimCharacteristicsMB.reset}"
+                                    action="victimCharacteristics"/>
+                                <p:commandButton 
+                                    style="width: 340px;" 
+                                    value="CONTEXTO RELACIONADO CON EL HECHO" 
+                                    actionListener="#{murderContextVariableMB.reset}"
+                                    action="murderContext"/>
+                                <p:commandButton 
+                                    style="width: 340px;" 
+                                    value="CLASES DE ACCIDENTES" 
+                                    actionListener="#{accidentClassVariableMB.reset}"
+                                    action="accidentClass"/>
+                                <p:commandButton 
+                                    style="width: 340px;" 
+                                    value="COMUNAS" 
+                                    actionListener="#{communesVariableMB.reset}"
+                                    action="communes"/>
+                                <p:commandButton 
+                                    style="width: 340px;" 
+                                    value="CORREDORES" 
+                                    actionListener="#{corridorsVariableMB.reset}"
+                                    action="corridors"/>
+                                <p:commandButton 
+                                    style="width: 340px;" 
+                                    value="CUADRANTES" 
+                                    actionListener="#{quadrantsVariableMB.reset}"
+                                    action="quadrants"/>
+                                <p:commandButton 
+                                    style="width: 340px;" 
+                                    value="DEPARTAMENTOS" 
+                                    actionListener="#{departamentsVariableMB.reset}"
+                                    action="departaments"/>
+                                <p:commandButton 
+                                    style="width: 340px;" 
+                                    value="DESTINOS DEL PACIENTE" 
+                                    actionListener="#{destinationPatientMB.reset}"
+                                    action="destinationPatient"/>
+                                <p:commandButton 
+                                    style="width: 340px;" 
+                                    value="DIAGNOSTICO CIE-10" 
+                                    actionListener="#{diagnosesVariableMB.reset}"
+                                    action="diagnoses"/>                            
+                                <p:commandButton 
+                                    style="width: 340px;" 
+                                    value="EVENTOS RELACIONADOS CON EL HECHO" 
+                                    actionListener="#{relatedEventsVariableMB.reset}"
+                                    action="relatedEvents"/>
+                                <p:commandButton 
+                                    style="width: 340px;" 
+                                    value="GRUPOS ETNICOS"
+                                    actionListener="#{ethnicGroupVariableMB.reset}"
+                                    action="ethnicGroup"/>
+                                <p:commandButton 
+                                    style="width: 340px;" 
+                                    value="GRUPOS VULNERABLES" 
+                                    actionListener="#{vulnerableGroupVariableMB.reset}"
+                                    action="vulnerableGroup"/>
+                                <p:commandButton 
+                                    style="width: 340px;" 
+                                    value="INSTITUCIONES DE SALUD / RECEPTORAS" 
+                                    actionListener="#{healtInstitutionsVariableMB.reset}"
+                                    action="healtInstitutions"/>                            
+                                <p:commandButton 
+                                    style="width: 340px;" 
+                                    value="LUGARES DE REMISION (VIF)" 
+                                    actionListener="#{fromWhereSumbitedVariableMB.reset}"
+                                    action="fromWhereSumbited"/>
+                                <p:commandButton 
+                                    style="width: 340px;" 
+                                    value="LUGAR DEL HECHO(FATALES)" 
+                                    actionListener="#{placesVariableMB.reset}"
+                                    action="places"/>
+                                <p:commandButton 
+                                    style="width: 340px;" 
+                                    value="LUGAR DEL HECHO(NO FATALES)" 
+                                    actionListener="#{nonFatalPlacesVariableMB.reset}"
+                                    action="nonFatalPlaces"/>
+                                <p:commandButton 
+                                    style="width: 340px;" 
+                                    value="MEDIDAS DE PROTECCION" 
+                                    actionListener="#{protectiveMeasuresVariableMB.reset}"
+                                    action="protectiveMeasures"/>
+                                <p:commandButton 
+                                    style="width: 340px;" 
+                                    value="MECANISMOS / OBJETOS DE LA LESION" 
+                                    actionListener="#{mechanismVariableMB.reset}"
+                                    action="mechanism"/>
+                                <p:commandButton 
+                                    style="width: 340px;" 
+                                    value="MEDICOS" 
+                                    actionListener="#{healtProfessionalVariableMB.reset}"
+                                    action="healtProfessionals"/>
+                                <p:commandButton 
+                                    style="width: 340px;" 
+                                    value="MUNICIPIOS" 
+                                    actionListener="#{municipalitiesVariableMB.reset}"
+                                    action="municipalities"/>
+                                <p:commandButton 
+                                    style="width: 340px;" 
+                                    value="OCUPACIONES" 
+                                    actionListener="#{jobsVariableMB.reset}"
+                                    action="jobs"/>
+                                <p:commandButton 
+                                    style="width: 340px;" 
+                                    value="PAISES " 
+                                    actionListener="#{countriesVariableMB.reset}"
+                                    action="countries"/>
+                                <p:commandButton 
+                                    style="width: 340px;" 
+                                    value="TIPO DE SERVICIO" 
+                                    actionListener="#{serviceTypeVariableMB.reset}"
+                                    action="serviceType"/>
+                                <p:commandButton 
+                                    style="width: 340px;" 
+                                    value="VEHICULOS INVOLUCRADOS EN EL ACCIDENTE"
+                                    actionListener="#{involvedVehiclesVariableMB.reset}"
+                                    action="involvedVehicles"/>
+                            </div>
+                            <br/>
+                            <br/>
+                        </p:column>                                       
+                    </p:row>
+                </p:panelGrid>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
