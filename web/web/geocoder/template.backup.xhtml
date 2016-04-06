@@ -40,7 +40,7 @@
                         <p:menuitem value="Fatales" action="#{injuriesCountMB.loadFatalIndicator()}" />
                         <p:menuitem value="No fatales" action="#{injuriesCountMB.loadNonFatalIndicator()}" />
                     </p:menuButton>
-                    
+                
                 </p:toolbarGroup>
                 
             </p:toolbar>
@@ -68,10 +68,11 @@
                     
                 </p:layoutUnit>
 
+                <ui:insert name="leftPanel">
+                </ui:insert>
+
             </p:layout>
             <ui:insert name="dialogs">   
-            </ui:insert>
-            <ui:insert name="mapsettingsDialog">   
             </ui:insert>
         </h:form>
     </h:body>

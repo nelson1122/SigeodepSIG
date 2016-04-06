@@ -1,0 +1,501 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html">
+    <body>
+            
+            <ui:composition template="template.xhtml">
+            
+            <ui:define name="indexTitle">
+                ANALISIS ESPACIAL LESIONES FATALES
+            </ui:define>
+                
+                <ui:define name="InactivityLayer">
+                    <script type="text/javascript">                
+                        function pageInactive1() {//muestra la pagina deshabilitada                    
+                            document.getElementById('IdInactivityLayer').style.display = "block";
+                        }
+                        function pageActive1() {//muestra la pagina habilitada
+                            document.getElementById('IdInactivityLayer').style.display = "none";
+                        }
+                    </script>
+                    <div class="InactivityLayer" id="IdInactivityLayer"> Procesando...</div>
+                </ui:define>
+
+            <ui:define name="centerPanel">
+                
+                <p:toolbar style="margin-top: -3px; margin-bottom: 2px;">
+                    <p:toolbarGroup style="margin-top: 8px;">
+                        Tipo de mapa:&nbsp; &nbsp;
+                    </p:toolbarGroup>
+                    
+                    <p:toolbarGroup>
+                        <p:selectOneButton value="#{injuriesCountMB.mapType}">
+                            <f:selectItem itemLabel="Puntos" itemValue="points" />
+                            <f:selectItem itemLabel="HeatMap" itemValue="heatMap" />
+                            <f:ajax 
+                                event="change"
+                                render=":formInjuries:msg :formInjuries:panelMap"/>
+                        </p:selectOneButton>
+                    </p:toolbarGroup>
+                    <p:toolbarGroup>
+                        <span class="ui-separator">
+                            <span class="ui-icon ui-icon-grip-dotted-vertical" />
+                        </span>
+                        <p:commandButton type="button" value="Trazar" />
+                        <p:commandButton type="button" value="Seleccionar" />
+                        <p:commandButton type="button" value="Reiniciar" />
+                    </p:toolbarGroup>
+                </p:toolbar>
+
+                <p:outputPanel id="panelMap">
+                    <div id="geocoderMap"></div>
+                    <script type="text/javascript">
+
+                        var map, gmaps, osm, heat;
+                        var featurecollection, injuriesLayer;
+                        var boxLayer, box;
+
+                        $(function () {
+
+                            map = new OpenLayers.Map('geocoderMap');
+
+                            gmaps = new OpenLayers.Layer.Google(
+                                    "Google Hybrid",
+                                    {
+                                        type: google.maps.MapTypeId.HYBRID,
+                                        numZoomLevels: 20
+                                    }
+                            );
+
+                            osm = new OpenLayers.Layer.OSM();
+                            
+                            //AGREGO LAYERS Y CONFIGURO EL MAPA
+                            map.addLayers([osm, gmaps]);
+                            map.addControl(new OpenLayers.Control.LayerSwitcher());
+                            
+                            
+                            map.setCenter(new OpenLayers.LonLat(-8602732.136679076,133773.624483927), 14);
+                            
+                            if (#{injuriesCountMB.showAddressesMap}){
+                                featurecollection = #{injuriesCountMB.loadGeoJSON()};
+                                
+                                if("#{injuriesCountMB.mapType}" === "points"){
+                                    var geojson_format = new OpenLayers.Format.GeoJSON();
+                                    injuriesLayer = new OpenLayers.Layer.Vector('Puntos');
+                                    injuriesLayer.addFeatures(geojson_format.read(featurecollection));
+                                    map.addLayer(injuriesLayer);
+                                }
+                                else if ("#{injuriesCountMB.mapType}" === "heatMap"){
+                                    var geojson_format = new OpenLayers.Format.GeoJSON();
+                                    injuriesLayer = new OpenLayers.Layer.Vector('Puntos');
+                                    injuriesLayer.addFeatures(geojson_format.read(featurecollection));
+                                    map.addLayer(injuriesLayer);
+                                    
+                                    /*
+                                    heat = new Heatmap.Layer("Heatmap");
+                                    for (var i = 0; i &lt; featurecollection.features.length; i++) {
+                                        var x = featurecollection.features[i].geometry.coordinates[0];
+                                        var y = featurecollection.features[i].geometry.coordinates[1];
+                                        heat.addSource(new Heatmap.Source(new OpenLayers.LonLat(x, y)));
+                                    }
+
+                                    heat.defaultIntensity = 0.5;
+                                    heat.defaultRadius = 10;
+                                    heat.setOpacity(0.7);
+                                    heat.redraw();
+                                    heat.setVisibility(true);
+                                    map.addLayer(heat);*/
+                                    
+                                }
+                            }
+                        });
+
+                        // called when the feature is complete (double-clicked)
+                        function doneHandler(lineGeom) {
+                            //alert("DONE:" + lineGeom.getVertices());
+                            document.getElementById("formInjuries:txtCoordinates").value = lineGeom.getVertices();
+                        }
+
+                        //activar/desactivar la seleccion de area
+                        function activate() {
+                            if (box.deactivate() === false) {
+                                box.activate();
+                            }
+                        }
+
+
+                    </script>
+                </p:outputPanel>
+
+            </ui:define>
+            <ui:define name="leftPanel">
+
+                <p:layoutUnit position="east" size="45%">
+
+                    <p:fieldset legend="CONFIGURACION" >
+                        
+                        <p:tabView style="height: 180px; width: 540px; margin-bottom: 10px;">
+                            
+                            <p:tab id="tabConfigurations" title="Categorias">
+                                <h:panelGroup layout="block" style="margin: 25px 0px 0px 140px;">
+                                    <h:outputText value="Seleccione lesion de causa externa: "/>
+                                    <br/>
+                                    <br/>
+                                    <p:selectOneMenu id="category" value="#{injuriesCountMB.selectedCategoryForInjuries}">
+                                        <f:selectItem itemLabel="Casos por Lesión no fatal" itemValue="3"/>
+                                        <f:selectItem itemLabel="Lesiones No Intencionales" itemValue="47"/>
+                                        <f:selectItem itemLabel="Violencia AutoInflingida" itemValue="54"/>
+                                        <f:selectItem itemLabel="Lesiones en Accidentes de transito" itemValue="40"/>
+                                        <f:selectItem itemLabel="Violencia Interpersonal en Familia" itemValue="33"/>
+                                        <f:selectItem itemLabel="Violencia Interpersonal en Comunidad" itemValue="61"/>
+                                        <f:ajax 
+                                                event="change"
+                                                listener="#{injuriesCountMB.changeVariableForAddresses()}"
+                                                render="IdBtnRemove IdBtnAdd IdBtnOptions IdSelectOneListVariables IdSelectOneListCrossVariables :formInjuries:msg"/>
+                                    
+                                    </p:selectOneMenu>
+                                </h:panelGroup>
+                            </p:tab>
+                            
+                            <p:tab title="Rango de Fechas">
+                                <h:panelGroup layout="block" style="margin: 10px 0px 0px 0px;">
+                                    <h:outputText value="Seleccione rango de fechas: "/>
+                                    <br/>
+                                    <br/>
+                                    <br/>
+                                    <h:outputText value="Fecha Inicial:" />
+
+                                    <p:calendar
+                                        id="IdInitialDate"
+                                        value="#{injuriesCountMB.initialDate}" 
+                                        locale="es"                                       
+                                        converterMessage="La fecha inicial no es válida, por favor corríjala." 
+                                        showOn="button" 
+                                        pattern="dd/MM/yyyy">
+                                        <f:ajax 
+                                            event="change"
+                                            listener="#{injuriesCountMB.changeDateRange}"
+                                            render="IdSelectOneListCrossVariables IdBtnRemove IdBtnAdd IdBtnOptions"/>
+                                    </p:calendar>
+                                    &#160;&#160;
+                                    <h:outputText value="Fecha Final:" />
+
+                                    <p:calendar 
+                                        id="IdEndDate"
+                                        value="#{injuriesCountMB.endDate}" 
+                                        converterMessage="La fecha final no es válida, por favor corríjala." 
+                                        showOn="button" 
+                                        pattern="dd/MM/yyyy">
+                                        <f:ajax 
+                                            event="change"
+                                            listener="#{injuriesCountMB.changeDateRange}"
+                                            render="IdSelectOneListCrossVariables IdBtnRemove IdBtnAdd IdBtnOptions"/>
+                                    </p:calendar>
+                                </h:panelGroup>
+                            </p:tab>
+                                
+                            <p:tab title="Seleccion de Variables">
+                                <p:panelGrid>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header" style="width: 150px;">
+                                            Variables disponibles                                            
+                                        </p:column>    
+                                        <p:column styleClass="ui-widget-header">
+
+                                        </p:column>    
+                                        <p:column styleClass="ui-widget-header" style="width: 150px;">
+                                            Variables a cruzar
+                                        </p:column>    
+                                    </p:row>
+                                    <p:row>
+                                        <p:column>
+                                            
+                                            <h:selectManyListbox 
+                                                id="IdSelectOneListVariables" 
+                                                value="#{injuriesCountMB.currentVariablesSelected}"
+                                                style="height:80px; width: 200px;"
+                                                converterMessage="Fallo de comunicación, por favor intente nuevamente.">
+                                                <f:selectItems value="#{injuriesCountMB.variablesList}"/>                                                                                                
+                                                <f:ajax 
+                                                    event="change"
+                                                    listener="#{injuriesCountMB.changeVariable}"
+                                                    render="IdBtnRemove IdBtnAdd IdBtnOptions"/>
+                                                <f:ajax 
+                                                    event="dblclick"
+                                                    listener="#{injuriesCountMB.addVariableClick}"                                                    
+                                                    render="IdSelectOneListVariables IdSelectOneListCrossVariables  IdBtnRemove IdBtnAdd IdBtnOptions :formInjuries:msg"/>
+                                            </h:selectManyListbox> 
+                                            
+                                        </p:column>
+                                        <p:column>
+
+                                            <p:commandButton 
+                                                
+                                                style="width: 20px;"
+                                                id="IdBtnAdd" 
+                                                icon="ui-icon-arrowthick-1-e"                                            
+                                                disabled="#{injuriesCountMB.btnAddVariableDisabled}"
+                                                actionListener="#{injuriesCountMB.addVariableClick}"  
+                                                update="IdSelectOneListVariables IdSelectOneListCrossVariables IdBtnRemove IdBtnAdd IdBtnOptions :formInjuries:msg"/> 
+                                             
+                                            <br/>
+                                            <p:commandButton 
+                                                 
+                                                style="width: 20px;"
+                                                id="IdBtnRemove" 
+                                                icon="ui-icon-arrowthick-1-w"                                            
+                                                disabled="#{injuriesCountMB.btnRemoveVariableDisabled}"
+                                                actionListener="#{injuriesCountMB.removeVariableClick}"  
+                                                update="IdSelectOneListVariables IdSelectOneListCrossVariables IdBtnRemove IdBtnAdd IdBtnOptions :formInjuries:msg"/> 
+                                            
+                                            <br/>
+                                            <p:commandButton
+                                                
+                                                style="width: 20px;"
+                                                id="IdBtnOptions" 
+                                                icon="ui-icon-wrench"
+                                                disabled="#{injuriesCountMB.btnRemoveVariableDisabled}"
+                                                actionListener="#{injuriesCountMB.btnLoadConfigurationClick}"
+                                                oncomplete="configurationsDialog.show();"
+                                                update="IdSelectOneListVariables  IdSelectOneListCrossVariables IdBtnRemove IdBtnAdd IdBtnOptions :formInjuries:IdForm2:IdConfigurationsList :formInjuries:msg"/>
+                                            
+                                        </p:column>
+                                        <p:column>
+                                            <h:selectManyListbox 
+                                                id="IdSelectOneListCrossVariables" 
+                                                value="#{injuriesCountMB.currentVariablesCrossSelected}"
+                                                style="height:80px; width: 200px;"
+                                                converterMessage="Fallo de comunicación, por favor intente nuevamente.">
+                                                <f:selectItems value="#{injuriesCountMB.variablesCrossList}"/>                                                            
+                                                <f:ajax 
+                                                    event="change"                                                                                                           
+                                                    listener="#{injuriesCountMB.changeCrossVariable}" 
+                                                    render="IdBtnRemove IdBtnAdd IdBtnOptions :formInjuries:IdForm2:IdConfigurationsDialog"/>
+                                                <f:ajax 
+                                                    event="dblclick"
+                                                    listener="#{injuriesCountMB.removeVariableClick}"                                                    
+                                                    render="IdSelectOneListVariables IdSelectOneListCrossVariables IdBtnRemove IdBtnAdd IdBtnOptions :formInjuries:msg"/>
+                                            </h:selectManyListbox> 
+
+                                        </p:column>
+                                    </p:row>
+
+                                </p:panelGrid>
+                                <br/>
+                                
+                                
+                            </p:tab>
+                            
+                            <p:tab title="Mapa">
+                                
+                            </p:tab>
+                            
+                        </p:tabView>
+
+                        <p:commandButton 
+                            value="Reiniciar" 
+                            style="width: 100px;"
+                            id="IdBtnReset" 
+                            actionListener="#{injuriesCountMB.reset}"  
+                            oncomplete="pageActive1();"
+                            onclick="pageInactive1();"
+                            update=":formInjuries :formInjuries:msg"
+                            /> 
+                        <p:commandButton 
+                            value="Generar mapa" 
+                            style="width: 100px;"
+                            id="IdBtnGenerate" 
+                            actionListener="#{injuriesCountMB.processAddressCountIndicators()}"
+                            oncomplete="pageActive1();"  
+                            onclick="pageInactive1();"                                                        
+                            update=":formInjuries:panelMap :formInjuries:msg"
+                            />
+
+                        
+                    </p:fieldset>
+                    <p:fieldset legend="ANALISIS ESTADISTICO">
+
+                        <p:inputText id="txtCoordinates" 
+                                     
+                                     style="width: 380px;"
+                                     />
+                        <p:commandButton value="Generar grafico"
+                                         
+                                         update=":formInjuries:panelChart :formInjuries:msg"
+
+                                         />
+
+                        <p:outputPanel id="panelChart">
+                            <div id="fatalInjuriesChart" style="min-width: 310px; height: 400px; margin: 0 auto;"></div>
+                            
+                        </p:outputPanel>
+                    </p:fieldset>
+
+                </p:layoutUnit>
+
+            </ui:define>
+                
+            <ui:define name="dialogs">
+                <h:form id="IdForm2">
+                    <p:dialog                     
+                        id="IdSaveConfigurationsDialog"  
+                        modal="true"
+                        header="Guardar configuración"
+                        resizable="false"                    
+                        widgetVar="saveConfigurationDialog">  
+                        <br/>                    
+                        Nombre para La configuración
+                        <br/>                    
+                        <br/>
+                        <h:inputText                         
+                            value="#{injuriesCountMB.newConfigurationName}" 
+                            size="70"/>
+                        <br/>
+                        <br/>
+                        <p:commandButton                                                            
+                            value="Guardar"
+                            style="margin:0;"
+                            oncomplete="saveConfigurationDialog.hide()"
+                            actionListener="#{injuriesCountMB.btnSaveConfigurationClick}"
+                            update="IdConfigurationsList :formInjuries:msg"/>
+                        <br/>
+                        <br/>
+                    </p:dialog>
+                    <p:dialog 
+                        id="IdOpenConfigurationsDialog"  
+                        modal="true"
+                        header="Cargar configuración"         
+                        resizable="false"                    
+                        widgetVar="openConfigurationDialog">  
+                        <br/>
+                        <h:selectManyListbox 
+                            id="IdConfigurationsList"
+                            value="#{injuriesCountMB.currentConfigurationSelected}"
+                            style="height:110px; width: 360px;"
+                            converterMessage="Fallo de comunicación, por favor intente nuevamente.">
+                            <f:selectItems value="#{injuriesCountMB.configurationsList}"/>
+                        </h:selectManyListbox>
+                        <br/>
+                        <br/>
+                        <p:commandButton                                                            
+                            value="Cargar"
+                            style="margin:0;"
+                            oncomplete="openConfigurationDialog.hide()"
+                            actionListener="#{injuriesCountMB.btnOpenConfigurationClick}"
+                            update="IdSelectManyListCategoryValues IdConfigurationsList :formInjuries:msg"/>
+                        <p:commandButton                                                            
+                            value="Eliminar"
+                            style="margin:0;"                        
+                            oncomplete="openConfigurationDialog.hide()"
+                            actionListener="#{injuriesCountMB.btnRemoveConfigurationClick}"
+                            update="IdSelectManyListCategoryValues IdConfigurationsList :formInjuries:msg"/>  
+                        <br/>
+                        <br/>
+
+                    </p:dialog>
+                    <p:dialog 
+                        id="IdConfigurationsDialog"  
+                        modal="true"
+                        header="Configuración de variable: #{injuriesCountMB.firstVariablesCrossSelected}"         
+                        resizable="false"                    
+                        widgetVar="configurationsDialog">  
+                        <br/>
+                        <p:panelGrid rendered="#{!injuriesCountMB.btnAddCategoricalValueDisabled}">
+                            <p:row>
+                                <p:column styleClass="ui-widget-header">
+                                    Nueva categoria
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    Valor inicial &nbsp;
+                                    <h:inputText 
+                                        id="IdA" 
+                                        disabled="#{injuriesCountMB.btnAddCategoricalValueDisabled}"
+                                        value="#{injuriesCountMB.initialValue}" 
+                                        maxlength="4" 
+                                        size="4"/>
+                                    &nbsp; &nbsp;                                 
+                                    Valor Final &nbsp;                                
+                                    <h:inputText 
+                                        id="IdB" 
+                                        disabled="#{injuriesCountMB.btnAddCategoricalValueDisabled}"
+                                        value="#{injuriesCountMB.endValue}" 
+                                        maxlength="4" 
+                                        size="4"/>
+                                    &nbsp; &nbsp;
+                                    <p:commandButton                        
+                                        id="IdBtnAddCategory"
+                                        value="Agregar"
+                                        style="margin:0;"
+                                        disabled="#{injuriesCountMB.btnAddCategoricalValueDisabled}"
+                                        actionListener="#{injuriesCountMB.btnAddCategoricalValueClick}"
+                                        update="IdSelectManyListCategoryValues :formInjuries:msg IdA IdB"/>  
+
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                        <br/>
+                        <p:panelGrid>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header">
+                                    Categorias actuales    
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column>
+                                    <h:selectManyListbox 
+                                        id="IdSelectManyListCategoryValues" 
+                                        value="#{injuriesCountMB.currentCategoricalValuesSelected}"
+                                        style="height:110px; width: 360px;"
+                                        converterMessage="Fallo de comunicación, por favor intente nuevamente.">
+                                        <f:selectItems value="#{injuriesCountMB.currentCategoricalValuesList}"/>                                                                                                
+
+                                    </h:selectManyListbox>
+                                    <br/>
+                                    <br/>
+                                    <p:commandButton                        
+                                        id="IdBtnRemoveCategory"
+                                        value="Quitar"
+                                        style="margin:0;"                                    
+                                        actionListener="#{injuriesCountMB.btnRemoveCategoryValueClick}"                                                
+                                        update="IdBtnRemoveCategory IdSelectManyListCategoryValues"/>  
+                                    <p:commandButton                        
+                                        id="IdBtnResetCategory"
+                                        rendered="false"
+                                        value="Reiniciar"
+                                        style="margin:0;"                                                
+                                        actionListener="#{injuriesCountMB.btnResetCategoryListClick}"                                                
+                                        update="IdBtnRemoveCategory IdSelectManyListCategoryValues"/>  
+                                    <p:commandButton   
+                                        rendered="#{loginMB.userSystem}"
+                                        value="Guardar"
+                                        style="margin:0;"
+                                        onclick="saveConfigurationDialog.show();"/>  
+                                    <p:commandButton                                                            
+                                        value="Cargar/Eliminar"
+                                        rendered="#{loginMB.userSystem}"
+                                        style="margin:0;"                    
+                                        oncomplete="openConfigurationDialog.show()"/>  
+                                    <br/>
+                                    <br/>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                        <br/>
+                        <br/>                    
+                    </p:dialog>
+                </h:form>
+
+            </ui:define>
+
+        </ui:composition>
+            
+        
+    </body>
+</html>
