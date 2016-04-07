@@ -15,17 +15,17 @@ and open the template in the editor.
 
 
 body {
-    background: url(../img/background.png) top center repeat-x #CFDEEA;
+    /*background: url(../img/background.png) top center repeat-x #CFDEEA;*/
     /*margin: 0px;*/
     /*font: 11px "Lucida Sans Unicode", "Lucida Sans", "Lucida Grande", verdana, arial, helvetica;*/
     color: #282828;
 }
 
 #formInjuries\:logo{
-    width: 200px;
-    height: 100px;
+    width: 100px;
+    height: 30px;
     display:block;
-    margin:0 auto 0 auto;
+    margin:-8px 0px 0px 0px;
 }
 
 
@@ -68,3 +68,9 @@ body {
     -moz-opacity: 0.1;
     opacity: 0.1;
 }
+
+.rangeDateGrid.ui-panelgrid>*>tr,
+.rangeDateGrid.ui-panelgrid>*>tr>td {
+    border: none;
+}
+

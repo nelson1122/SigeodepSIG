@@ -106,5 +106,14 @@
         <libraries xmlns="http://www.netbeans.org/ns/ant-project-libraries/1">
             <definitions>.\lib\nblibraries.properties</definitions>
         </libraries>
+        <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
+            <word>BOTONES</word>
+            <word>CONFIGURACIONES</word>
+            <word>CREACION</word>
+            <word>MAPA</word>
+            <word>PESTAÑA</word>
+            <word>REINICIO</word>
+            <word>RESULTADOS</word>
+        </spellchecker-wordlist>
     </configuration>
 </project>

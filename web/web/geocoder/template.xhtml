@@ -13,26 +13,22 @@
         <h:outputScript name="geocoder/js/Highcharts-4.2.1/highcharts.js"/>
         <h:outputScript name="geocoder/js/Highcharts-4.2.1/exporting.js"/>
         <h:outputStylesheet name="geocoder/css/default.css"/>
-        <h:outputStylesheet name="geocoder/css/cssLayout.css"/>
         <h:outputStylesheet name="geocoder/css/style.css"/>
         <script src="http://maps.google.com/maps/api/js?sensor=false"/>
         <title><ui:insert name="indexTitle"></ui:insert></title>
     </h:head>
 
     <h:body>
-         
-        
         <h:form id="formInjuries">
-            
             <ui:insert name="InactivityLayer">
             </ui:insert>
-            
+
             <p:growl id="msg"  showDetail="true" sticky="true" autoUpdate="true" life="1000"/>
             
-            <p:toolbar>
-                
+            <h:graphicImage id="logo" name="geocoder/img/logo2.png"/>
+            
+            <p:toolbar style="margin-left: 110px; margin-top: -30px; margin-bottom: 4px;">
                 <p:toolbarGroup align="left">
-                    
                     <p:menuButton value="Direcciones">
                         <p:menuitem value="Busqueda" action="addressSearch" />
                     </p:menuButton>
@@ -40,16 +36,14 @@
                         <p:menuitem value="Fatales" action="#{injuriesCountMB.loadFatalIndicator()}" />
                         <p:menuitem value="No fatales" action="#{injuriesCountMB.loadNonFatalIndicator()}" />
                     </p:menuButton>
-                    
                 </p:toolbarGroup>
-                
             </p:toolbar>
-            <p:layout style="height: 640px" >
-                
+            <p:layout style="height: 620px" >
+
                 <p:layoutUnit position="center">
                     <ui:insert name="centerPanel">
                     </ui:insert>
-                    
+
                     <p:ajaxStatus 
                         style=" position:fixed; 
                         top: 5px; 
@@ -65,13 +59,13 @@
                             <h:outputText value="&nbsp;" />  
                         </f:facet>  
                     </p:ajaxStatus>
-                    
-                </p:layoutUnit>
 
+                </p:layoutUnit>
+                <ui:insert name="leftPanel">
+                </ui:insert>
             </p:layout>
+            
             <ui:insert name="dialogs">   
-            </ui:insert>
-            <ui:insert name="mapsettingsDialog">   
             </ui:insert>
         </h:form>
     </h:body>
