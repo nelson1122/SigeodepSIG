@@ -9,6 +9,10 @@
 
         <ui:composition template="template.xhtml">
 
+            <ui:define name="script">
+                <script type="text/javascript" src="js/features.js"></script>
+            </ui:define>
+
             <ui:define name="indexTitle">
                 ANALISIS ESPACIAL LESIONES FATALES
             </ui:define>
@@ -26,112 +30,77 @@
             </ui:define>
 
             <ui:define name="centerPanel">
-
                 <p:toolbar style="margin-top: -3px; margin-bottom: 2px;">
                     <p:toolbarGroup style="margin-top: 6px;">
                         Tipo de mapa:&nbsp; &nbsp;
                     </p:toolbarGroup>
                     <p:toolbarGroup>
-                        <p:selectOneButton value="#{injuriesCountMB.mapType}">
-                            <f:selectItem itemLabel="Puntos" itemValue="points" />
-                            <f:selectItem itemLabel="HeatMap" itemValue="heatMap" />
-                            <f:ajax 
-                                event="change"
-                                render=":formInjuries:msg :formInjuries:panelMap"/>
+                        <p:selectOneButton 
+                            id="mapSelectionBtn" value="#{injuriesCountMB.mapType}">
+                            <f:selectItem itemLabel="Puntos" itemValue="points"/>
+                            <f:selectItem itemLabel="HeatMap" itemValue="heatmap" />
+                            <p:ajax
+                                listener="#{injuriesCountMB.changeInteractionButtonsState}"
+                                oncomplete="loadDataLayer()"
+                                update= "selectOptionSelected drawOptionSelected resetBtn txtMapType :formInjuries:configurationsTab"/>
                         </p:selectOneButton>
                     </p:toolbarGroup>
-                    <p:toolbarGroup>
+                    <p:toolbarGroup style="margin-top: 6px;">
                         <span class="ui-separator">
                             <span class="ui-icon ui-icon-grip-dotted-vertical" />
                         </span>
-                        <p:toolbarGroup style="margin-top: 6px;">
-                            Zonas de interés:&nbsp; &nbsp;
-                        </p:toolbarGroup>
-                        <p:commandButton type="button" value="Trazar" />
-                        <p:commandButton type="button" value="Seleccionar" />
-                        <p:commandButton type="button" value="Reiniciar" />
+                        Zonas de interés:&nbsp; &nbsp;
+                    </p:toolbarGroup>
+                    <p:toolbarGroup>
+                        <p:selectBooleanButton 
+                            id="drawOptionSelected" 
+                            onLabel="Trazar" 
+                            offLabel="Trazar"
+                            
+                            value="#{injuriesCountMB.drawOptionSelected}"
+                            disabled="#{injuriesCountMB.drawOptionDisabled}">
+                            <p:ajax 
+                                listener="#{injuriesCountMB.drawButtonChange()}" update="selectOptionSelected boolDrawOption boolSelectOption" oncomplete="changeInteraction()"/>
+                        </p:selectBooleanButton>
+
+                        <p:selectBooleanButton 
+                            id="selectOptionSelected" 
+                            onLabel="Seleccionar" 
+                            offLabel="Seleccionar"
+                            
+                            value="#{injuriesCountMB.selectOptionSelected}"
+                            disabled="#{injuriesCountMB.selectOptionDisabled}">
+                            <p:ajax listener="#{injuriesCountMB.selectButtonChange()}"  update="drawOptionSelected boolDrawOption boolSelectOption" oncomplete="changeInteraction()"/>
+                        </p:selectBooleanButton>
+                        <p:commandButton 
+                            id="resetBtn" 
+                            value="Reiniciar" 
+                            oncomplete="clearLayer()"
+                            actionListener="#{injuriesCountMB.resetButtonChange()}" 
+                            update="selectOptionSelected drawOptionSelected"
+                            disabled="#{injuriesCountMB.resetOptionDisabled}" />
+
                     </p:toolbarGroup>
 
+
                 </p:toolbar>
-
-
-                <p:outputPanel id="panelMap">
-                    <div id="geocoderMap"></div>
+                
+                <div id="map" style="width: 100%; height: 94%; position: absolute;"></div>
+                <p:outputPanel id='mapPanel'>
+                    <!-- DIVISION DEL MAPA -->
+                    <!-- CONTROLES PARA CARGAR VALORES LEIDOS DESDE JAVASCRIPT -->
+                    <p:inputText id="txtGeoJSON" value='#{injuriesCountMB.geoJSON}' style="display: none;"/>
+                    <p:inputText id="boolShowInjuriesLayer" value='#{injuriesCountMB.showInjuriesLayer}' style="display: none;"/>
+                    <p:inputText id="txtMapType" value="#{injuriesCountMB.mapType}" style="display: none;"/>
+                    <p:inputText id="boolDrawOption" value="#{injuriesCountMB.drawOptionSelected}" style="display: none;"/>
+                    <p:inputText id="boolSelectOption" value="#{injuriesCountMB.selectOptionSelected}" style="display: none;"/>
+                    
                     <script type="text/javascript">
-
-                        var map, gmaps, osm, heat;
-                        var featurecollection, injuriesLayer;
-                        var boxLayer, box;
-
-                        $(function () {
-
-                            map = new OpenLayers.Map('geocoderMap');
-
-                            gmaps = new OpenLayers.Layer.Google(
-                                    "Google Hybrid",
-                                    {
-                                        type: google.maps.MapTypeId.HYBRID,
-                                        numZoomLevels: 20
-                                    }
-                            );
-
-                            osm = new OpenLayers.Layer.OSM();
-
-                            //AGREGO LAYERS Y CONFIGURO EL MAPA
-                            map.addLayers([osm, gmaps]);
-                            map.addControl(new OpenLayers.Control.LayerSwitcher());
-
-
-                            map.setCenter(new OpenLayers.LonLat(-8602732.136679076, 133773.624483927), 14);
-
-                            if (#{injuriesCountMB.showAddressesMap}) {
-                                featurecollection = #{injuriesCountMB.loadGeoJSON()};
-
-                                if ("#{injuriesCountMB.mapType}" === "points") {
-                                    var geojson_format = new OpenLayers.Format.GeoJSON();
-                                    injuriesLayer = new OpenLayers.Layer.Vector('Puntos');
-                                    injuriesLayer.addFeatures(geojson_format.read(featurecollection));
-                                    map.addLayer(injuriesLayer);
-                                } else if ("#{injuriesCountMB.mapType}" === "heatMap") {
-                                    var geojson_format = new OpenLayers.Format.GeoJSON();
-                                    injuriesLayer = new OpenLayers.Layer.Vector('Puntos');
-                                    injuriesLayer.addFeatures(geojson_format.read(featurecollection));
-                                    map.addLayer(injuriesLayer);
-
-                                    /*
-                                     heat = new Heatmap.Layer("Heatmap");
-                                     for (var i = 0; i &lt; featurecollection.features.length; i++) {
-                                     var x = featurecollection.features[i].geometry.coordinates[0];
-                                     var y = featurecollection.features[i].geometry.coordinates[1];
-                                     heat.addSource(new Heatmap.Source(new OpenLayers.LonLat(x, y)));
-                                     }
-                                     
-                                     heat.defaultIntensity = 0.5;
-                                     heat.defaultRadius = 10;
-                                     heat.setOpacity(0.7);
-                                     heat.redraw();
-                                     heat.setVisibility(true);
-                                     map.addLayer(heat);*/
-
-                                }
-                            }
-                        });
-
-                        // called when the feature is complete (double-clicked)
-                        function doneHandler(lineGeom) {
-                            //alert("DONE:" + lineGeom.getVertices());
-                            document.getElementById("formInjuries:txtCoordinates").value = lineGeom.getVertices();
+                        if(typeof map !== 'undefined'){
+                            loadDataLayer();
                         }
-
-                        //activar/desactivar la seleccion de area
-                        function activate() {
-                            if (box.deactivate() === false) {
-                                box.activate();
-                            }
-                        }
-
-
                     </script>
+                    
                 </p:outputPanel>
 
             </ui:define>
@@ -139,7 +108,7 @@
             <!-- PANEL IZQUIERDO -->
             <ui:define name="leftPanel">
                 <p:layoutUnit position="east" size="36%">
-                    <p:tabView style="height: 99%;">
+                    <p:tabView id="configurationsTab" style="height: 99%;">
                         <!-- PESTAÑA DE CONFIGURACIONES -->
                         <p:tab title="Configuraciones">
                             <p:fieldset legend="Categorias disponibles" >
@@ -313,8 +282,11 @@
                                         actionListener="#{injuriesCountMB.processAddressCountIndicators()}"
                                         oncomplete="pageActive1();"  
                                         onclick="pageInactive1();"                                                        
-                                        update=":formInjuries:panelMap :formInjuries:msg"
-                                        />
+                                        update=":formInjuries:msg
+                                                :formInjuries:configurationsTab
+                                                :formInjuries:mapPanel">
+                                        
+                                    </p:commandButton>
                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                     <p:commandButton 
                                         value="Reiniciar" 
@@ -323,7 +295,12 @@
                                         actionListener="#{injuriesCountMB.reset}"  
                                         oncomplete="pageActive1();"
                                         onclick="pageInactive1();"
-                                        update=":formInjuries :formInjuries:msg"
+                                        update=":formInjuries:mapSelectionBtn 
+                                                :formInjuries:selectOptionSelected 
+                                                :formInjuries:drawOptionSelected
+                                                :formInjuries:resetBtn
+                                                :formInjuries:configurationsTab
+                                                :formInjuries:mapPanel"
                                         />
                                 </h:panelGroup>
                             </p:fieldset>
@@ -346,7 +323,7 @@
 
             </ui:define>
 
-            <!--Dialogos de configuracion de variables-->
+            <!--DIALOGOS DE CONFIGURACION DE VARIABLES-->
 
             <ui:define name="dialogs">
                 <h:form id="IdForm2">
