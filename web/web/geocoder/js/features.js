@@ -5,6 +5,7 @@
  */
 
 var map; //contenedor de capas y componentes
+var points, heatmap;
 var pointsOverlay, heatmapOverlay; //Grupos de capas para puntos / heatmap
 var container, content, closer; // contenedores (divs) para el popup (mapa de puntos)
 var popup, singleclickFunction, pointermoveFunction; //variables/eventos(funciones) necesarios para ejecutar popup
@@ -12,7 +13,8 @@ var drawingLayer, drawInteraction;
 var selectClick;
 
 $(function () {
-
+    
+    //Divisiones para popup (configuradas con estilos)
     container = document.getElementById('popup');
     content = document.getElementById('popup-content');
     closer = document.getElementById('popup-closer');
@@ -45,7 +47,7 @@ $(function () {
      * @type ol.layer.Group
      */
     var baseMaps = new ol.layer.Group({
-        title: 'BaseMaps',
+        title: 'Mapas Base',
         layers: [bmapsRoads, bmapsAerial, osmLayer]
     });
 
@@ -81,7 +83,7 @@ $(function () {
             center: [-8602509.5692, 134983.3435],
             zoom: 14,
             maxZoom: 18,
-            minZoom: 14
+            minZoom: 13
         })
     });
 
@@ -118,7 +120,8 @@ $(function () {
     }, 2);
 
     loadDataLayer();
-
+    
+    
 });
 
 /**
@@ -164,7 +167,7 @@ function loadDataLayer() {
  */
 function loadPoints(dataSource) {
 
-    var points = new ol.layer.Vector({
+    points = new ol.layer.Vector({
         title: 'Puntos',
         source: dataSource,
         style: new ol.style.Style({
@@ -272,13 +275,16 @@ function loadPoints(dataSource) {
  * @returns {undefined}
  */
 function loadHeatmap(dataSource) {
+    
+    var blur = $("#formInjuries\\:blurValueOutput").text();
+    var radio = $("#formInjuries\\:radioValueOutput").text();
 
-    var heatmap = new ol.layer.Heatmap({
+    heatmap = new ol.layer.Heatmap({
         title: 'Heatmap',
         source: dataSource,
         visible: true,
-        blur: 10,
-        radius: 10
+        blur: parseInt(blur),
+        radius: parseInt(radio)
     });
 
     heatmapOverlay = new ol.layer.Group({
@@ -289,6 +295,7 @@ function loadHeatmap(dataSource) {
     changeInteraction();
 
     map.addLayer(heatmapOverlay);
+    
 }
 
 /**
@@ -297,6 +304,7 @@ function loadHeatmap(dataSource) {
  * @returns {undefined}
  */
 function changeInteraction() {
+    
     var drawOption = $('#formInjuries\\:boolDrawOption').val();
     var selectOption = $('#formInjuries\\:boolSelectOption').val();
 
@@ -349,15 +357,18 @@ function changeInteraction() {
                     //console.info("SELECCIONADO");
                     //console.info(feature.getGeometry().getCoordinates());
                     var coordinates = feature.getGeometry().getCoordinates()[0];
+                    
+                    
 
                     if (coordinates.length) {
-                        var coord = "Es poligono: \n"
-                                + "1." + coordinates[0] + "\n"
-                                + "2." + coordinates[1] + "\n"
-                                + "3." + coordinates[2] + "\n"
-                                + "4." + coordinates[3] + "\n"
-                                + "5." + coordinates[4] + "\n";
-                        alert(coord);
+                        var coord = ""
+                                + coordinates[0][0] +" "+ coordinates[0][1] +","
+                                + coordinates[1][0] +" "+ coordinates[1][1] +","
+                                + coordinates[2][0] +" "+ coordinates[2][1] +","
+                                + coordinates[3][0] +" "+ coordinates[3][1] +","
+                                + coordinates[4][0] +" "+ coordinates[4][1];
+                        $('#formInjuries\\:txtSelectedBox').val(coord);
+                        remoteDataProcess();
                     }
                 });
             } else {
@@ -394,10 +405,19 @@ function removeComponents() {
  * las interacciones utilizadas
  * @returns {undefined}
  */
-
 function clearLayer(){
     drawingLayer.getSource().clear();
     if (typeof selectClick !== 'undefined'){
         selectClick.getFeatures().clear();
     }
+    removeComponents();
 }
+function updateHeatmapStyle(){
+    var blur = $("#formInjuries\\:blurValueOutput").text();
+    var radio = $("#formInjuries\\:radioValueOutput").text();
+    
+    heatmap.setBlur(parseInt(blur), 10);
+    heatmap.setRadius(parseInt(radio), 10);
+}
+
+

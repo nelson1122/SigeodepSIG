@@ -42,21 +42,18 @@
                             <p:ajax
                                 listener="#{injuriesCountMB.changeInteractionButtonsState}"
                                 oncomplete="loadDataLayer()"
-                                update= "selectOptionSelected drawOptionSelected resetBtn txtMapType :formInjuries:configurationsTab"/>
+                                update= "selectOptionSelected drawOptionSelected resetBtn heatmapConfigBtn heatmapConfigDlg txtMapType :formInjuries:configurationsTab"/>
                         </p:selectOneButton>
                     </p:toolbarGroup>
                     <p:toolbarGroup style="margin-top: 6px;">
-                        <span class="ui-separator">
-                            <span class="ui-icon ui-icon-grip-dotted-vertical" />
-                        </span>
-                        Zonas de interés:&nbsp; &nbsp;
+                        &nbsp; &nbsp;&nbsp; &nbsp;Zonas de interés:&nbsp; &nbsp;
                     </p:toolbarGroup>
                     <p:toolbarGroup>
                         <p:selectBooleanButton 
                             id="drawOptionSelected" 
                             onLabel="Trazar" 
                             offLabel="Trazar"
-                            
+
                             value="#{injuriesCountMB.drawOptionSelected}"
                             disabled="#{injuriesCountMB.drawOptionDisabled}">
                             <p:ajax 
@@ -70,7 +67,8 @@
                             
                             value="#{injuriesCountMB.selectOptionSelected}"
                             disabled="#{injuriesCountMB.selectOptionDisabled}">
-                            <p:ajax listener="#{injuriesCountMB.selectButtonChange()}"  update="drawOptionSelected boolDrawOption boolSelectOption" oncomplete="changeInteraction()"/>
+                            <p:ajax 
+                                listener="#{injuriesCountMB.selectButtonChange()}" update="drawOptionSelected boolDrawOption boolSelectOption" oncomplete="changeInteraction()"/>
                         </p:selectBooleanButton>
                         <p:commandButton 
                             id="resetBtn" 
@@ -81,10 +79,23 @@
                             disabled="#{injuriesCountMB.resetOptionDisabled}" />
 
                     </p:toolbarGroup>
-
+                    <p:toolbarGroup>
+                        <span class="ui-separator">
+                            <span class="ui-icon ui-icon-grip-dotted-vertical" />
+                        </span>
+                            <p:commandButton
+                                id="heatmapConfigBtn"
+                                value="Configuracion del mapa"
+                                type="button" 
+                                onclick="optDlg.show()"
+                                disabled="#{injuriesCountMB.heatmapConfigDisable}" 
+                                />
+                    </p:toolbarGroup>
 
                 </p:toolbar>
-                
+
+
+
                 <div id="map" style="width: 100%; height: 94%; position: absolute;"></div>
                 <p:outputPanel id='mapPanel'>
                     <!-- DIVISION DEL MAPA -->
@@ -94,13 +105,39 @@
                     <p:inputText id="txtMapType" value="#{injuriesCountMB.mapType}" style="display: none;"/>
                     <p:inputText id="boolDrawOption" value="#{injuriesCountMB.drawOptionSelected}" style="display: none;"/>
                     <p:inputText id="boolSelectOption" value="#{injuriesCountMB.selectOptionSelected}" style="display: none;"/>
-                    
+                    <p:inputText id="txtSelectedBox" value="#{injuriesCountMB.selectedBox}" style="display: none;"/>
                     <script type="text/javascript">
-                        if(typeof map !== 'undefined'){
+                        if (typeof map !== 'undefined') {
                             loadDataLayer();
                         }
                     </script>
-                    
+                    <p:remoteCommand
+                        name="remoteDataProcess" actionListener="#{injuriesCountMB.remoteDataProcess()}"/>
+
+                    <p:dialog
+                        id="heatmapConfigDlg"
+                        header="Opciones Mapa de calor" 
+                        widgetVar="optDlg" 
+                        style="position: absolute; margin-top: 470px; margin-right: 10px;" 
+                        draggable="false" resizable="false" height="70" width="300" position="top"
+                        visible="#{injuriesCountMB.heatmapConfigDisable eq true ? false : false}"
+                        >
+                        Blur:
+                        <h:inputHidden id="blurSlider" value="#{injuriesCountMB.blursliderValue}" />
+                        <h:outputText id="blurValueOutput" value="#{injuriesCountMB.blursliderValue}"/>
+                        <p:slider for="blurSlider" display="blurValueOutput" onSlideEnd="updateHeatmapStyle()" maxValue="20">
+                            <p:ajax event="slideEnd" process="blurSlider" />
+                        </p:slider>
+                        <br></br>
+                        Radio:
+                        <h:inputHidden id="radioSlider" value="#{injuriesCountMB.radiosliderValue}"/>
+                        <h:outputText id="radioValueOutput" value="#{injuriesCountMB.radiosliderValue}"/>
+                        <p:slider for="radioSlider" display="radioValueOutput" onSlideEnd="updateHeatmapStyle()" maxValue="10">
+                            <p:ajax event="slideEnd" process="radioSlider" />
+                        </p:slider>
+                                              
+                    </p:dialog>
+
                 </p:outputPanel>
 
             </ui:define>
@@ -283,9 +320,9 @@
                                         oncomplete="pageActive1();"  
                                         onclick="pageInactive1();"                                                        
                                         update=":formInjuries:msg
-                                                :formInjuries:configurationsTab
-                                                :formInjuries:mapPanel">
-                                        
+                                        :formInjuries:configurationsTab
+                                        :formInjuries:mapPanel">
+
                                     </p:commandButton>
                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                     <p:commandButton 
@@ -296,11 +333,11 @@
                                         oncomplete="pageActive1();"
                                         onclick="pageInactive1();"
                                         update=":formInjuries:mapSelectionBtn 
-                                                :formInjuries:selectOptionSelected 
-                                                :formInjuries:drawOptionSelected
-                                                :formInjuries:resetBtn
-                                                :formInjuries:configurationsTab
-                                                :formInjuries:mapPanel"
+                                        :formInjuries:selectOptionSelected 
+                                        :formInjuries:drawOptionSelected
+                                        :formInjuries:resetBtn
+                                        :formInjuries:configurationsTab
+                                        :formInjuries:mapPanel"
                                         />
                                 </h:panelGroup>
                             </p:fieldset>

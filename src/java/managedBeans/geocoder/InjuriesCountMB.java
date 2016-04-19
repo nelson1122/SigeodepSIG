@@ -118,7 +118,9 @@ public class InjuriesCountMB {
     private ResultSet rsPoints;
     private String mapType = "points";
     private String geoJSON = "";
-    
+    private String selectedBox = "";
+    private String sourceGeocodedTable = "";
+    private String joinField = "";
 
     private boolean drawOptionSelected = false;
     private boolean selectOptionSelected = false;
@@ -127,6 +129,9 @@ public class InjuriesCountMB {
     private boolean drawOptionDisabled = true;
     private boolean selectOptionDisabled = true;
     private boolean resetOptionDisabled = true;
+    private boolean heatmapConfigDisable = true;
+    private int blursliderValue;
+    private int radiosliderValue;
 
     private boolean showGraphic = false;//mostrar seccion de graficos
     private boolean showTableResult = false;//mostrar tabla de resultados
@@ -175,6 +180,8 @@ public class InjuriesCountMB {
         variablesCrossData = new ArrayList<>();//lista de variables a cruzar            
         continueProcess = true;
         showInjuriesLayer = true;
+
+        selectedBox = "-8606316.127212692 138114.54413991174,-8606316.127212692 131368.97639374496,-8598175.583700322 131368.97639374496,-8598175.583700322 138114.54413991174,-8606316.127212692 138114.54413991174";
 
         if (continueProcess) {//ELIMINO DATOS DE UN PROCESO ANTERIOR
             removeIndicatorRecords();
@@ -965,12 +972,21 @@ public class InjuriesCountMB {
      * well as the settings for the categorical variables.
      */
     public void reset() {
+
         drawOptionDisabled = true;
         selectOptionDisabled = true;
         resetOptionDisabled = true;
-        
-        
+        heatmapConfigDisable = true;
+
+        drawOptionSelected = false;
+        selectOptionSelected = false;
+        resetOptionSelected = false;
+
+        selectedBox = "-8606316.127212692 138114.54413991174,-8606316.127212692 131368.97639374496,-8598175.583700322 131368.97639374496,-8598175.583700322 138114.54413991174,-8606316.127212692 138114.54413991174";
+
+        mapType = "points";
         showInjuriesLayer = false;
+
         showGraphic = false;
         showTableResult = false;
         btnExportDisabled = true;
@@ -1006,7 +1022,7 @@ public class InjuriesCountMB {
 
         currentVariablesSelected = null;
         currentVariablesCrossSelected = null;
-        mapType = "points";
+
     }
 
     /**
@@ -2349,26 +2365,47 @@ public class InjuriesCountMB {
     private void groupingOfValues() {
         //------------------------------------------------------------------
         //SE AGRUPAN LOS VALORES Y SE REALIZA EL CONTEO
-        //------------------------------------------------------------------                
-        sql = ""
-                + " SELECT  \n\r"
-                + "	column_1, \n\r"
-                + "	column_2, \n\r"
-                + "	column_3, \n\r"
-                + "     count(*)  \n\r"
-                + " FROM \n\r"
-                + "	indicators_addresses \n\r"
+        //------------------------------------------------------------------
+
+        if (currentIndicator.getInjuryType().compareTo("fatal_injuries") == 0) {
+            sourceGeocodedTable = "geocoded_fatal_injuries";
+            joinField = "fatal_injury_id";
+        } else {
+            sourceGeocodedTable = "geocoded_non_fatal_injuries";
+            joinField = "non_fatal_injury_id";
+        }
+
+        sql = " "
+                + " UPDATE \n\r"
+                + "    indicators_addresses \n\r"
+                + " SET \n\r"
+                + "    count = 0 \n\r"
                 + " WHERE \n\r"
-                + "     user_id = " + loginMB.getCurrentUser().getUserId() + " AND \n\r"
-                + "     indicator_id = " + (currentIndicator.getIndicatorId() + 100) + " \n\r"
-                + " GROUP BY \n\r"
-                + "	column_1, \n\r"
-                + "	column_2, \n\r"
-                + "	column_3 \n\r"
-                + " ORDER BY \n\r"
-                + "	column_1, \n\r"
-                + "	column_2, \n\r"
-                + "	column_3 \n\r";
+                + "    user_id = " + loginMB.getCurrentUser().getUserId() + " AND \n\r"
+                + "    indicator_id = " + currentIndicator.getIndicatorId();
+        connectionJdbcMB.non_query(sql);
+
+        sql = "SELECT \n"
+                + "	column_1, \n"
+                + "	column_2, \n"
+                + "	column_3, \n"
+                + "	count(*)  \n"
+                + "FROM \n"
+                + "	indicators_addresses \n"
+                + "		JOIN geocoded_non_fatal_injuries ON injury_id = non_fatal_injury_id	\n"
+                + "WHERE \n"
+                + "	user_id = " + loginMB.getCurrentUser().getUserId() + " AND\n"
+                + "	indicator_id = " + (currentIndicator.getIndicatorId() + 100) + " AND\n"
+                + "	ST_Contains(ST_GeomFromText('POLYGON((" + selectedBox + "))'), ST_MakePoint(lon, lat)) IS TRUE\n"
+                + "GROUP BY \n"
+                + "	column_1, \n"
+                + "	column_2, \n"
+                + "	column_3 \n"
+                + "ORDER BY \n"
+                + "	column_1, \n"
+                + "	column_2, \n"
+                + "	column_3 ";
+
         ResultSet rs = connectionJdbcMB.consult(sql);
         try {//actualizo el valor count de los registros currentIndicator.getIndicatorId() apartir de  currentIndicator.getIndicatorId()+100
             while (rs.next()) {
@@ -2518,17 +2555,6 @@ public class InjuriesCountMB {
 
     public void checkValidPoints() {
 
-        String sourceGeocodedTable;
-        String joinField;
-
-        if (currentIndicator.getInjuryType().compareTo("fatal_injuries") == 0) {
-            sourceGeocodedTable = "geocoded_fatal_injuries";
-            joinField = "fatal_injury_id";
-        } else {
-            sourceGeocodedTable = "geocoded_non_fatal_injuries";
-            joinField = "non_fatal_injury_id";
-        }
-
         try {
             sql = ""
                     + "SELECT\n"
@@ -2610,9 +2636,9 @@ public class InjuriesCountMB {
         } catch (SQLException | JSONException ex) {
 
         }
-        
+
         geoJSON = injuriesRoot.toString();
-        
+
     }
 
     public String loadFatalIndicator() {
@@ -2662,7 +2688,7 @@ public class InjuriesCountMB {
         drawOptionSelected = false;
         selectOptionSelected = false;
     }
-    
+
     /**
      * Metodo para cambiar estado de botones de interaccion con mapa
      *
@@ -2675,14 +2701,16 @@ public class InjuriesCountMB {
                 drawOptionDisabled = true;
                 selectOptionDisabled = true;
                 resetOptionDisabled = true;
-                
+                heatmapConfigDisable = true;
+
                 resetButtonChange();
-            
+
             }
             if (mapType.equals("heatmap")) {
                 drawOptionDisabled = false;
                 selectOptionDisabled = false;
                 resetOptionDisabled = false;
+                heatmapConfigDisable = false;
             }
         }
 
@@ -3133,6 +3161,14 @@ public class InjuriesCountMB {
         this.resetOptionDisabled = resetOptionDisabled;
     }
 
+    public boolean isHeatmapConfigDisable() {
+        return heatmapConfigDisable;
+    }
+
+    public void setHeatmapConfigDisable(boolean heatmapConfigDisable) {
+        this.heatmapConfigDisable = heatmapConfigDisable;
+    }
+
     public String getGeoJSON() {
         return geoJSON;
     }
@@ -3141,6 +3177,34 @@ public class InjuriesCountMB {
         this.geoJSON = geoJSON;
     }
 
-    
+    public String getSelectedBox() {
+        return selectedBox;
+    }
+
+    public void setSelectedBox(String selectedBox) {
+        this.selectedBox = selectedBox;
+    }
+
+    public int getBlursliderValue() {
+        return blursliderValue;
+    }
+
+    public void setBlursliderValue(int blursliderValue) {
+        this.blursliderValue = blursliderValue;
+    }
+
+    public int getRadiosliderValue() {
+        return radiosliderValue;
+    }
+
+    public void setRadiosliderValue(int radiosliderValue) {
+        this.radiosliderValue = radiosliderValue;
+    }
+
+    public void remoteDataProcess() {
+        System.out.println("Ejecutado desde JS\n" + selectedBox);
+
+        groupingOfValues();
+    }
 
 }
