@@ -11,9 +11,10 @@ var container, content, closer; // contenedores (divs) para el popup (mapa de pu
 var popup, singleclickFunction, pointermoveFunction; //variables/eventos(funciones) necesarios para ejecutar popup
 var drawingLayer, drawInteraction;
 var selectClick;
+var chart;
 
 $(function () {
-    
+
     //Divisiones para popup (configuradas con estilos)
     container = document.getElementById('popup');
     content = document.getElementById('popup-content');
@@ -39,7 +40,7 @@ $(function () {
     var osmLayer = new ol.layer.Tile({
         title: 'OpenStreetMaps',
         source: new ol.source.OSM(),
-        visible: false
+        visible: true
     });
 
     /**
@@ -48,7 +49,7 @@ $(function () {
      */
     var baseMaps = new ol.layer.Group({
         title: 'Mapas Base',
-        layers: [bmapsRoads, bmapsAerial, osmLayer]
+        layers: [osmLayer, bmapsRoads, bmapsAerial]
     });
 
     /**
@@ -120,8 +121,7 @@ $(function () {
     }, 2);
 
     loadDataLayer();
-    
-    
+
 });
 
 /**
@@ -136,14 +136,11 @@ function loadDataLayer() {
     map.removeLayer(heatmapOverlay);
     map.removeLayer(pointsOverlay);
 
-
     var data = $('#formInjuries\\:txtGeoJSON').val();
     var showInjuriesLayer = $('#formInjuries\\:boolShowInjuriesLayer').val();
     var mapType = $('#formInjuries\\:txtMapType').val();
 
     if (showInjuriesLayer !== 'false' && mapType !== '') {
-
-
 
         var geoJSONSource = new ol.source.Vector({
             features: (new ol.format.GeoJSON()).readFeatures(data)
@@ -155,6 +152,7 @@ function loadDataLayer() {
         if (mapType === 'heatmap') {
             loadHeatmap(geoJSONSource);
         }
+
     }
 
 }
@@ -186,7 +184,6 @@ function loadPoints(dataSource) {
         title: 'Capas de Datos',
         layers: [points]
     });
-
 
     /**
      * DIALOGO DE CARACTERISTICAS (POPUP)
@@ -224,7 +221,6 @@ function loadPoints(dataSource) {
                     injury_id = properties[key];
                 }
             }
-
 
             html = '<b>injury id: ' + injury_id + '</br>';
             content.innerHTML = html;
@@ -275,7 +271,7 @@ function loadPoints(dataSource) {
  * @returns {undefined}
  */
 function loadHeatmap(dataSource) {
-    
+
     var blur = $("#formInjuries\\:blurValueOutput").text();
     var radio = $("#formInjuries\\:radioValueOutput").text();
 
@@ -295,7 +291,7 @@ function loadHeatmap(dataSource) {
     changeInteraction();
 
     map.addLayer(heatmapOverlay);
-    
+
 }
 
 /**
@@ -304,13 +300,12 @@ function loadHeatmap(dataSource) {
  * @returns {undefined}
  */
 function changeInteraction() {
-    
+
     var drawOption = $('#formInjuries\\:boolDrawOption').val();
     var selectOption = $('#formInjuries\\:boolSelectOption').val();
 
     map.removeInteraction(selectClick);
     map.removeInteraction(drawInteraction);
-
 
     if (drawOption !== 'false' && selectOption !== 'true') {//Se ha seleccionado la opcion Dibujar areas
 
@@ -357,25 +352,17 @@ function changeInteraction() {
                     //console.info("SELECCIONADO");
                     //console.info(feature.getGeometry().getCoordinates());
                     var coordinates = feature.getGeometry().getCoordinates()[0];
-                    
-                    
 
                     if (coordinates.length) {
                         var coord = ""
-                                + coordinates[0][0] +" "+ coordinates[0][1] +","
-                                + coordinates[1][0] +" "+ coordinates[1][1] +","
-                                + coordinates[2][0] +" "+ coordinates[2][1] +","
-                                + coordinates[3][0] +" "+ coordinates[3][1] +","
-                                + coordinates[4][0] +" "+ coordinates[4][1];
+                                + coordinates[0][0] + " " + coordinates[0][1] + ","
+                                + coordinates[1][0] + " " + coordinates[1][1] + ","
+                                + coordinates[2][0] + " " + coordinates[2][1] + ","
+                                + coordinates[3][0] + " " + coordinates[3][1] + ","
+                                + coordinates[4][0] + " " + coordinates[4][1];
                         $('#formInjuries\\:txtSelectedBox').val(coord);
                         remoteDataProcess();
                     }
-                });
-            } else {
-                deselected.forEach(function (feature) {
-                    //console.info("NO SELECCIONADO");
-                    //console.info(feature);
-
                 });
             }
         });
@@ -383,7 +370,6 @@ function changeInteraction() {
         map.addInteraction(selectClick);
     }
 }
-
 
 /**
  * Metodo encargado de eliminar todos los posibles componentes/eventos cargados al mapa. 
@@ -398,6 +384,7 @@ function removeComponents() {
     //Componentes del mapa de calor
     map.removeInteraction(drawInteraction);
     map.removeInteraction(selectClick);
+
 }
 
 /**
@@ -405,19 +392,63 @@ function removeComponents() {
  * las interacciones utilizadas
  * @returns {undefined}
  */
-function clearLayer(){
+function clearLayer() {
+
     drawingLayer.getSource().clear();
-    if (typeof selectClick !== 'undefined'){
+    if (typeof selectClick !== 'undefined') {
         selectClick.getFeatures().clear();
     }
     removeComponents();
 }
-function updateHeatmapStyle(){
+function updateHeatmapStyle() {
     var blur = $("#formInjuries\\:blurValueOutput").text();
     var radio = $("#formInjuries\\:radioValueOutput").text();
-    
+
     heatmap.setBlur(parseInt(blur), 10);
     heatmap.setRadius(parseInt(radio), 10);
 }
 
 
+function loadChart() {
+    
+    var categoryAxis = $('#formInjuries\\:txtCategoryAxis').val();
+    var seriesValues = $('#formInjuries\\:txtSeries').val();
+    
+    chart = new Highcharts.Chart({
+        chart: {
+            renderTo: 'container', // Le doy el nombre a la gráfica
+            defaultSeriesType: 'column'	// Pongo que tipo de gráfica es
+        },
+        title: {
+            text: 'Conteo de Delitos No fatales'	// Titulo (Opcional)
+        },
+        subtitle: {
+            text: ''		// Subtitulo (Opcional)
+        },
+        // Pongo los datos en el eje de las 'X'
+        xAxis: {
+            categories: JSON.parse(categoryAxis),
+            // Pongo el título para el eje de las 'X'
+            title: {
+                text: ''
+            }
+        },
+        yAxis: {
+            // Pongo el título para el eje de las 'Y'
+            title: {
+                text: 'Nro de delitos'
+            }
+        },
+        // Doy formato al la "cajita" que sale al pasar el ratón por encima de la gráfica
+        tooltip: {
+            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                    '<td style="padding:0"><b>{point.y} delitos</b></td></tr>',
+            footerFormat: '</table>',
+            shared: true,
+            useHTML: true
+        },
+        series: JSON.parse(seriesValues)
+    });
+
+}

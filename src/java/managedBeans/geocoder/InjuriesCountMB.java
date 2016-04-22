@@ -122,6 +122,9 @@ public class InjuriesCountMB {
     private String sourceGeocodedTable = "";
     private String joinField = "";
 
+    private String categoryAxis = "[' ']";
+    private String seriesValues = "[' ']";
+
     private boolean drawOptionSelected = false;
     private boolean selectOptionSelected = false;
     private boolean resetOptionSelected = false;
@@ -130,8 +133,8 @@ public class InjuriesCountMB {
     private boolean selectOptionDisabled = true;
     private boolean resetOptionDisabled = true;
     private boolean heatmapConfigDisable = true;
-    private int blursliderValue;
-    private int radiosliderValue;
+    private int blursliderValue = 8;
+    private int radiosliderValue = 4;
 
     private boolean showGraphic = false;//mostrar seccion de graficos
     private boolean showTableResult = false;//mostrar tabla de resultados
@@ -180,6 +183,10 @@ public class InjuriesCountMB {
         variablesCrossData = new ArrayList<>();//lista de variables a cruzar            
         continueProcess = true;
         showInjuriesLayer = true;
+
+        drawOptionSelected = false;
+        selectOptionSelected = false;
+        resetOptionSelected = false;
 
         selectedBox = "-8606316.127212692 138114.54413991174,-8606316.127212692 131368.97639374496,-8598175.583700322 131368.97639374496,-8598175.583700322 138114.54413991174,-8606316.127212692 138114.54413991174";
 
@@ -3201,10 +3208,126 @@ public class InjuriesCountMB {
         this.radiosliderValue = radiosliderValue;
     }
 
-    public void remoteDataProcess() {
-        System.out.println("Ejecutado desde JS\n" + selectedBox);
+    public String getCategoryAxis() {
+        return categoryAxis;
+    }
 
+    public void setCategoryAxis(String categoryAxis) {
+        this.categoryAxis = categoryAxis;
+    }
+
+    public String getSeriesValues() {
+        return seriesValues;
+    }
+
+    public void setSeriesValues(String seriesValues) {
+        this.seriesValues = seriesValues;
+    }
+
+    public void remoteDataProcess() {
+        /*
+        System.out.println("Ejecutado desde JS\n" + selectedBox);
+        
+        
+        System.out.println("Nro variables: " + variablesCrossData.size());
+        
+        for(int i = 0; i< variablesCrossData.size(); i++){
+            System.out.println("Variable: " + variablesCrossData.get(i).getName());
+            for (int j = 0; j < variablesCrossData.get(i).getValues().size(); j++){
+                System.out.println(i + ". "+ variablesCrossData.get(i).getValues().get(j));
+            }
+        }
+         */
         groupingOfValues();
+        
+        try {
+
+            sql = ""
+                + " SELECT \n"
+                + "    * \n"
+                + " FROM \n"
+                + "    indicators_addresses \n"
+                + " WHERE \n"
+                + "    user_id = " + loginMB.getCurrentUser().getUserId() + " AND \n"
+                + "    indicator_id = " + currentIndicator.getIndicatorId() + "  \n";
+            ResultSet rs;
+            
+            
+
+            switch (variablesCrossData.size()) {
+                case 1:
+                    
+                    rs = connectionJdbcMB.consult(sql + " ORDER BY record_id");
+                    
+                    JSONArray category = new JSONArray(); //etiquetas del eje x
+                    
+                    
+                    JSONArray series = new JSONArray(); //array final que se enviara a javascript
+                    
+                    category.put(0, " ");
+                    
+                    int pos = 0;
+                    while(rs.next()){
+                        JSONArray values = new JSONArray();//valores numericos de cada serie
+                        JSONObject serie = new JSONObject();//json donde se guardarán cada una de las series
+                        
+                        values.put(0, rs.getInt("count"));
+                        serie.put("name", rs.getString("column_1"));
+                        serie.put("data", values);
+                        series.put(pos, serie);
+                        pos++;
+                    }
+                    
+                    categoryAxis = category.toString();
+                    seriesValues = series.toString();
+                    
+                    System.out.println("AXIS = " + categoryAxis);
+                    System.out.println("DATA GRAPHIC = " + seriesValues);
+                    
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                default:
+                    break;
+            }
+
+        } catch (JSONException | SQLException ex) {
+
+        }
+
+    }
+
+    /**
+     * This method is responsible of determine the header for the table and
+     * columns containing all results of the cross of variable.
+     *
+     * @param value
+     * @return
+     */
+    private String determineHeader(String value) {
+        for (int i = 0; i < value.length(); i++) {
+            if (value.charAt(i) != '0' && value.charAt(i) != '1' && value.charAt(i) != '2'
+                    && value.charAt(i) != '3' && value.charAt(i) != '4' && value.charAt(i) != '5'
+                    && value.charAt(i) != '6' && value.charAt(i) != '7' && value.charAt(i) != '8'
+                    && value.charAt(i) != '9' && value.charAt(i) != ' ' && value.charAt(i) != 'n'
+                    && value.charAt(i) != '-' && value.charAt(i) != ':' && value.charAt(i) != '/') {
+                return value;
+            }
+        }
+        if (value.indexOf("SIN DATO") == -1) {
+            if (value.indexOf("/") != -1) {
+                if (value.indexOf(":") != -1) {
+                    String newValue = value.replace("/", " a ");
+                    return newValue + " Horas";
+                } else {
+                    String newValue = value.replace("/", " a ");
+                    return newValue + " Años";
+                }
+            }
+        }
+        return value;
     }
 
 }
