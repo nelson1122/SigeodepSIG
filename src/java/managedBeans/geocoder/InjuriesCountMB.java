@@ -38,6 +38,7 @@ import org.json.JSONObject;
 import org.postgresql.copy.CopyManager;
 import org.postgresql.core.BaseConnection;
 import org.primefaces.component.outputpanel.OutputPanel;
+import org.primefaces.context.RequestContext;
 import org.primefaces.model.StreamedContent;
 
 /**
@@ -124,6 +125,11 @@ public class InjuriesCountMB {
 
     private String categoryAxis = "[' ']";
     private String seriesValues = "[' ']";
+    private String variablesName = "";
+    private String categoryAxixLabel = "";
+    private String indicatorName = "";
+    private String injuryIdForInfo = "";
+    private String popupInfo = "PRIMERA VEZ";
 
     private boolean drawOptionSelected = false;
     private boolean selectOptionSelected = false;
@@ -189,6 +195,13 @@ public class InjuriesCountMB {
         resetOptionSelected = false;
 
         selectedBox = "-8606316.127212692 138114.54413991174,-8606316.127212692 131368.97639374496,-8598175.583700322 131368.97639374496,-8598175.583700322 138114.54413991174,-8606316.127212692 138114.54413991174";
+
+        valuesGraph = new ArrayList<>();
+        currentValueGraph = "";
+        currentVariableGraph = "";
+
+        categoryAxis = "[' ']";
+        seriesValues = "[' ']";
 
         if (continueProcess) {//ELIMINO DATOS DE UN PROCESO ANTERIOR
             removeIndicatorRecords();
@@ -274,7 +287,7 @@ public class InjuriesCountMB {
                 currentVariableGraph = variablesCrossData.get(2).getName();
                 for (int j = 0; j < variablesCrossData.get(2).getValuesConfigured().size(); j++) {
                     valuesGraph.add(variablesCrossData.get(2).getValuesConfigured().get(j));
-                    currentValueGraph = variablesCrossData.get(2).getValuesConfigured().get(j);
+                    currentValueGraph = variablesCrossData.get(2).getValuesConfigured().get(0);
                 }
             }
         }
@@ -989,7 +1002,12 @@ public class InjuriesCountMB {
         selectOptionSelected = false;
         resetOptionSelected = false;
 
+        variablesCrossData = new ArrayList<>();//lista de variables a cruzar            
+
         selectedBox = "-8606316.127212692 138114.54413991174,-8606316.127212692 131368.97639374496,-8598175.583700322 131368.97639374496,-8598175.583700322 138114.54413991174,-8606316.127212692 138114.54413991174";
+
+        categoryAxis = "[' ']";
+        seriesValues = "[' ']";
 
         mapType = "points";
         showInjuriesLayer = false;
@@ -2392,6 +2410,7 @@ public class InjuriesCountMB {
                 + "    indicator_id = " + currentIndicator.getIndicatorId();
         connectionJdbcMB.non_query(sql);
 
+        //consulta espacial
         sql = "SELECT \n"
                 + "	column_1, \n"
                 + "	column_2, \n"
@@ -2399,7 +2418,7 @@ public class InjuriesCountMB {
                 + "	count(*)  \n"
                 + "FROM \n"
                 + "	indicators_addresses \n"
-                + "		JOIN geocoded_non_fatal_injuries ON injury_id = non_fatal_injury_id	\n"
+                + "		JOIN " + sourceGeocodedTable + " ON injury_id = " + joinField + "	\n"
                 + "WHERE \n"
                 + "	user_id = " + loginMB.getCurrentUser().getUserId() + " AND\n"
                 + "	indicator_id = " + (currentIndicator.getIndicatorId() + 100) + " AND\n"
@@ -2661,6 +2680,7 @@ public class InjuriesCountMB {
     }
 
     public void changeVariableForAddresses() {
+        reset();
         loadIndicator(selectedCategoryForInjuries);
     }
 
@@ -3224,74 +3244,218 @@ public class InjuriesCountMB {
         this.seriesValues = seriesValues;
     }
 
-    public void remoteDataProcess() {
-        /*
-        System.out.println("Ejecutado desde JS\n" + selectedBox);
-        
-        
-        System.out.println("Nro variables: " + variablesCrossData.size());
-        
-        for(int i = 0; i< variablesCrossData.size(); i++){
-            System.out.println("Variable: " + variablesCrossData.get(i).getName());
-            for (int j = 0; j < variablesCrossData.get(i).getValues().size(); j++){
-                System.out.println(i + ". "+ variablesCrossData.get(i).getValues().get(j));
-            }
-        }
-         */
-        groupingOfValues();
-        
+    public String getIndicatorName() {
+        return indicatorName;
+    }
+
+    public void setIndicatorName(String indicatorName) {
+        this.indicatorName = indicatorName;
+    }
+
+    public String getCategoryAxixLabel() {
+        return categoryAxixLabel;
+    }
+
+    public void setCategoryAxixLabel(String categoryAxixLabel) {
+        this.categoryAxixLabel = categoryAxixLabel;
+    }
+
+    public String getInjuryIdForInfo() {
+        return injuryIdForInfo;
+    }
+
+    public String getPopupInfo() {
+        return popupInfo;
+    }
+
+    public void setInjuryIdForInfo(String injuryIdForInfo) {
+        this.injuryIdForInfo = injuryIdForInfo;
+    }
+
+    public void setPopupInfo(String popupInfo) {
+        this.popupInfo = popupInfo;
+    }
+
+    public void remoteLoadPointInfoProcess() {
+
+        popupInfo = "Identificador de delito recibido: " + injuryIdForInfo;
+        String msj = "";
         try {
 
             sql = ""
-                + " SELECT \n"
-                + "    * \n"
-                + " FROM \n"
-                + "    indicators_addresses \n"
-                + " WHERE \n"
-                + "    user_id = " + loginMB.getCurrentUser().getUserId() + " AND \n"
-                + "    indicator_id = " + currentIndicator.getIndicatorId() + "  \n";
-            ResultSet rs;
-            
-            
+                    + "SELECT \n"
+                    + "	column_1,\n"
+                    + "	column_2,\n"
+                    + "	column_3,\n"
+                    + "	non_format_address,\n"
+                    + "	normalized_address,\n"
+                    + "	neighborhood,\n"
+                    + "	commune,\n"
+                    + "	lon, \n"
+                    + "	lat \n"
+                    + "FROM \n"
+                    + "	indicators_addresses  \n"
+                    + "		JOIN " + sourceGeocodedTable + "  ON injury_id = " + joinField + "\n"
+                    + "WHERE \n"
+                    + "     user_id = " + loginMB.getCurrentUser().getUserId() + " AND \n"
+                    + "     indicator_id = " + (currentIndicator.getIndicatorId() + 100) + " AND \n"
+                    + "     " + joinField + "= " + injuryIdForInfo + " AND \n"
+                    + "	(lon IS NOT NULL AND lat IS NOT NULL);";
 
-            switch (variablesCrossData.size()) {
-                case 1:
-                    
-                    rs = connectionJdbcMB.consult(sql + " ORDER BY record_id");
-                    
-                    JSONArray category = new JSONArray(); //etiquetas del eje x
-                    
-                    
-                    JSONArray series = new JSONArray(); //array final que se enviara a javascript
-                    
-                    category.put(0, " ");
-                    
-                    int pos = 0;
-                    while(rs.next()){
-                        JSONArray values = new JSONArray();//valores numericos de cada serie
-                        JSONObject serie = new JSONObject();//json donde se guardarán cada una de las series
-                        
-                        values.put(0, rs.getInt("count"));
-                        serie.put("name", rs.getString("column_1"));
-                        serie.put("data", values);
-                        series.put(pos, serie);
-                        pos++;
-                    }
-                    
-                    categoryAxis = category.toString();
-                    seriesValues = series.toString();
-                    
-                    System.out.println("AXIS = " + categoryAxis);
-                    System.out.println("DATA GRAPHIC = " + seriesValues);
-                    
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
-                default:
-                    break;
+            ResultSet rs = connectionJdbcMB.consult(sql);
+            rs.next();
+
+            msj = "<div><div style=\"text-align:center;\">\n"
+                    + "<b>Información</b>\n"
+                    + "</div><br>";
+
+            if (variablesCrossData.size() == 1) {
+                msj = msj + "<b>" + variablesCrossData.get(0).getName() + ":</b>" + rs.getString("column_1") + "<br>";
             }
+            if (variablesCrossData.size() == 2) {
+                msj = msj + "<b>" + variablesCrossData.get(0).getName() + ":</b>" + rs.getString("column_1") + "<br>";
+                msj = msj + "<b>" + variablesCrossData.get(1).getName() + ":</b>" + rs.getString("column_2") + "<br>";
+            }
+            if (variablesCrossData.size() == 3) {
+                msj = msj + "<b>" + variablesCrossData.get(0).getName() + ":</b>" + rs.getString("column_1") + "<br>";
+                msj = msj + "<b>" + variablesCrossData.get(1).getName() + ":</b>" + rs.getString("column_2") + "<br>";
+                msj = msj + "<b>" + variablesCrossData.get(2).getName() + ":</b>" + rs.getString("column_3") + "<br>";
+            }
+
+            msj = msj + "<b>Direccion registrada: </b>" + rs.getString("non_format_address") + "<br>";
+            msj = msj + "<b>Direccion normalizada: </b>" + rs.getString("normalized_address") + "<br>";
+            msj = msj + "<b>Barrio: </b>" + rs.getString("neighborhood") + "<br>";
+            msj = msj + "<b>Comuna: </b>" + rs.getString("commune") + "<br>";
+            msj = msj + "<b>Latitud: </b>" + rs.getString("lat") + "<br>";
+            msj = msj + "<b>Longitud: </b>" + rs.getString("lon") + "<br>";
+            msj = msj + "</div>";
+
+            popupInfo = msj;
+
+        } catch (SQLException e) {
+
+        }
+
+    }
+
+    public void remoteDataProcess() {
+
+        groupingOfValues();
+
+        /*CREACION DE LOS JSON PARA EL GRAFICO*/
+        try {
+
+            ResultSet rs;
+
+            sql = ""
+                    + " SELECT \n"
+                    + "    * \n"
+                    + " FROM \n"
+                    + "    indicators_addresses \n"
+                    + " WHERE \n"
+                    + "    user_id = " + loginMB.getCurrentUser().getUserId() + " AND \n"
+                    + "    indicator_id = " + currentIndicator.getIndicatorId() + "  \n";
+
+            if (variablesCrossData.size() == 1) { //variables seleccionadas igual a 1
+
+                variablesName = "Desagregado por: " + variablesCrossData.get(0).getName();
+                rs = connectionJdbcMB.consult(sql + " ORDER BY record_id");
+                JSONArray category = new JSONArray(); //etiquetas del eje x
+                JSONArray series = new JSONArray(); //array final que se enviara a javascript
+                category.put(0, " ");
+                int position = 0;
+
+                while (rs.next()) {
+                    //datSet.setValue(rs.getLong("count"), determineHeader(rs.getString("column_1")), "-");
+                    JSONArray values = new JSONArray();//valores numericos de cada serie
+                    JSONObject serie = new JSONObject();//json donde se guardarán cada una de las series
+
+                    values.put(0, rs.getInt("count"));
+                    serie.put("name", determineHeader(rs.getString("column_1")));
+                    serie.put("data", values);
+                    series.put(position, serie);
+                    position++;
+                }
+                categoryAxis = category.toString();
+                seriesValues = series.toString();
+
+                categoryAxixLabel = "";
+
+            }
+            if (variablesCrossData.size() == 2) {  //variables seleccionadas igual a 2
+
+                variablesName = "Desagregado por: " + variablesCrossData.get(0).getName() + ", " + variablesCrossData.get(1).getName();
+                JSONArray category = new JSONArray();
+
+                for (int i = 0; i < variablesCrossData.get(1).getValuesConfigured().size(); i++) {
+                    category.put(i, determineHeader(variablesCrossData.get(1).getValuesConfigured().get(i)));
+                }
+
+                JSONArray series = new JSONArray(); //array final que se enviara a javascript
+                rs = connectionJdbcMB.consult(sql + " ORDER BY record_id");
+
+                //Creacion del JSON con los nombres de las series y valores vacios
+                for (int i = 0; i < variablesCrossData.get(0).getValuesConfigured().size(); i++) {
+                    JSONObject serie = new JSONObject();//json donde se guardarán cada una de las series
+                    serie.put("name", determineHeader(variablesCrossData.get(0).getValuesConfigured().get(i)));
+                    serie.put("data", new JSONArray());
+                    series.put(i, serie);
+                }
+
+                while (rs.next()) {
+                    int variablePosition = variablesCrossData.get(0).getValuesConfigured().indexOf(rs.getString("column_1"));
+                    int valuePosition = variablesCrossData.get(1).getValuesConfigured().indexOf(rs.getString("column_2"));
+                    series.getJSONObject(variablePosition).getJSONArray("data").put(valuePosition, rs.getInt("count"));
+                }
+                categoryAxis = category.toString();
+                seriesValues = series.toString();
+
+                categoryAxixLabel = variablesCrossData.get(1).getName();
+            }
+            if (variablesCrossData.size() == 3) { //variables seleccionadas igual a 3
+
+                variablesName = "Desagregado por: " + variablesCrossData.get(0).getName() + ", " + variablesCrossData.get(1).getName() + ", " + variablesCrossData.get(2).getName() + " = " + determineHeader(currentValueGraph);
+                sql = sql + " AND column_3 LIKE '" + currentValueGraph + "' ";
+
+                JSONArray category = new JSONArray();
+
+                for (int i = 0; i < variablesCrossData.get(1).getValuesConfigured().size(); i++) {
+                    category.put(i, determineHeader(variablesCrossData.get(1).getValuesConfigured().get(i)));
+                }
+
+                JSONArray series = new JSONArray(); //array final que se enviara a javascript
+                rs = connectionJdbcMB.consult(sql + " ORDER BY record_id");
+
+                for (int i = 0; i < variablesCrossData.get(0).getValuesConfigured().size(); i++) {
+                    JSONObject serie = new JSONObject();//json donde se guardarán cada una de las series
+                    serie.put("name", determineHeader(variablesCrossData.get(0).getValuesConfigured().get(i)));
+                    serie.put("data", new JSONArray());
+                    series.put(i, serie);
+                }
+
+                while (rs.next()) {
+                    int variablePosition = variablesCrossData.get(0).getValuesConfigured().indexOf(rs.getString("column_1"));
+                    int valuePosition = variablesCrossData.get(1).getValuesConfigured().indexOf(rs.getString("column_2"));
+                    series.getJSONObject(variablePosition).getJSONArray("data").put(valuePosition, rs.getInt("count"));
+                }
+
+                categoryAxis = category.toString();
+                seriesValues = series.toString();
+
+                categoryAxixLabel = variablesCrossData.get(1).getName();
+
+            }
+
+            /* TITULO DEL GRAFICO*/
+            indicatorName = currentIndicator.getIndicatorName() + " - Municipo de Pasto.<br></br>" + variablesName + "<br></br>";
+            if (sameRangeLimit) {
+                indicatorName = indicatorName + initialDate.getDate() + " de " + intToMonth(initialDate.getMonth()) + " a " + endDate.getDate() + " de " + intToMonth(endDate.getMonth()) + "\n";
+                indicatorName = indicatorName + "<br></br> de los años " + String.valueOf(initialDate.getYear() + 1900) + " a " + String.valueOf(endDate.getYear() + 1900);
+            } else {
+                indicatorName = indicatorName + "Periodo " + sdf.format(initialDate) + " a " + sdf.format(endDate);
+            }
+            //System.out.println("TITULO: " + indicatorName);
+            //System.out.println("TITULO EJE: " + categoryAxixLabel);
 
         } catch (JSONException | SQLException ex) {
 
@@ -3328,6 +3492,43 @@ public class InjuriesCountMB {
             }
         }
         return value;
+    }
+
+    /**
+     * This method is responsible of return the month corresponding to integer
+     * number assigned
+     *
+     * @param m
+     * @return
+     */
+    private String intToMonth(int m) {
+        switch (m) {
+            case 0:
+                return "Enero";
+            case 1:
+                return "Febrero";
+            case 2:
+                return "Marzo";
+            case 3:
+                return "Abril";
+            case 4:
+                return "Mayo";
+            case 5:
+                return "Junio";
+            case 6:
+                return "Julio";
+            case 7:
+                return "Agosto";
+            case 8:
+                return "Septiembre";
+            case 9:
+                return "Octubre";
+            case 10:
+                return "Noviembre";
+            case 11:
+                return "Diciembre";
+        }
+        return "Enero";
     }
 
 }

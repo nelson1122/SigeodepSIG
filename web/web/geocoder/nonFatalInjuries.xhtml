@@ -31,6 +31,7 @@
             </ui:define>
 
             <ui:define name="centerPanel">
+
                 <p:toolbar style="margin-top: -3px; margin-bottom: 2px;">
                     <p:toolbarGroup style="margin-top: 6px;">
                         Tipo de mapa:&nbsp; &nbsp;
@@ -94,12 +95,17 @@
                     </p:toolbarGroup>
 
                 </p:toolbar>
-
+                
 
                 <!-- DIVISION DEL MAPA -->
-                <div id="map" style="width: 100%; height: 94%; position: absolute;"></div>
+                <div id="map" style="width: 100%; height: 94%; position: absolute;">
+                    <div id="popup" class="ol-popup" style="margin-bottom: 10px; width: 260px;">
+                        <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+                        <div id="popup-content"></div>
+                    </div>
+                </div>
                 <p:outputPanel id='mapPanel'>
-                    
+
                     <!-- CONTROLES PARA CARGAR VALORES LEIDOS DESDE JAVASCRIPT -->
                     <p:inputText id="txtGeoJSON" value='#{injuriesCountMB.geoJSON}' style="display: none;"/>
                     <p:inputText id="boolShowInjuriesLayer" value='#{injuriesCountMB.showInjuriesLayer}' style="display: none;"/>
@@ -118,8 +124,15 @@
                     <!-- GRAFICO -->
                     <p:inputText id="txtCategoryAxis" value="#{injuriesCountMB.categoryAxis}" style="display: none;"/>
                     <p:inputText id="txtSeries" value="#{injuriesCountMB.seriesValues}" style="display: none;"/>
+                    <p:inputText id="txtGraphicTitle" value="#{injuriesCountMB.indicatorName}" style="display: none;"/>
+                    <p:inputText id="txtCategoryAxisLabel" value="#{injuriesCountMB.categoryAxixLabel}" style="display: none;"/>
+                    
+                    <!--POPUP INFO -->
+                    <h:inputText id="txtInjuryIdForInfo" value="#{injuriesCountMB.injuryIdForInfo}" style="display: none;"/>
+                    <p:inputText id="txtPopupInfo" value="#{injuriesCountMB.popupInfo}" style="display: none;"/>
                 </p:outputPanel>
                 
+
                 <p:dialog
                     id="heatmapConfigDlg"
                     header="Opciones Mapa de calor" 
@@ -150,7 +163,13 @@
                     update=":formInjuries:hiddenControls"
                     oncomplete="loadChart()"
                     />
-
+                
+                <p:remoteCommand
+                    name="loadPointInfo" actionListener="#{injuriesCountMB.remoteLoadPointInfoProcess()}"
+                    update=":formInjuries:hiddenControls txtInjuryIdForInfo txtPopupInfo"
+                    oncomplete="loadInfo()"
+                    />
+                
             </ui:define>
 
             <!-- PANEL IZQUIERDO -->
@@ -169,10 +188,21 @@
                                         <f:selectItem itemLabel="Lesiones en Accidentes de transito" itemValue="40"/>
                                         <f:selectItem itemLabel="Violencia Interpersonal en Familia" itemValue="33"/>
                                         <f:selectItem itemLabel="Violencia Interpersonal en Comunidad" itemValue="61"/>
-                                        <f:ajax 
+                                        <p:ajax 
                                             event="change"
                                             listener="#{injuriesCountMB.changeVariableForAddresses()}"
-                                            render="IdBtnRemove IdBtnAdd IdBtnOptions IdSelectOneListVariables IdSelectOneListCrossVariables :formInjuries:msg"/>
+                                            update="IdBtnRemove 
+                                                IdBtnAdd 
+                                                IdBtnOptions 
+                                                IdSelectOneListVariables 
+                                                IdSelectOneListCrossVariables 
+                                                :formInjuries:msg 
+                                                :formInjuries:mapSelectionBtn 
+                                                :formInjuries:drawOptionSelected 
+                                                :formInjuries:selectOptionSelected 
+                                                :formInjuries:resetBtn 
+                                                :formInjuries:heatmapConfigBtn
+                                                :formInjuries:mapPanel"/>
                                     </p:selectOneMenu>
                                 </h:panelGroup>
 
@@ -372,6 +402,24 @@
                             <p:fieldset legend="Gráfico" style="width: 100%; margin-left: -12px;">
 
                                 <p:outputPanel id="chartPanel">
+
+                                    <p:column colspan="2">
+                                        <h:outputText
+                                            id="IdVariableGraph"
+                                            value="#{injuriesCountMB.currentVariableGraph}"/> <!--NOMBRE DE LA VARIABLE-->
+                                        <h:selectOneMenu 
+                                            id="IdValueGraph" value="#{injuriesCountMB.currentValueGraph}"> 
+                                            <f:selectItems value="#{injuriesCountMB.valuesGraph}"/> <!--VALOR DE LA VARIABLE-->
+                                            <p:ajax 
+                                                event="change"
+                                                listener="#{injuriesCountMB.remoteDataProcess()}"
+                                                update =":formInjuries:hiddenControls"
+                                                oncomplete="loadChart()"
+                                                />
+
+                                        </h:selectOneMenu>
+                                    </p:column>
+
                                     <div id="container" style="min-width: 480px; height: 440px; margin: 0px -10px 0px -10px;"></div>
                                 </p:outputPanel>
 

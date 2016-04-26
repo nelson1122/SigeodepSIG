@@ -26,7 +26,7 @@ $(function () {
             key: 'AnyGyd4GaAzToU0sDaA0NaXDD88yChcUh8ySoNc32_ddxkrxkl9K5SIATkA8EpMn',
             imagerySet: 'Road'
         }),
-        visible: false
+        visible: true
     });
     /*Creacion capa base Bing Maps Aerial*/
     var bmapsAerial = new ol.layer.Tile({
@@ -40,7 +40,7 @@ $(function () {
     var osmLayer = new ol.layer.Tile({
         title: 'OpenStreetMaps',
         source: new ol.source.OSM(),
-        visible: true
+        visible: false
     });
 
     /**
@@ -163,6 +163,7 @@ function loadDataLayer() {
  * @param {ol.source.DataSource} dataSource
  * @returns {loadPoints}
  */
+
 function loadPoints(dataSource) {
 
     points = new ol.layer.Vector({
@@ -202,7 +203,10 @@ function loadPoints(dataSource) {
 
     map.addOverlay(popup);
 
+
+
     singleclickFunction = function (evt) {
+
 
         //alert('Entro al listener');
         var feature = map.forEachFeatureAtPixel(evt.pixel, function (feature) {
@@ -215,16 +219,22 @@ function loadPoints(dataSource) {
             //var coordinates = feature.getGeometry().getCoordinates();
             var properties = feature.getProperties();
             var injury_id = '';
+
             for (var key in properties) {
                 if (key === 'fatal_injury_id' || key === 'non_fatal_injury_id') {
                     //alert("Key: "+ key + ", Value: " + properties[key]);
                     injury_id = properties[key];
                 }
             }
+            //console.log('ID DELITO: ' + injury_id);
+            $('#formInjuries\\:txtInjuryIdForInfo').val(injury_id);
 
-            html = '<b>injury id: ' + injury_id + '</br>';
+            var html = "";
+            html = '<b></br>';
             content.innerHTML = html;
             container.style.display = 'block';
+
+            loadPointInfo();
         }
     };
 
@@ -407,20 +417,26 @@ function updateHeatmapStyle() {
     heatmap.setBlur(parseInt(blur), 10);
     heatmap.setRadius(parseInt(radio), 10);
 }
-
+/**
+ * Metodo encargado de cargar las estructuras JSON creadas en el Managed Bean InjuriesCountMB
+ * y crea el grafico respectivo
+ * @returns {undefined}
+ */
 
 function loadChart() {
-    
+
     var categoryAxis = $('#formInjuries\\:txtCategoryAxis').val();
     var seriesValues = $('#formInjuries\\:txtSeries').val();
-    
+    var graphicTitle = $('#formInjuries\\:txtGraphicTitle').val();
+    var categoyAxisLabel = $('#formInjuries\\:txtCategoryAxisLabel').val();
+
     chart = new Highcharts.Chart({
         chart: {
             renderTo: 'container', // Le doy el nombre a la gráfica
             defaultSeriesType: 'column'	// Pongo que tipo de gráfica es
         },
         title: {
-            text: 'Conteo de Delitos No fatales'	// Titulo (Opcional)
+            text: graphicTitle	// Titulo (Opcional)
         },
         subtitle: {
             text: ''		// Subtitulo (Opcional)
@@ -430,7 +446,7 @@ function loadChart() {
             categories: JSON.parse(categoryAxis),
             // Pongo el título para el eje de las 'X'
             title: {
-                text: ''
+                text: categoyAxisLabel
             }
         },
         yAxis: {
@@ -451,4 +467,16 @@ function loadChart() {
         series: JSON.parse(seriesValues)
     });
 
+}
+/**
+ * Metodo encargado de cargar la informacion del punto seleccionado una vez se haya procesado
+ * los datos que seran visualizados en el popup(llamada a procedimiento en ManagedBean)
+ * @returns {undefined}
+ */
+function loadInfo() {
+    var info = $('#formInjuries\\:txtPopupInfo').val();
+    console.log(info);
+
+    content.innerHTML = info;
+    container.style.display = 'block';
 }
