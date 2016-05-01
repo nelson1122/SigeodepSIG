@@ -86,6 +86,7 @@ a:link:hover, a:visited:hover  {
 .rangeDateGrid.ui-panelgrid>*>tr,
 .rangeDateGrid.ui-panelgrid>*>tr>td {
     border: none;
+    min-width: 200px;
 }
 
 /*Css para popup*/
@@ -130,4 +131,31 @@ a:link:hover, a:visited:hover  {
 }
 .ol-popup-closer:after {
     content: "x";
+}
+
+#pointsOpacity{
+    position: absolute;
+    display: inline-block;
+    width:200px;
+    top: 21px;
+    left: 100px;
+    
+}
+
+#heatmapOpacity{
+    position: absolute;
+    display: inline-block;
+    width:200px;
+    top: 51px;
+    left: 100px;
+    
+}
+
+#heatmapRadius{
+    position: absolute;
+    display: inline-block;
+    width:200px;
+    top: 70px;
+    left: 100px;
+    
 }

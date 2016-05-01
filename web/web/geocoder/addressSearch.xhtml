@@ -1,48 +1,33 @@
 <?xml version='1.0' encoding='UTF-8' ?>
-
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
 
     <body>
 
         <ui:composition template="template.xhtml">
-            
+
+            <ui:define name="script">
+                <script type="text/javascript" src="js/search.js"></script>
+            </ui:define>
+
             <ui:define name="indexTitle">
                 BUSQUEDA DE DIRECCIONES URBANAS MUNICIPIO DE PASTO
             </ui:define>
 
             <ui:define name="centerPanel">
 
-                <p:outputPanel id="panelMap">
-                    <div id="addressMap"></div>
-                    <script type="text/javascript">
+                <div id="map" style="width: 100%; height: 99%; position: absolute;">
+                    <div id="popup" class="ol-popup" style="margin-bottom: 10px; width: 260px;">
+                        <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+                        <div id="popup-content"></div>
+                    </div>
+                </div>
 
-                        var map, gmap, osm;
+                <p:outputPanel id="hideControls">
 
-                        $(function () {
-
-                            map = new OpenLayers.Map('addressMap');
-                            osm = new OpenLayers.Layer.OSM();
-                            gmap = new OpenLayers.Layer.Google(
-                                    "Google Hybrid",
-                                    {
-                                        type: google.maps.MapTypeId.HYBRID,
-                                        numZoomLevels: 20
-                                    }
-                            );
-
-
-                            map.addLayers([osm, gmap]);
-                            map.addControl(new OpenLayers.Control.LayerSwitcher());
-                            map.addControl(new OpenLayers.Control.MousePosition());
-
-                            map.setCenter(new OpenLayers.LonLat(-77.280, 1.21489).transform(
-                                    new OpenLayers.Projection("EPSG:4326"),
-                                    map.getProjectionObject()
-                                    ), 14);
-                        });
-                    </script>
                 </p:outputPanel>
             </ui:define>
 
@@ -53,14 +38,32 @@
 
                         <p:accordionPanel>
                             <p:tab title="Malla Vial">
-
-
+                                <p:column colspan="1">
+                                    <p:outputLabel for="txtRoadAddress" value="Ingrese direccion: "/>
+                                    <p:inputText id="txtRoadAddress" value="#{addressSearchMB.searchedAddress}" />
+                                    <p:commandButton 
+                                        id="btnSearchRoadAddress" 
+                                        actionListener="#{addressSearchMB.searchRoadNetworkAddress()}"
+                                        value="Buscar"
+                                        update=":formInjuries:msg"/>
+                                </p:column>
 
                             </p:tab>
                             <p:tab title="Barrio Manzana Predio">
-
-
-
+                                <p:column colspan="1">
+                                    <p:outputLabel for="txtBlockHouseIdAddress" value ="Ingrese direccion:"/>
+                                    <p:inputText id="txtBlockHouseIdAddress" value="#{addressSearchMB.searchedAddress}"/>
+                                    <br></br>
+                                    <p:outputLabel for="selBlockHouseIdAddress" value ="Seleccione barrio:"/>
+                                    <p:selectOneListbox id="selBlockHouseIdAddress" value="#{addressSearchMB.searchedNeighborhood}" style="height: 140px; width: 200px;">
+                                        <f:selectItems value="#{addressSearchMB.neighborhoods}"/>
+                                    </p:selectOneListbox>
+                                    <p:commandButton 
+                                        id="btnSearchBlockAddress"
+                                        value="Buscar"
+                                        actionListener="#{addressSearchMB.searchNeighborhoodBlockHouseIdAddress()}"
+                                        update=":formInjuries:msg"/>
+                                </p:column>
                             </p:tab>
 
                         </p:accordionPanel>

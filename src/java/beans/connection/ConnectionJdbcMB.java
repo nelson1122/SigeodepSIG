@@ -298,13 +298,14 @@ public class ConnectionJdbcMB implements Serializable {
      */
     public int non_query(String query) {
         msj = "";
+        PreparedStatement stmt;
         int reg;
         reg = 0;
         try {
             if (conn != null) {
-                try (PreparedStatement stmt = conn.prepareStatement(query)) {
-                    reg = stmt.executeUpdate();
-                }
+                stmt = conn.prepareStatement(query);
+                reg = stmt.executeUpdate();
+                stmt.close();
             }
 
         } catch (SQLException e) {

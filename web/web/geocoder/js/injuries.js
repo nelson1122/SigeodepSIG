@@ -12,6 +12,7 @@ var popup, singleclickFunction, pointermoveFunction; //variables/eventos(funcion
 var drawingLayer, drawInteraction;
 var selectClick;
 var chart;
+var geoserverHost;
 
 $(function () {
 
@@ -19,6 +20,8 @@ $(function () {
     container = document.getElementById('popup');
     content = document.getElementById('popup-content');
     closer = document.getElementById('popup-closer');
+
+    geoserverHost = 'http://' + location.host + '/geoserver/geocoder/wms';
 
     var bmapsRoads = new ol.layer.Tile({
         title: 'BingMaps Roads',
@@ -88,6 +91,54 @@ $(function () {
         })
     });
 
+
+    //Creacion de las capas de puntos y de calor
+
+    points = new ol.layer.Image({
+        title: 'Points',
+        source: new ol.source.ImageWMS({
+            ratio: 1,
+            url: geoserverHost,
+            params: {
+                FORMAT: 'image/png',
+                VERSION: '1.1.1',
+                LAYERS: 'geocoder:geocoded_injuries-points',
+                STYLES: '',
+                viewparams: '',
+                env:''
+
+            }
+        })
+    });
+
+    heatmap = new ol.layer.Image({
+        title: 'Heatmap',
+        source: new ol.source.ImageWMS({
+            ratio: 1,
+            url: geoserverHost,
+            params: {
+                FORMAT: 'image/png',
+                VERSION: '1.1.1',
+                LAYERS: 'geocoder:geocoded_injuries-heatmap',
+                STYLES: '',
+                viewparams: '',
+                env: ''
+            }
+        })
+    });
+
+    console.log($('#formInjuries\\:heatmapOpacity').val());
+
+    pointsOverlay = new ol.layer.Group({
+        title: 'WMS',
+        layers: [points]
+    });
+
+    heatmapOverlay = new ol.layer.Group({
+        title: 'WMS',
+        layers: [heatmap]
+    });
+
     //Capa donde se dibujarán las areas de interes
     drawingLayer = new ol.layer.Vector({
         source: new ol.source.Vector({wrapX: false}),
@@ -120,6 +171,78 @@ $(function () {
         map.updateSize();
     }, 2);
 
+    /*
+     * Controles para configuracion de capas
+     * @returns {undefined}
+     */
+    var pointsOpacity = $('#formInjuries\\:pointsOpacity').val();
+    var heatmapOpacity = $('#formInjuries\\:heatmapOpacity').val();
+    var heatmapRadius = $('#formInjuries\\:heatmapRadius').val();
+
+    $('#pointsOpacityLabel').text(pointsOpacity);
+    $('#heatmapOpacityLabel').text(heatmapOpacity);
+    $('#heatmapRadiusLabel').text(heatmapRadius);
+    
+    $("#pointsOpacity").slider({
+        max: 1,
+        min: 0,
+        step: 0.01,
+        value: pointsOpacity,
+        slide: function (event, ui) {
+            $('#pointsOpacityLabel').text(parseFloat(ui.value).toFixed(2));
+            $('#formInjuries\\:pointsOpacity').val(ui.value);
+            
+            var source = points.getSource();
+            var params = source.getParams();
+            params['env'] = 'opacity:' + ui.value;
+            source.updateParams(params);
+
+            updateLayerStyle();
+        }
+    });
+    
+    
+    $("#heatmapOpacity").slider({
+        max: 1,
+        min: 0,
+        step: 0.01,
+        value: heatmapOpacity,
+        slide: function (event, ui) {
+            $('#heatmapOpacityLabel').text(parseFloat(ui.value).toFixed(2));
+            $('#formInjuries\\:heatmapOpacity').val(ui.value);
+            
+            var source = heatmap.getSource();
+            var params = source.getParams();
+            params['env'] = 'radius:'+ $('#formInjuries\\:heatmapRadius').val() +';opacity:' + ui.value;
+            source.updateParams(params);
+
+            updateLayerStyle();
+        }
+    });
+    
+    $("#heatmapRadius").slider({
+        max: 20,
+        min: 2,
+        step: 1,
+        value: heatmapRadius,
+        slide: function (event, ui) {
+            $('#heatmapRadiusLabel').text(ui.value);
+            $('#formInjuries\\:heatmapRadius').val(ui.value);
+            
+            var source = heatmap.getSource();
+            var params = source.getParams();
+            params['env'] = 'radius:'+ ui.value +';opacity:'+ $('#formInjuries\\:heatmapOpacity').val();
+            source.updateParams(params);
+
+            updateLayerStyle();
+        }
+    });
+    
+    /*
+     * Carga de capas de datos
+     * @returns {undefined}
+     */
+
     loadDataLayer();
 
 });
@@ -127,6 +250,7 @@ $(function () {
 /**
  * Metodo encargado de cargar la capa de datos de acuerdo a la seleccion del usuario:
  * Mapa de puntos / Mapa de calor
+ * @param {String} data description
  * @returns {undefined}
  */
 function loadDataLayer() {
@@ -136,21 +260,19 @@ function loadDataLayer() {
     map.removeLayer(heatmapOverlay);
     map.removeLayer(pointsOverlay);
 
-    var data = $('#formInjuries\\:txtGeoJSON').val();
+    var geoserverParams = $('#formInjuries\\:txtGeoserverParameters').val();
     var showInjuriesLayer = $('#formInjuries\\:boolShowInjuriesLayer').val();
     var mapType = $('#formInjuries\\:txtMapType').val();
 
+    //alert(data);
+
     if (showInjuriesLayer !== 'false' && mapType !== '') {
 
-        var geoJSONSource = new ol.source.Vector({
-            features: (new ol.format.GeoJSON()).readFeatures(data)
-        });
-
         if (mapType === 'points') {
-            loadPoints(geoJSONSource);
+            loadPoints(geoserverParams);
         } else
         if (mapType === 'heatmap') {
-            loadHeatmap(geoJSONSource);
+            loadHeatmap(geoserverParams);
         }
 
     }
@@ -164,27 +286,16 @@ function loadDataLayer() {
  * @returns {loadPoints}
  */
 
-function loadPoints(dataSource) {
+function loadPoints(geoserverParams) {
+    
+    var pointsOpacity = $('#formInjuries\\:pointsOpacity').val();
 
-    points = new ol.layer.Vector({
-        title: 'Puntos',
-        source: dataSource,
-        style: new ol.style.Style({
-            image: new ol.style.Icon({
-                anchor: [190, 370],
-                anchorXUnits: 'pixels',
-                anchorYUnits: 'pixels',
-                src: 'img/location_icon-1.png',
-                scale: 0.10
-            })
-        }),
-        visible: true
-    });
-
-    pointsOverlay = new ol.layer.Group({
-        title: 'Capas de Datos',
-        layers: [points]
-    });
+    var source = points.getSource();
+    var params = source.getParams();
+    params['viewparams'] = geoserverParams;
+    params['env'] = 'opacity:'+ pointsOpacity;
+    params.t = new Date().getMilliseconds();
+    source.updateParams(params);
 
     /**
      * DIALOGO DE CARACTERISTICAS (POPUP)
@@ -204,69 +315,38 @@ function loadPoints(dataSource) {
     map.addOverlay(popup);
 
 
-
     singleclickFunction = function (evt) {
-
-
-        //alert('Entro al listener');
-        var feature = map.forEachFeatureAtPixel(evt.pixel, function (feature) {
-            return feature;
-        });
-
-        if (feature) {
-            popup.setPosition(evt.coordinate);
-
-            //var coordinates = feature.getGeometry().getCoordinates();
-            var properties = feature.getProperties();
-            var injury_id = '';
-
-            for (var key in properties) {
-                if (key === 'fatal_injury_id' || key === 'non_fatal_injury_id') {
-                    //alert("Key: "+ key + ", Value: " + properties[key]);
-                    injury_id = properties[key];
+        var view = map.getView();
+        var viewResolution = view.getResolution();
+        var source = points.getSource();
+        var url = source.getGetFeatureInfoUrl(
+                evt.coordinate,
+                viewResolution,
+                view.getProjection(),
+                {
+                    'INFO_FORMAT': 'application/json',
+                    'FEATURE_COUNT': 1
                 }
-            }
-            //console.log('ID DELITO: ' + injury_id);
-            $('#formInjuries\\:txtInjuryIdForInfo').val(injury_id);
+        );
+        if (url) {
+            $.getJSON(url, function (data) {
+                if (data.features.length > 0) {
+                    popup.setPosition(evt.coordinate);
+                    var injury_id = data.features[0].properties.injury_id;
 
-            var html = "";
-            html = '<b></br>';
-            content.innerHTML = html;
-            container.style.display = 'block';
+                    $('#formInjuries\\:txtInjuryIdForInfo').val(injury_id);
 
-            loadPointInfo();
+                    var html = "";
+                    content.innerHTML = html;
+                    container.style.display = 'block';
+
+                    loadPointInfo();
+                }
+            });
         }
     };
 
     map.on('singleclick', singleclickFunction);
-
-    /*
-     * PUNTERO (EVENTO QUE SE EJECUTA AL PASAR EL PUNTERO SOBRE LOS PUNTOS GEOCODIFICADOS)
-     * @type String
-     */
-    var cursorHoverStyle = "pointer";
-    var target = map.getTarget();
-
-    //target returned might be the DOM element or the ID of this element dependeing on how the map was initialized
-    //either way get a jQuery object for it
-    var jTarget = typeof target === "string" ? $("#" + target) : $(target);
-
-    pointermoveFunction = function (event) {
-        var mouseCoordInMapPixels = [event.originalEvent.offsetX, event.originalEvent.offsetY];
-
-        //detect feature at mouse coords
-        var hit = map.forEachFeatureAtPixel(mouseCoordInMapPixels, function (feature, layer) {
-            return true;
-        });
-
-        if (hit) {
-            jTarget.css("cursor", cursorHoverStyle);
-        } else {
-            jTarget.css("cursor", "");
-        }
-    };
-
-    map.on("pointermove", pointermoveFunction);
 
     //Si todo se ejecuta correctamente, se agrega la capa de puntos
     map.addLayer(pointsOverlay);
@@ -280,23 +360,20 @@ function loadPoints(dataSource) {
  * @param {type} dataSource
  * @returns {undefined}
  */
-function loadHeatmap(dataSource) {
+function loadHeatmap(geoserverParams) {
 
-    var blur = $("#formInjuries\\:blurValueOutput").text();
-    var radio = $("#formInjuries\\:radioValueOutput").text();
+    var heatmapOpacity = $("#formInjuries\\:heatmapOpacity").val();
+    var heatmapRadius = $("#formInjuries\\:heatmapRadius").val();
+    
+    console.log(heatmapOpacity);
+    console.log(heatmapRadius);
 
-    heatmap = new ol.layer.Heatmap({
-        title: 'Heatmap',
-        source: dataSource,
-        visible: true,
-        blur: parseInt(blur),
-        radius: parseInt(radio)
-    });
-
-    heatmapOverlay = new ol.layer.Group({
-        title: 'Capas de Datos',
-        layers: [heatmap]
-    });
+    var source = heatmap.getSource();
+    var params = source.getParams();
+    params['viewparams'] = geoserverParams;
+    params['env'] = 'opacity:'+ heatmapOpacity +';radius:'+ heatmapRadius;
+    params.t = new Date().getMilliseconds();
+    source.updateParams(params);
 
     changeInteraction();
 
@@ -410,12 +487,15 @@ function clearLayer() {
     }
     removeComponents();
 }
-function updateHeatmapStyle() {
-    var blur = $("#formInjuries\\:blurValueOutput").text();
-    var radio = $("#formInjuries\\:radioValueOutput").text();
 
-    heatmap.setBlur(parseInt(blur), 10);
-    heatmap.setRadius(parseInt(radio), 10);
+function updateHeatmapStyle() {
+    /*
+     var blur = $("#formInjuries\\:blurValueOutput").text();
+     var radio = $("#formInjuries\\:radioValueOutput").text();
+     
+     heatmap.setBlur(parseInt(blur), 10);
+     heatmap.setRadius(parseInt(radio), 10);
+     */
 }
 /**
  * Metodo encargado de cargar las estructuras JSON creadas en el Managed Bean InjuriesCountMB

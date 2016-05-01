@@ -38,7 +38,6 @@ import org.json.JSONObject;
 import org.postgresql.copy.CopyManager;
 import org.postgresql.core.BaseConnection;
 import org.primefaces.component.outputpanel.OutputPanel;
-import org.primefaces.context.RequestContext;
 import org.primefaces.model.StreamedContent;
 
 /**
@@ -118,7 +117,7 @@ public class InjuriesCountMB {
     private boolean continueProcess = true;
     private ResultSet rsPoints;
     private String mapType = "points";
-    private String geoJSON = "";
+    private String geoserverSQLViewParameters = "";
     private String selectedBox = "";
     private String sourceGeocodedTable = "";
     private String joinField = "";
@@ -139,8 +138,9 @@ public class InjuriesCountMB {
     private boolean selectOptionDisabled = true;
     private boolean resetOptionDisabled = true;
     private boolean heatmapConfigDisable = true;
-    private int blursliderValue = 8;
-    private int radiosliderValue = 4;
+    private double pointsOpacityValue = 0.4;
+    private double heatmapOpacityValue = 0.4;
+    private int heatmapRadiusValue = 4;
 
     private boolean showGraphic = false;//mostrar seccion de graficos
     private boolean showTableResult = false;//mostrar tabla de resultados
@@ -315,8 +315,10 @@ public class InjuriesCountMB {
             checkValidPoints();
         }
         if (continueProcess) {
-            loadGeoJSON();
+            /*loadGeoJSON();*/
+            createGeoserverParameters();
             JsfUtil.addSuccessMessage("Mapa creado exitosamente.");
+            System.out.println("Process has finished...");
         }
 
         showInjuriesLayer = continueProcess;
@@ -2554,7 +2556,7 @@ public class InjuriesCountMB {
     }
 
     /**
-     * METODO ENCARGADO DE BOORAR LAS COMBINACIONES
+     * METODO ENCARGADO DE BOORAR LAS TUPLAS QUE NO SE ENCUENTREN EN LAS VARIABLES Y VALORES CONFIGURADOS
      */
     public void removeUnusedAddressCombinations() {
         sql = ""
@@ -2574,13 +2576,14 @@ public class InjuriesCountMB {
                 + "			x.user_id = " + (loginMB.getCurrentUser().getUserId()) + " AND x.indicator_id = " + (currentIndicator.getIndicatorId() + 100) + " AND\n"
                 + "			y.user_id = " + (loginMB.getCurrentUser().getUserId()) + " AND y.indicator_id = " + (currentIndicator.getIndicatorId()) + "\n"
                 + "		)"
-                + "     AND injury_id > 0;";
+                + "     AND injury_id > 0;"
+                + "COMMIT;";
         System.out.println("QUERY:\n" + sql);
         connectionJdbcMB.non_query(sql);
     }
 
     public void checkValidPoints() {
-
+        
         try {
             sql = ""
                     + "SELECT\n"
@@ -2596,7 +2599,7 @@ public class InjuriesCountMB {
                     + "	(lon IS NOT NULL AND lat IS NOT NULL);";
 
             System.out.println("Consulta georreferenciacion:\n" + sql);
-            rsPoints = connectionJdbcMB.consult(sql);
+            ResultSet rsPoints = connectionJdbcMB.consult(sql);
 
             if (!rsPoints.next()) { //La consulta no arroja resultados para geocodificar.
 
@@ -2621,11 +2624,20 @@ public class InjuriesCountMB {
                 continueProcess = false;
                 showInjuriesLayer = false;
             }
-        } catch (SQLException ex) {
-
+        } catch (SQLException e) {
+            System.out.println("Error Geocoder 1 en" + this.getClass().getName() + ":" + e.toString());
         }
 
     }
+    
+    public void createGeoserverParameters(){
+        geoserverSQLViewParameters = ""
+                + "geocoded_source_table:"+ sourceGeocodedTable +";"
+                + "join_field:"+ joinField +";"
+                + "user_id:"+ loginMB.getCurrentUser().getUserId() +";"
+                + "indicator_id:"+ (currentIndicator.getIndicatorId() + 100);
+    }
+    /*
 
     public void loadGeoJSON() {
 
@@ -2659,14 +2671,14 @@ public class InjuriesCountMB {
 
             injuriesRoot.put("features", featuresArray);
             injuriesRoot.put("type", "FeatureCollection");
-        } catch (SQLException | JSONException ex) {
-
+        } catch (SQLException | JSONException e) {
+            System.out.println("Error Geocoder 2 en " + this.getClass().getName() + ":" + e.toString());
         }
 
         geoJSON = injuriesRoot.toString();
-
+        System.out.println("GEOJSON:\n" + geoJSON);
     }
-
+    */
     public String loadFatalIndicator() {
         loadIndicator(1);
         removeIndicatorRecords();
@@ -3196,14 +3208,14 @@ public class InjuriesCountMB {
         this.heatmapConfigDisable = heatmapConfigDisable;
     }
 
-    public String getGeoJSON() {
-        return geoJSON;
+    public String getGeoserverSQLViewParameters() {
+        return geoserverSQLViewParameters;
     }
 
-    public void setGeoJSON(String geoJSON) {
-        this.geoJSON = geoJSON;
+    public void setGeoserverSQLViewParameters(String geoserverSQLViewParameters) {
+        this.geoserverSQLViewParameters = geoserverSQLViewParameters;
     }
-
+    
     public String getSelectedBox() {
         return selectedBox;
     }
@@ -3212,22 +3224,31 @@ public class InjuriesCountMB {
         this.selectedBox = selectedBox;
     }
 
-    public int getBlursliderValue() {
-        return blursliderValue;
+    public double getPointsOpacityValue() {
+        return pointsOpacityValue;
     }
 
-    public void setBlursliderValue(int blursliderValue) {
-        this.blursliderValue = blursliderValue;
+    public void setPointsOpacityValue(double pointsOpacityValue) {
+        this.pointsOpacityValue = pointsOpacityValue;
     }
 
-    public int getRadiosliderValue() {
-        return radiosliderValue;
+    public double getHeatmapOpacityValue() {
+        return heatmapOpacityValue;
     }
 
-    public void setRadiosliderValue(int radiosliderValue) {
-        this.radiosliderValue = radiosliderValue;
+    public void setHeatmapOpacityValue(double heatmapOpacityValue) {
+        this.heatmapOpacityValue = heatmapOpacityValue;
     }
 
+    public int getHeatmapRadiusValue() {
+        return heatmapRadiusValue;
+    }
+
+    public void setHeatmapRadiusValue(int heatmapRadiusValue) {
+        this.heatmapRadiusValue = heatmapRadiusValue;
+    }
+    
+    
     public String getCategoryAxis() {
         return categoryAxis;
     }
@@ -3333,7 +3354,7 @@ public class InjuriesCountMB {
             popupInfo = msj;
 
         } catch (SQLException e) {
-
+            System.out.println("Error Geocoder 3 en " + this.getClass().getName() + ":" + e.toString());
         }
 
     }
@@ -3457,8 +3478,8 @@ public class InjuriesCountMB {
             //System.out.println("TITULO: " + indicatorName);
             //System.out.println("TITULO EJE: " + categoryAxixLabel);
 
-        } catch (JSONException | SQLException ex) {
-
+        } catch (JSONException | SQLException e) {
+            System.out.println("Error Geocoder 4 en " + this.getClass().getName() + ":" + e.toString());
         }
 
     }
