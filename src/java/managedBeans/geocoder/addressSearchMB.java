@@ -23,16 +23,19 @@ import javax.faces.context.FacesContext;
 @SessionScoped
 public class addressSearchMB {
 
-    private String searchedAddress = "";
-    private String searchedNeighborhood = "";
-    private List<String> neighborhoods = new ArrayList<>();
-    private String address = "";
-    private String neighborhood = "";
-    private String commune = "";
-    private String lon = "";
-    private String lat = "";
+    private String searchedRNAddress = "";
+    private String searchedNBHAddress = "";
+    private String searchedNBHNeighborhood = "";
 
-    private ConnectionJdbcMB connectionJdbcMB;
+    private String resultAddress = "";
+    private String resultNeighborhood = "";
+    private String resultCommune = "";
+    private double resultLongitude = 0;
+    private double resultLatitude = 0;
+
+    private List<String> neighborhoods = new ArrayList<>();
+
+    private final ConnectionJdbcMB connectionJdbcMB;
     private String sql;
 
     /**
@@ -40,20 +43,24 @@ public class addressSearchMB {
      */
     public addressSearchMB() {
         connectionJdbcMB = (ConnectionJdbcMB) FacesContext.getCurrentInstance().getApplication().evaluateExpressionGet(FacesContext.getCurrentInstance(), "#{connectionJdbcMB}", ConnectionJdbcMB.class);
-        
     }
-    
+
     @PostConstruct
-    public void init(){
+    public void init() {
+        resultAddress = "";
+        resultNeighborhood = "";
+        resultCommune = "";
+        resultLongitude = 0;
+        resultLatitude = 0;
         loadNeighborhoods();
     }
 
     /*ROAD NETWORK CASE METHODS*/
-    public void searchRoadNetworkAddress() {
+    public void roadNetworkAddressSearch() {
         sql = ""
                 + "WITH geocoded AS(\n"
                 + "	SELECT\n"
-                + "		geocode_address('" + searchedAddress + "') AS result\n"
+                + "		geocode_address('" + searchedRNAddress + "') AS result\n"
                 + ")\n"
                 + "SELECT\n"
                 + "	(result).address,\n"
@@ -70,16 +77,17 @@ public class addressSearchMB {
             ResultSet rs = connectionJdbcMB.consult(sql);
 
             if (rs.next()) {
-                address = rs.getString("address");
-                neighborhood = rs.getString("neighborhood");
-                commune = rs.getString("commune");
-                lon = rs.getString("lon");
-                lat = rs.getString("lat");
-                JsfUtil.addSuccessMessage("Resultado\nDireccion: " + address + "\nBarrio: " + neighborhood + "\nComuna: " + commune);
+                resultAddress = rs.getString("address");
+                resultNeighborhood = rs.getString("neighborhood");
+                resultCommune = rs.getString("commune");
+                resultLongitude = rs.getDouble("lon");
+                resultLatitude = rs.getDouble("lat");
+                JsfUtil.addSuccessMessage("Dirección encontrada");
 
             } else {
-                JsfUtil.addErrorMessage("DIRECCION NO ENCONTRADA.");
-
+                resultLongitude = 0;
+                resultLatitude = 0;
+                JsfUtil.addErrorMessage("Direccion no encontrada.");
             }
 
         } catch (SQLException e) {
@@ -88,6 +96,44 @@ public class addressSearchMB {
     }
 
     /*NEIGHBORHOOD BLOCK HOUSEID CASE METHODS*/
+    public void neighborhoodblockhouseidAddressSearch() {
+        sql = ""
+                + "WITH query AS (\n"
+                + "	SELECT \n"
+                + "		geocode_address('" + searchedNBHNeighborhood + "','" + searchedNBHAddress + "') AS result\n"
+                + ")\n"
+                + "SELECT\n"
+                + "	(result).address,\n"
+                + "	(result).neighborhood,\n"
+                + "	(result).commune,\n"
+                + "	(result).lon,\n"
+                + "	(result).lat\n"
+                + "FROM\n"
+                + "	query\n"
+                + "WHERE\n"
+                + "	(result).lon IS NOT NULL AND (result).lat IS NOT NULL;";
+
+        try {
+            ResultSet rs = connectionJdbcMB.consult(sql);
+
+            if (rs.next()) {
+                resultAddress = rs.getString("address");
+                resultNeighborhood = rs.getString("neighborhood");
+                resultCommune = rs.getString("commune");
+                resultLongitude = rs.getDouble("lon");
+                resultLatitude = rs.getDouble("lat");
+                JsfUtil.addSuccessMessage("Dirección encontrada");
+            } else {
+                resultLongitude = 0;
+                resultLatitude = 0;
+                JsfUtil.addErrorMessage("Dirección no encontrada");
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error 2 en " + this.getClass().getName() + ":" + e.toString());
+        }
+    }
+
     public void loadNeighborhoods() {
         String q = ""
                 + "SELECT\n"
@@ -104,69 +150,73 @@ public class addressSearchMB {
                 neighborhoods.add(rs.getString("neighborhood_name"));
             }
         } catch (SQLException e) {
-
+            System.out.println("Error 3 en " + this.getClass().getName() + ":" + e.toString());
         }
     }
 
-    public void searchNeighborhoodBlockHouseIdAddress() {
-        JsfUtil.addSuccessMessage("Variables recibidas\n Direccion:"+ searchedAddress + " Barrio: " + searchedNeighborhood);
-    }
-
     /*GETTERS AND SETTERS*/
-    public String getSearchedAddress() {
-        return searchedAddress;
+    public String getSearchedRNAddress() {
+        return searchedRNAddress;
     }
 
-    public void setSearchedAddress(String searchedAddress) {
-        this.searchedAddress = searchedAddress;
+    public void setSearchedRNAddress(String searchedRNAddress) {
+        this.searchedRNAddress = searchedRNAddress;
     }
 
-    public String getAddress() {
-        return address;
+    public String getSearchedNBHAddress() {
+        return searchedNBHAddress;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setSearchedNBHAddress(String searchedNBHAddress) {
+        this.searchedNBHAddress = searchedNBHAddress;
     }
 
-    public String getNeighborhood() {
-        return neighborhood;
+    public String getSearchedNBHNeighborhood() {
+        return searchedNBHNeighborhood;
     }
 
-    public void setNeighborhood(String neighborhood) {
-        this.neighborhood = neighborhood;
+    public void setSearchedNBHNeighborhood(String searchedNBHNeighborhood) {
+        this.searchedNBHNeighborhood = searchedNBHNeighborhood;
     }
 
-    public String getCommune() {
-        return commune;
+    public String getResultAddress() {
+        return resultAddress;
     }
 
-    public void setCommune(String commune) {
-        this.commune = commune;
+    public void setResultAddress(String resultAddress) {
+        this.resultAddress = resultAddress;
     }
 
-    public String getLon() {
-        return lon;
+    public String getResultNeighborhood() {
+        return resultNeighborhood;
     }
 
-    public void setLon(String lon) {
-        this.lon = lon;
+    public void setResultNeighborhood(String resultNeighborhood) {
+        this.resultNeighborhood = resultNeighborhood;
     }
 
-    public String getLat() {
-        return lat;
+    public String getResultCommune() {
+        return resultCommune;
     }
 
-    public void setLat(String lat) {
-        this.lat = lat;
+    public void setResultCommune(String resultCommune) {
+        this.resultCommune = resultCommune;
     }
 
-    public String getSearchedNeighborhood() {
-        return searchedNeighborhood;
+    public double getResultLongitude() {
+        return resultLongitude;
     }
 
-    public void setSearchedNeighborhood(String searchedNeighborhood) {
-        this.searchedNeighborhood = searchedNeighborhood;
+    public void setResultLongitude(double resultLongitude) {
+        this.resultLongitude = resultLongitude;
+    }
+
+    public double getResultLatitude() {
+        return resultLatitude;
+    }
+
+    public void setResultLatitude(double resultLatitude) {
+        this.resultLatitude = resultLatitude;
     }
 
     public List<String> getNeighborhoods() {

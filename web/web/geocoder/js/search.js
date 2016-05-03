@@ -7,8 +7,15 @@
 var map; //contenedor de capas y componentes
 var points, heatmap;
 var pointsOverlay, heatmapOverlay; //Grupos de capas para puntos / heatmap
+var vectorLayer, iconFeature, popup;
+var container, content, closer; // contenedores (divs) para el popup (mapa de puntos)
 
 $(function () {
+    
+    //Divisiones para popup (configuradas con estilos)
+    container = document.getElementById('popup');
+    content = document.getElementById('popup-content');
+    closer = document.getElementById('popup-closer');
 
     var bmapsRoads = new ol.layer.Tile({
         title: 'BingMaps Roads',
@@ -88,5 +95,71 @@ $(function () {
     setInterval(function () {
         map.updateSize();
     }, 2);
+    
+    /*
+     * Adicion de dialogo (popup)
+     */
+    closer.onclick = function () {
+        container.style.display = 'none';
+        closer.blur();
+        return false;
+    };
+    popup = new ol.Overlay({
+        element: container
+    });
+
+    map.addOverlay(popup);
+
 
 });
+
+function locateAddress() {
+
+    var resultAddress = $('#formInjuries\\:txtResultAddress').val();
+    var resultNeighborhood = $('#formInjuries\\:txtResultNeighborhood').val();
+    var resultCommune = $('#formInjuries\\:txtResultCommune').val();
+    var resultLongitude = parseFloat($('#formInjuries\\:txtResultLongitude').val());
+    var resultLatitude = parseFloat($('#formInjuries\\:txtResultLatitude').val());
+
+    map.removeLayer(vectorLayer);
+
+    if (resultLongitude !== 0 && resultLatitude !== 0) {
+
+        iconFeature = new ol.Feature({
+            geometry: new ol.geom.Point([resultLongitude, resultLatitude]),
+        });
+
+        vectorLayer = new ol.layer.Vector({
+            source: new ol.source.Vector({
+                features: [iconFeature]
+            }),
+            style: new ol.style.Style({
+                image: new ol.style.Icon({
+                    anchor: [190, 370],
+                    anchorXUnits: 'pixels',
+                    anchorYUnits: 'pixels',
+                    src: './img/location_icon.png',
+                    scale: 0.1
+                })
+            })
+        });
+        var info = ''
+                    +'<b>Direccion:</b>  ' + resultAddress + '<br>'
+                    +'<b>Barrio:</b>  '+ resultNeighborhood + '<br>'
+                    +'<b>Comuna:</b>  '+ resultCommune + '<br>'
+                    +'<b>Longitud:</b>  '+ resultLongitude + '<br>'
+                    +'<b>Latitud:</b>  '+ resultLatitude + '<br>';
+        popup.setPosition([resultLongitude, resultLatitude]);
+        content.innerHTML = info;
+        container.style.display = 'block';
+        container.style.bottom= '24px';
+        
+        map.addLayer(vectorLayer);
+        map.getView().setCenter([resultLongitude, resultLatitude]);
+        map.getView().setZoom(17);
+        
+    }else{
+        container.style.display = 'none';
+        closer.blur();
+    }
+}

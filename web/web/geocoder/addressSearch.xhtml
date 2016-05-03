@@ -25,14 +25,9 @@
                         <div id="popup-content"></div>
                     </div>
                 </div>
-
-                <p:outputPanel id="hideControls">
-
-                </p:outputPanel>
             </ui:define>
 
             <ui:define name="leftPanel">
-
                 <p:layoutUnit position="east" size="30%">
                     <p:fieldset legend="Busqueda de direcciones">
 
@@ -40,29 +35,31 @@
                             <p:tab title="Malla Vial">
                                 <p:column colspan="1">
                                     <p:outputLabel for="txtRoadAddress" value="Ingrese direccion: "/>
-                                    <p:inputText id="txtRoadAddress" value="#{addressSearchMB.searchedAddress}" />
+                                    <p:inputText id="txtRoadAddress" value="#{addressSearchMB.searchedRNAddress}" />
                                     <p:commandButton 
                                         id="btnSearchRoadAddress" 
-                                        actionListener="#{addressSearchMB.searchRoadNetworkAddress()}"
+                                        actionListener="#{addressSearchMB.roadNetworkAddressSearch()}"
                                         value="Buscar"
-                                        update=":formInjuries:msg"/>
+                                        update=":formInjuries:msg :formInjuries:hideControls"
+                                        oncomplete="locateAddress()"/>
                                 </p:column>
 
                             </p:tab>
                             <p:tab title="Barrio Manzana Predio">
                                 <p:column colspan="1">
                                     <p:outputLabel for="txtBlockHouseIdAddress" value ="Ingrese direccion:"/>
-                                    <p:inputText id="txtBlockHouseIdAddress" value="#{addressSearchMB.searchedAddress}"/>
+                                    <p:inputText id="txtBlockHouseIdAddress" value="#{addressSearchMB.searchedNBHAddress}"/>
                                     <br></br>
                                     <p:outputLabel for="selBlockHouseIdAddress" value ="Seleccione barrio:"/>
-                                    <p:selectOneListbox id="selBlockHouseIdAddress" value="#{addressSearchMB.searchedNeighborhood}" style="height: 140px; width: 200px;">
+                                    <p:selectOneListbox id="selBlockHouseIdAddress" value="#{addressSearchMB.searchedNBHNeighborhood}" style="height: 140px; width: 200px;">
                                         <f:selectItems value="#{addressSearchMB.neighborhoods}"/>
                                     </p:selectOneListbox>
                                     <p:commandButton 
                                         id="btnSearchBlockAddress"
                                         value="Buscar"
-                                        actionListener="#{addressSearchMB.searchNeighborhoodBlockHouseIdAddress()}"
-                                        update=":formInjuries:msg"/>
+                                        actionListener="#{addressSearchMB.neighborhoodblockhouseidAddressSearch()}"
+                                        update=":formInjuries:msg :formInjuries:hideControls"
+                                        oncomplete="locateAddress()"/> 
                                 </p:column>
                             </p:tab>
 
@@ -70,6 +67,14 @@
 
                     </p:fieldset>
                 </p:layoutUnit>
+                <!--CONTROLES PARA ENVIO DE DATOS A JS-->
+                <p:outputPanel id="hideControls">
+                    <p:inputText id="txtResultAddress" value="#{addressSearchMB.resultAddress}" style="display: none;"/>
+                    <p:inputText id="txtResultNeighborhood" value="#{addressSearchMB.resultNeighborhood}" style="display: none;"/>
+                    <p:inputText id="txtResultCommune" value="#{addressSearchMB.resultCommune}" style="display: none;"/>
+                    <p:inputText id="txtResultLongitude" value="#{addressSearchMB.resultLongitude}" style="display: none;"/>
+                    <p:inputText id="txtResultLatitude" value="#{addressSearchMB.resultLatitude}" style="display: none;"/>
+                </p:outputPanel>
 
             </ui:define>
 

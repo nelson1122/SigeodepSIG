@@ -32,66 +32,67 @@
 
             <ui:define name="centerPanel">
 
-                <p:toolbar style="margin-top: -3px; margin-bottom: 2px;">
+                <p:toolbar style="margin-top: -3px; margin-bottom: 2px; ">
                     <p:toolbarGroup style="margin-top: 6px;">
                         &nbsp;Tipo de mapa:&nbsp;
                     </p:toolbarGroup>
                     <p:toolbarGroup>
                         <p:selectOneButton 
-                            id="mapSelectionBtn" value="#{injuriesCountMB.mapType}">
+                            id="mapSelectionBtn" value="#{injuriesCountMB.mapType}" >
                             <f:selectItem itemLabel="Puntos" itemValue="points"/>
-                            <f:selectItem itemLabel="HeatMap" itemValue="heatmap" />
+                            <f:selectItem itemLabel="Heatmap" itemValue="heatmap" />
                             <p:ajax
                                 listener="#{injuriesCountMB.changeInteractionButtonsState}"
                                 oncomplete="loadDataLayer()"
-                                update= "selectOptionSelected drawOptionSelected resetBtn heatmapConfigBtn txtMapType :formInjuries:configurationsTab"/>
+                                update= "selectOptionSelected drawOptionSelected resetBtn mapConfigBtn txtMapType :formInjuries:configurationsTab"/>
                         </p:selectOneButton>
                     </p:toolbarGroup>
                     <p:toolbarGroup>
-                        <span class="ui-separator">
-                            <span class="ui-icon ui-icon-grip-dotted-vertical" />
-                        </span>
                         <p:commandButton
-                            id="heatmapConfigBtn"
-                            value="Opciones mapa"
-                            type="button" 
+                            id="mapConfigBtn"
+                            type="button"
+                            icon="ui-icon-wrench"
                             onclick="optDlg.show()"/>
+                        <p:tooltip for="mapConfigBtn" value="Configuracion de capas" style="font-size: 9pt; font-family: sans-serif;"/>
                     </p:toolbarGroup>
-                    <p:toolbarGroup style="margin-top: 6px;">
-                        <span class="ui-separator">
-                            <span class="ui-icon ui-icon-grip-dotted-vertical" />
-                        </span>
-                        &nbsp;Zonas de interés:&nbsp;
-                    </p:toolbarGroup>
+                    
                     <p:toolbarGroup>
-                        <p:selectBooleanButton 
+                        &nbsp;&nbsp;Zonas de interés:&nbsp;
+                        <p:selectBooleanButton
                             id="drawOptionSelected" 
-                            onLabel="Trazar" 
-                            offLabel="Trazar"
-
+                            onLabel="&nbsp;"
+                            offLabel="&nbsp;"
+                            onIcon="ui-icon-pencil"
+                            offIcon="ui-icon-pencil"
                             value="#{injuriesCountMB.drawOptionSelected}"
-                            disabled="#{injuriesCountMB.drawOptionDisabled}">
+                            disabled="#{injuriesCountMB.drawOptionDisabled}"
+                            style="width: 28px">
                             <p:ajax 
                                 listener="#{injuriesCountMB.drawButtonChange()}" update="selectOptionSelected boolDrawOption boolSelectOption" oncomplete="changeInteraction()"/>
                         </p:selectBooleanButton>
-
+                        <p:tooltip for="drawOptionSelected" value="Trazar" style="font-size: 9pt; font-family: sans-serif;"/>
                         <p:selectBooleanButton 
                             id="selectOptionSelected" 
-                            onLabel="Seleccionar" 
-                            offLabel="Seleccionar"
-
+                            onLabel="&nbsp;" 
+                            offLabel="&nbsp;"
+                            onIcon="ui-icon-info"
+                            offIcon="ui-icon-info"
                             value="#{injuriesCountMB.selectOptionSelected}"
-                            disabled="#{injuriesCountMB.selectOptionDisabled}">
+                            disabled="#{injuriesCountMB.selectOptionDisabled}"
+                            style="width: 28px">
                             <p:ajax 
-                                listener="#{injuriesCountMB.selectButtonChange()}" update="drawOptionSelected boolDrawOption boolSelectOption" oncomplete="changeInteraction()"/>
+                                listener="#{injuriesCountMB.selectButtonChange()}" update="drawOptionSelected boolDrawOption boolSelectOption selectOptionTooltip" oncomplete="changeInteraction()"/>
                         </p:selectBooleanButton>
+                        <p:tooltip  id="selectOptionTooltip" for="selectOptionSelected" value="Seleccionar" style="font-size: 9pt; font-family: sans-serif;"/>
                         <p:commandButton 
                             id="resetBtn" 
-                            value="Limpiar" 
+                            icon="ui-icon-trash"
                             oncomplete="clearLayer()"
                             actionListener="#{injuriesCountMB.resetButtonChange()}" 
                             update="selectOptionSelected drawOptionSelected"
-                            disabled="#{injuriesCountMB.resetOptionDisabled}" />
+                            disabled="#{injuriesCountMB.resetOptionDisabled}" 
+                            style="width: 28px"/>
+                        <p:tooltip for="resetBtn" value="Limpiar" style="font-size: 9pt; font-family: sans-serif;"/>
 
                     </p:toolbarGroup>
                 </p:toolbar>
@@ -129,7 +130,7 @@
                 <p:dialog
                     id="mapConfigDlg"
                     draggable="false"
-                    header="Opciones" 
+                    header="Configuracion de capas" 
                     widgetVar="optDlg" 
                     style="position: absolute; margin-left: 40px; margin-top: 40px;"
                     resizable="false" height="190" width="326" position="left,top" >
@@ -202,7 +203,7 @@
                 <p:layoutUnit position="east" size="39%" collapsible="true" collapsed="true" header="&nbsp;">
 
                     <!-- PESTANAS CONFIGURACION Y RESULTADOS-->
-                    <p:tabView id="configurationsTab"  widgetVar="configurationsTab" onTabChange="updateElements">
+                    <p:tabView id="configurationsTab"  widgetVar="configurationsTab" onTabChange="updateElements" style="width: 506px;">
                         <!-- PESTAÑA DE CONFIGURACIONES -->
                         <p:tab title="Configuraciones">
                             <p:fieldset legend="Categorias disponibles" >
@@ -230,7 +231,7 @@
                                             :formInjuries:drawOptionSelected 
                                             :formInjuries:selectOptionSelected 
                                             :formInjuries:resetBtn 
-                                            :formInjuries:heatmapConfigBtn
+                                            :formInjuries:mapConfigBtn
                                             :formInjuries:mapPanel"/>
                                     </p:selectOneMenu>
                                 </h:panelGroup>
