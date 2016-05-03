@@ -121,14 +121,15 @@ public class InjuriesCountMB {
     private String selectedBox = "";
     private String sourceGeocodedTable = "";
     private String joinField = "";
-
-    private String categoryAxis = "[' ']";
-    private String seriesValues = "[' ']";
+    /*VARIABLES GRAFICO HIGHCHARTS*/
+    private String categoryAxis = "[\" \"]";
+    private String seriesValues = "[{\"name\": \" \", \"data\": [0]}]";
     private String variablesName = "";
     private String categoryAxixLabel = "";
-    private String indicatorName = "";
+    private String indicatorName = "Seleccione un Area de Interés";
+
     private String injuryIdForInfo = "";
-    private String popupInfo = "PRIMERA VEZ";
+    private String popupInfo = "";
 
     private boolean drawOptionSelected = false;
     private boolean selectOptionSelected = false;
@@ -137,10 +138,12 @@ public class InjuriesCountMB {
     private boolean drawOptionDisabled = true;
     private boolean selectOptionDisabled = true;
     private boolean resetOptionDisabled = true;
-    private boolean heatmapConfigDisable = true;
+
     private double pointsOpacityValue = 0.4;
     private double heatmapOpacityValue = 0.4;
-    private int heatmapRadiusValue = 4;
+    private int heatmapRadiusValue = 14;
+    private double neighborhoodsOpacityValue = 0.5;
+    private double communesOpacityValue = 0.5;
 
     private boolean showGraphic = false;//mostrar seccion de graficos
     private boolean showTableResult = false;//mostrar tabla de resultados
@@ -194,14 +197,23 @@ public class InjuriesCountMB {
         selectOptionSelected = false;
         resetOptionSelected = false;
 
-        selectedBox = "-8606316.127212692 138114.54413991174,-8606316.127212692 131368.97639374496,-8598175.583700322 131368.97639374496,-8598175.583700322 138114.54413991174,-8606316.127212692 138114.54413991174";
+        selectedBox = ""
+                + "-8606316.127212692 138114.54413991174,"
+                + "-8606316.127212692 131368.97639374496,"
+                + "-8598175.583700322 131368.97639374496,"
+                + "-8598175.583700322 138114.54413991174,"
+                + "-8606316.127212692 138114.54413991174";
 
         valuesGraph = new ArrayList<>();
         currentValueGraph = "";
         currentVariableGraph = "";
 
-        categoryAxis = "[' ']";
-        seriesValues = "[' ']";
+        categoryAxis = "[\" \"]";
+        seriesValues = "[{\"name\": \" \", \"data\": [0]}]";
+
+        variablesName = "";
+        categoryAxixLabel = "";
+        indicatorName = "Seleccione un Area de Interés";
 
         if (continueProcess) {//ELIMINO DATOS DE UN PROCESO ANTERIOR
             removeIndicatorRecords();
@@ -998,18 +1010,26 @@ public class InjuriesCountMB {
         drawOptionDisabled = true;
         selectOptionDisabled = true;
         resetOptionDisabled = true;
-        heatmapConfigDisable = true;
+        //heatmapConfigDisable = true;
 
         drawOptionSelected = false;
         selectOptionSelected = false;
         resetOptionSelected = false;
 
         variablesCrossData = new ArrayList<>();//lista de variables a cruzar            
+        selectedBox = ""
+                + "-8606316.127212692 138114.54413991174,"
+                + "-8606316.127212692 131368.97639374496,"
+                + "-8598175.583700322 131368.97639374496,"
+                + "-8598175.583700322 138114.54413991174,"
+                + "-8606316.127212692 138114.54413991174";
 
-        selectedBox = "-8606316.127212692 138114.54413991174,-8606316.127212692 131368.97639374496,-8598175.583700322 131368.97639374496,-8598175.583700322 138114.54413991174,-8606316.127212692 138114.54413991174";
+        categoryAxis = "[\" \"]";
+        seriesValues = "[{\"name\": \" \", \"data\": [0]}]";
 
-        categoryAxis = "[' ']";
-        seriesValues = "[' ']";
+        variablesName = "";
+        categoryAxixLabel = "";
+        indicatorName = "Seleccione un Area de Interés";
 
         mapType = "points";
         showInjuriesLayer = false;
@@ -2556,7 +2576,8 @@ public class InjuriesCountMB {
     }
 
     /**
-     * METODO ENCARGADO DE BOORAR LAS TUPLAS QUE NO SE ENCUENTREN EN LAS VARIABLES Y VALORES CONFIGURADOS
+     * METODO ENCARGADO DE BOORAR LAS TUPLAS QUE NO SE ENCUENTREN EN LAS
+     * VARIABLES Y VALORES CONFIGURADOS
      */
     public void removeUnusedAddressCombinations() {
         sql = ""
@@ -2583,7 +2604,7 @@ public class InjuriesCountMB {
     }
 
     public void checkValidPoints() {
-        
+
         try {
             sql = ""
                     + "SELECT\n"
@@ -2629,56 +2650,15 @@ public class InjuriesCountMB {
         }
 
     }
-    
-    public void createGeoserverParameters(){
+
+    public void createGeoserverParameters() {
         geoserverSQLViewParameters = ""
-                + "geocoded_source_table:"+ sourceGeocodedTable +";"
-                + "join_field:"+ joinField +";"
-                + "user_id:"+ loginMB.getCurrentUser().getUserId() +";"
-                + "indicator_id:"+ (currentIndicator.getIndicatorId() + 100);
+                + "geocoded_source_table:" + sourceGeocodedTable + ";"
+                + "join_field:" + joinField + ";"
+                + "user_id:" + loginMB.getCurrentUser().getUserId() + ";"
+                + "indicator_id:" + (currentIndicator.getIndicatorId() + 100);
     }
-    /*
 
-    public void loadGeoJSON() {
-
-        try {
-            JSONArray featuresArray = new JSONArray();
-            int processedTuples = 0;
-
-            if (rsPoints != null) {
-                do {
-                    JSONArray coordinates = new JSONArray();
-                    coordinates.put(0, rsPoints.getDouble("lon"));
-                    coordinates.put(1, rsPoints.getDouble("lat"));
-
-                    JSONObject feature = new JSONObject();
-                    feature.put("type", "Point");
-                    feature.put("coordinates", coordinates);
-
-                    JSONObject properties = new JSONObject();
-                    properties.put("fatal_injury_id", rsPoints.getInt("injury_id"));
-
-                    JSONObject geometry = new JSONObject();
-                    geometry.put("type", "Feature");
-                    geometry.put("geometry", feature);
-                    geometry.put("properties", properties);
-
-                    featuresArray.put(processedTuples, geometry);
-
-                    processedTuples++;
-                } while (rsPoints.next());
-            }
-
-            injuriesRoot.put("features", featuresArray);
-            injuriesRoot.put("type", "FeatureCollection");
-        } catch (SQLException | JSONException e) {
-            System.out.println("Error Geocoder 2 en " + this.getClass().getName() + ":" + e.toString());
-        }
-
-        geoJSON = injuriesRoot.toString();
-        System.out.println("GEOJSON:\n" + geoJSON);
-    }
-    */
     public String loadFatalIndicator() {
         loadIndicator(1);
         removeIndicatorRecords();
@@ -2740,7 +2720,7 @@ public class InjuriesCountMB {
                 drawOptionDisabled = true;
                 selectOptionDisabled = true;
                 resetOptionDisabled = true;
-                heatmapConfigDisable = true;
+                //heatmapConfigDisable = true;
 
                 resetButtonChange();
 
@@ -2749,7 +2729,7 @@ public class InjuriesCountMB {
                 drawOptionDisabled = false;
                 selectOptionDisabled = false;
                 resetOptionDisabled = false;
-                heatmapConfigDisable = false;
+                //heatmapConfigDisable = false;
             }
         }
 
@@ -3200,6 +3180,7 @@ public class InjuriesCountMB {
         this.resetOptionDisabled = resetOptionDisabled;
     }
 
+    /*
     public boolean isHeatmapConfigDisable() {
         return heatmapConfigDisable;
     }
@@ -3207,7 +3188,7 @@ public class InjuriesCountMB {
     public void setHeatmapConfigDisable(boolean heatmapConfigDisable) {
         this.heatmapConfigDisable = heatmapConfigDisable;
     }
-
+     */
     public String getGeoserverSQLViewParameters() {
         return geoserverSQLViewParameters;
     }
@@ -3215,7 +3196,7 @@ public class InjuriesCountMB {
     public void setGeoserverSQLViewParameters(String geoserverSQLViewParameters) {
         this.geoserverSQLViewParameters = geoserverSQLViewParameters;
     }
-    
+
     public String getSelectedBox() {
         return selectedBox;
     }
@@ -3247,8 +3228,23 @@ public class InjuriesCountMB {
     public void setHeatmapRadiusValue(int heatmapRadiusValue) {
         this.heatmapRadiusValue = heatmapRadiusValue;
     }
-    
-    
+
+    public double getNeighborhoodsOpacityValue() {
+        return neighborhoodsOpacityValue;
+    }
+
+    public void setNeighborhoodsOpacityValue(double neighborhoodsOpacityValue) {
+        this.neighborhoodsOpacityValue = neighborhoodsOpacityValue;
+    }
+
+    public double getCommunesOpacityValue() {
+        return communesOpacityValue;
+    }
+
+    public void setCommunesOpacityValue(double communesOpacityValue) {
+        this.communesOpacityValue = communesOpacityValue;
+    }
+
     public String getCategoryAxis() {
         return categoryAxis;
     }
@@ -3468,15 +3464,19 @@ public class InjuriesCountMB {
             }
 
             /* TITULO DEL GRAFICO*/
-            indicatorName = currentIndicator.getIndicatorName() + " - Municipo de Pasto.<br></br>" + variablesName + "<br></br>";
-            if (sameRangeLimit) {
-                indicatorName = indicatorName + initialDate.getDate() + " de " + intToMonth(initialDate.getMonth()) + " a " + endDate.getDate() + " de " + intToMonth(endDate.getMonth()) + "\n";
-                indicatorName = indicatorName + "<br></br> de los años " + String.valueOf(initialDate.getYear() + 1900) + " a " + String.valueOf(endDate.getYear() + 1900);
-            } else {
-                indicatorName = indicatorName + "Periodo " + sdf.format(initialDate) + " a " + sdf.format(endDate);
+            if (showInjuriesLayer) {
+                indicatorName = currentIndicator.getIndicatorName() + " - Municipio de Pasto.<br></br>" + variablesName + "<br></br>";
+                if (sameRangeLimit) {
+                    indicatorName = indicatorName + initialDate.getDate() + " de " + intToMonth(initialDate.getMonth()) + " a " + endDate.getDate() + " de " + intToMonth(endDate.getMonth());
+                    indicatorName = indicatorName + " de los años " + String.valueOf(initialDate.getYear() + 1900) + " a " + String.valueOf(endDate.getYear() + 1900);
+                } else {
+                    indicatorName = indicatorName + "Periodo " + sdf.format(initialDate) + " a " + sdf.format(endDate);
+                }
+                //System.out.println("TITULO: " + indicatorName);
+                //System.out.println("TITULO EJE: " + categoryAxixLabel);
+            }else{
+                indicatorName = "Seleccione un Área de Interés";
             }
-            //System.out.println("TITULO: " + indicatorName);
-            //System.out.println("TITULO EJE: " + categoryAxixLabel);
 
         } catch (JSONException | SQLException e) {
             System.out.println("Error Geocoder 4 en " + this.getClass().getName() + ":" + e.toString());

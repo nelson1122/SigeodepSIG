@@ -29,11 +29,12 @@
                 <div class="InactivityLayer" id="IdInactivityLayer"> Procesando...</div>
             </ui:define>
 
+
             <ui:define name="centerPanel">
 
                 <p:toolbar style="margin-top: -3px; margin-bottom: 2px;">
                     <p:toolbarGroup style="margin-top: 6px;">
-                        Tipo de mapa:&nbsp; &nbsp;
+                        &nbsp;Tipo de mapa:&nbsp;
                     </p:toolbarGroup>
                     <p:toolbarGroup>
                         <p:selectOneButton 
@@ -46,8 +47,21 @@
                                 update= "selectOptionSelected drawOptionSelected resetBtn heatmapConfigBtn txtMapType :formInjuries:configurationsTab"/>
                         </p:selectOneButton>
                     </p:toolbarGroup>
+                    <p:toolbarGroup>
+                        <span class="ui-separator">
+                            <span class="ui-icon ui-icon-grip-dotted-vertical" />
+                        </span>
+                        <p:commandButton
+                            id="heatmapConfigBtn"
+                            value="Opciones mapa"
+                            type="button" 
+                            onclick="optDlg.show()"/>
+                    </p:toolbarGroup>
                     <p:toolbarGroup style="margin-top: 6px;">
-                        &nbsp; &nbsp;&nbsp; &nbsp;Zonas de interés:&nbsp; &nbsp;
+                        <span class="ui-separator">
+                            <span class="ui-icon ui-icon-grip-dotted-vertical" />
+                        </span>
+                        &nbsp;Zonas de interés:&nbsp;
                     </p:toolbarGroup>
                     <p:toolbarGroup>
                         <p:selectBooleanButton 
@@ -73,38 +87,24 @@
                         </p:selectBooleanButton>
                         <p:commandButton 
                             id="resetBtn" 
-                            value="Reiniciar" 
+                            value="Limpiar" 
                             oncomplete="clearLayer()"
                             actionListener="#{injuriesCountMB.resetButtonChange()}" 
                             update="selectOptionSelected drawOptionSelected"
                             disabled="#{injuriesCountMB.resetOptionDisabled}" />
 
                     </p:toolbarGroup>
-                    <p:toolbarGroup>
-                        <span class="ui-separator">
-                            <span class="ui-icon ui-icon-grip-dotted-vertical" />
-                        </span>
-                        <p:commandButton
-                            id="heatmapConfigBtn"
-                            value="Opciones mapa"
-                            type="button" 
-                            onclick="optDlg.show()"
-                            disabled="#{injuriesCountMB.heatmapConfigDisable}" 
-                            />
-                    </p:toolbarGroup>
-
                 </p:toolbar>
 
 
                 <!-- DIVISION DEL MAPA -->
                 <div id="map" style="width: 100%; height: 94%; position: absolute;">
-                    <div id="popup" class="ol-popup" style="margin-bottom: 10px; width: 260px;">
+                    <div id="popup" class="ol-popup" style="margin-bottom: 10px; width: 260px; display: none;">
                         <a href="#" id="popup-closer" class="ol-popup-closer"></a>
                         <div id="popup-content"></div>
                     </div>
                 </div>
                 <p:outputPanel id='mapPanel'>
-
                     <!-- CONTROLES PARA CARGAR VALORES LEIDOS DESDE JAVASCRIPT -->
                     <p:inputText id="boolShowInjuriesLayer" value='#{injuriesCountMB.showInjuriesLayer}' style="display: none;"/>
                     <p:inputText id="txtMapType" value="#{injuriesCountMB.mapType}" style="display: none;"/>
@@ -120,12 +120,6 @@
                 </p:outputPanel>
 
                 <p:outputPanel id="hiddenControls">
-                    <!-- GRAFICO -->
-                    <p:inputText id="txtCategoryAxis" value="#{injuriesCountMB.categoryAxis}" style="display: none;"/>
-                    <p:inputText id="txtSeries" value="#{injuriesCountMB.seriesValues}" style="display: none;"/>
-                    <p:inputText id="txtGraphicTitle" value="#{injuriesCountMB.indicatorName}" style="display: none;"/>
-                    <p:inputText id="txtCategoryAxisLabel" value="#{injuriesCountMB.categoryAxixLabel}" style="display: none;"/>
-
                     <!--POPUP INFO -->
                     <h:inputText id="txtInjuryIdForInfo" value="#{injuriesCountMB.injuryIdForInfo}" style="display: none;"/>
                     <p:inputText id="txtPopupInfo" value="#{injuriesCountMB.popupInfo}" style="display: none;"/>
@@ -133,18 +127,19 @@
 
                 <!--DIALOGO CONFIGURACION DE CAPAS-->
                 <p:dialog
-                    id="heatmapConfigDlg"
+                    id="mapConfigDlg"
+                    draggable="false"
                     header="Opciones" 
                     widgetVar="optDlg" 
-                    style="position: absolute; margin-top: 40px; margin-left: 40px" 
-                    draggable="false" resizable="false" height="86" width="320" position="left,top"
-                    visible="#{injuriesCountMB.heatmapConfigDisable eq true ? false : false}">
+                    style="position: absolute; margin-left: 40px; margin-top: 40px;"
+                    resizable="false" height="190" width="326" position="left,top" >
 
                     <b>Mapa de puntos</b><br></br>
                     <h:panelGrid>
                         <label style="margin-right: 4px">Opacidad:</label><label id="pointsOpacityLabel"></label>
                         <div id="pointsOpacity" ></div>
                     </h:panelGrid>
+                    <p:separator/>
                     <b>Heatmap</b><br></br>
                     <h:panelGrid>
                         <label style="margin-right: 4px">Opacidad:</label><label id="heatmapOpacityLabel"></label>
@@ -154,41 +149,68 @@
                         <label style="margin-right: 4px">Radio:</label><label id="heatmapRadiusLabel"></label>
                         <div id="heatmapRadius" ></div>
                     </h:panelGrid>
-                    
-                    
+                    <p:separator/>
+                    <b>Barrios</b><br></br>
+                    <h:panelGrid>
+                        <label style="margin-right: 4px">Opacidad:</label><label id="neighborhoodsOpacityLabel"></label>
+                        <div id="neighborhoodsOpacity" ></div>
+                    </h:panelGrid>
+                    <p:separator/>
+                    <b>Comunas</b><br></br>
+                    <h:panelGrid>
+                        <label style="margin-right: 4px">Opacidad:</label><label id="communesOpacityLabel"></label>
+                        <div id="communesOpacity" ></div>
+                    </h:panelGrid>
+
+
+                    <!-- Cajas de texto para envio de datos al servidor -->
                     <h:inputHidden id="pointsOpacity" value="#{injuriesCountMB.pointsOpacityValue}" />
                     <h:inputHidden id="heatmapOpacity" value="#{injuriesCountMB.heatmapOpacityValue}" />
                     <h:inputHidden id="heatmapRadius" value="#{injuriesCountMB.heatmapRadiusValue}" />
-                        
-                    <p:remoteCommand name="updateLayerStyle" process="pointsOpacity heatmapOpacity heatmapRadius"/>
+                    <h:inputHidden id="neighborhoodsOpacity" value="#{injuriesCountMB.neighborhoodsOpacityValue}" />
+                    <h:inputHidden id="communesOpacity" value="#{injuriesCountMB.communesOpacityValue}" />
+
+                    <!--procedimiento remoto para ejecutar proceso desde JS-->
+                    <p:remoteCommand 
+                        name="updateLayerStyle" 
+                        process="pointsOpacity heatmapOpacity heatmapRadius neighborhoodsOpacity communesOpacity"/>
 
                 </p:dialog>
+
 
                 <!-- LLAMADA A PROCEDIMIENTO REMOTO DESDE JS -->
                 <p:remoteCommand
                     name="remoteDataProcess" actionListener="#{injuriesCountMB.remoteDataProcess()}"
-                    update=":formInjuries:hiddenControls"
-                    oncomplete="loadChart()"
+                    update=":formInjuries:configurationsTab:chartPanel"
+                    oncomplete="loadChart();configurationsTab.select(1);"
                     />
-
                 <p:remoteCommand
                     name="loadPointInfo" actionListener="#{injuriesCountMB.remoteLoadPointInfoProcess()}"
                     update=":formInjuries:hiddenControls txtInjuryIdForInfo txtPopupInfo"
                     oncomplete="loadInfo()"
+                    />
+                
+                <p:remoteCommand
+                    name="updateElements"
+                    update=":formInjuries:configurationsTab:category"
                     />
 
             </ui:define>
 
             <!-- PANEL IZQUIERDO -->
             <ui:define name="leftPanel">
-                <p:layoutUnit position="east" size="38%">
-                    <p:tabView id="configurationsTab" style="height: 99%;">
+                <p:layoutUnit position="east" size="39%" collapsible="true" collapsed="true" header="&nbsp;">
+
+                    <!-- PESTANAS CONFIGURACION Y RESULTADOS-->
+                    <p:tabView id="configurationsTab"  widgetVar="configurationsTab" onTabChange="updateElements">
                         <!-- PESTAÑA DE CONFIGURACIONES -->
                         <p:tab title="Configuraciones">
                             <p:fieldset legend="Categorias disponibles" >
 
                                 <h:panelGroup layout="block" style="margin: 10px 0px 20px 100px;">
-                                    <p:selectOneMenu id="category" value="#{injuriesCountMB.selectedCategoryForInjuries}">
+                                    <p:selectOneMenu id="category"  
+                                                     value="#{injuriesCountMB.selectedCategoryForInjuries}" 
+                                                     style="width: 210px;">
                                         <f:selectItem itemLabel="Casos por Lesión no fatal" itemValue="3"/>
                                         <f:selectItem itemLabel="Lesiones No Intencionales" itemValue="47"/>
                                         <f:selectItem itemLabel="Violencia AutoInflingida" itemValue="54"/>
@@ -374,9 +396,7 @@
                                         :formInjuries:drawOptionSelected
                                         :formInjuries:resetBtn
                                         :formInjuries:configurationsTab
-                                        :formInjuries:mapPanel">
-
-                                    </p:commandButton>
+                                        :formInjuries:mapPanel"/>
                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                     <p:commandButton 
                                         value="Reiniciar" 
@@ -392,49 +412,53 @@
                                         :formInjuries:drawOptionSelected
                                         :formInjuries:resetBtn
                                         :formInjuries:configurationsTab
-                                        :formInjuries:mapPanel"
-                                        />
+                                        :formInjuries:mapPanel"/>
                                 </h:panelGroup>
                             </p:fieldset>
+                            <br></br>
+
+
 
                         </p:tab>
                         <!-- PESTAÑA DE RESULTADOS-->
                         <p:tab title="Resultados">
-                            <p:fieldset legend="Información" style="width: 100%; margin-left: -12px;">
-
-                            </p:fieldset>
-                            <br></br>
-
                             <!-- GRAFICO ESTADISTICO -->
-                            <p:fieldset legend="Gráfico" style="width: 100%; margin-left: -12px;">
+                            <p:fieldset legend="Gráfico" style=" height: 520px; width: 100%; margin-left: -12px;">
+                                <p:column colspan="2">
+                                    <h:outputText
+                                        id="IdVariableGraph"
+                                        value="#{injuriesCountMB.currentVariableGraph}"/> <!--NOMBRE DE LA VARIABLE-->
+                                    <h:selectOneMenu 
+                                        id="IdValueGraph" value="#{injuriesCountMB.currentValueGraph}"> 
+                                        <f:selectItems value="#{injuriesCountMB.valuesGraph}"/> <!--VALOR DE LA VARIABLE-->
+                                        <p:ajax 
+                                            event="change"
+                                            listener="#{injuriesCountMB.remoteDataProcess()}"
+                                            update =":formInjuries:configurationsTab:chartPanel"
+                                            oncomplete="loadChart()"/>
+                                    </h:selectOneMenu>
+                                </p:column>
 
                                 <p:outputPanel id="chartPanel">
 
-                                    <p:column colspan="2">
-                                        <h:outputText
-                                            id="IdVariableGraph"
-                                            value="#{injuriesCountMB.currentVariableGraph}"/> <!--NOMBRE DE LA VARIABLE-->
-                                        <h:selectOneMenu 
-                                            id="IdValueGraph" value="#{injuriesCountMB.currentValueGraph}"> 
-                                            <f:selectItems value="#{injuriesCountMB.valuesGraph}"/> <!--VALOR DE LA VARIABLE-->
-                                            <p:ajax 
-                                                event="change"
-                                                listener="#{injuriesCountMB.remoteDataProcess()}"
-                                                update =":formInjuries:hiddenControls"
-                                                oncomplete="loadChart()"
-                                                />
+                                    <div id="container" style="width: 490px; height: 480px; margin: 0px -10px 0px -10px;"></div>
+                                    <!-- GRAFICO -->
+                                    <p:inputText id="txtCategoryAxis" value="#{injuriesCountMB.categoryAxis}" style="display: none;"/>
+                                    <p:inputText id="txtSeries" value="#{injuriesCountMB.seriesValues}" style="display: none;"/>
+                                    <p:inputText id="txtGraphicTitle" value="#{injuriesCountMB.indicatorName}" style="display: none;"/>
+                                    <p:inputText id="txtCategoryAxisLabel" value="#{injuriesCountMB.categoryAxixLabel}" style="display: none;"/>
 
-                                        </h:selectOneMenu>
-                                    </p:column>
+                                    <script type="text/javascript">
+                                        if (typeof map !== 'undefined') {
+                                            loadChart();
+                                        }
+                                    </script>
 
-                                    <div id="container" style="min-width: 480px; height: 440px; margin: 0px -10px 0px -10px;"></div>
+
                                 </p:outputPanel>
 
                             </p:fieldset>
-
                         </p:tab>
-
-
                     </p:tabView>
                 </p:layoutUnit>
 

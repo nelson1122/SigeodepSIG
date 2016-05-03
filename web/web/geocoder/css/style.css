@@ -133,6 +133,26 @@ a:link:hover, a:visited:hover  {
     content: "x";
 }
 
+/*Controles para estilos de capas*/
+
+#communesOpacity{
+    position: absolute;
+    display: inline-block;
+    width:200px;
+    top: 168px;
+    left: 100px;
+    
+}
+
+#neighborhoodsOpacity{
+    position: absolute;
+    display: inline-block;
+    width:200px;
+    top: 126px;
+    left: 100px;
+    
+}
+
 #pointsOpacity{
     position: absolute;
     display: inline-block;
@@ -146,7 +166,7 @@ a:link:hover, a:visited:hover  {
     position: absolute;
     display: inline-block;
     width:200px;
-    top: 51px;
+    top: 65px;
     left: 100px;
     
 }
@@ -155,7 +175,7 @@ a:link:hover, a:visited:hover  {
     position: absolute;
     display: inline-block;
     width:200px;
-    top: 70px;
+    top: 83px;
     left: 100px;
     
 }

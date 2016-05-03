@@ -29,10 +29,11 @@ $(function () {
             key: 'AnyGyd4GaAzToU0sDaA0NaXDD88yChcUh8ySoNc32_ddxkrxkl9K5SIATkA8EpMn',
             imagerySet: 'Road'
         }),
-        visible: true
+        visible: false
     });
     /*Creacion capa base Bing Maps Aerial*/
     var bmapsAerial = new ol.layer.Tile({
+        opacity: 1,
         title: 'BingMaps Aerial',
         source: new ol.source.BingMaps({
             key: 'AnyGyd4GaAzToU0sDaA0NaXDD88yChcUh8ySoNc32_ddxkrxkl9K5SIATkA8EpMn',
@@ -46,12 +47,49 @@ $(function () {
         visible: false
     });
 
+    /*Creacion capa base Comunas*/
+    var communes = new ol.layer.Image({
+        title: 'Comunas',
+        source: new ol.source.ImageWMS({
+            ratio: 1,
+            url: geoserverHost,
+            params: {'FORMAT': 'image/png',
+                'VERSION': '1.1.1',
+                LAYERS: 'geocoder:communes',
+                STYLES: '',
+                env: 'opacity:' + $('#formInjuries\\:communesOpacity').val()
+            }
+        }),
+        visible: true
+    });
+
+    /*Creacion capa base Barrios*/
+    var neighborhoods = new ol.layer.Image({
+        title: 'Barrios',
+        source: new ol.source.ImageWMS({
+            ratio: 1,
+            url: geoserverHost,
+            params: {'FORMAT': 'image/png',
+                'VERSION': '1.1.1',
+                LAYERS: 'geocoder:neighborhoods',
+                STYLES: '',
+                env: 'opacity:' + $('#formInjuries\\:neighborhoodsOpacity').val()
+            }
+        }),
+        visible: true
+    });
+
     /**
      * GRUPOS PARA LAYERSWITCHER
      * @type ol.layer.Group
      */
+    var baseLayers = new ol.layer.Group({
+        title: 'Capas Base',
+        layers: [neighborhoods, communes]
+    });
+
     var baseMaps = new ol.layer.Group({
-        title: 'Mapas Base',
+        title: 'Mapas',
         layers: [osmLayer, bmapsRoads, bmapsAerial]
     });
 
@@ -81,7 +119,7 @@ $(function () {
             })
         ]),
         renderer: 'canvas', // Force the renderer to be used
-        layers: [baseMaps],
+        layers: [baseMaps, baseLayers],
         // Create a view centered on the specified location and zoom level
         view: new ol.View({
             center: [-8602509.5692, 134983.3435],
@@ -93,9 +131,8 @@ $(function () {
 
 
     //Creacion de las capas de puntos y de calor
-
     points = new ol.layer.Image({
-        title: 'Points',
+        title: 'Puntos',
         source: new ol.source.ImageWMS({
             ratio: 1,
             url: geoserverHost,
@@ -105,7 +142,7 @@ $(function () {
                 LAYERS: 'geocoder:geocoded_injuries-points',
                 STYLES: '',
                 viewparams: '',
-                env:''
+                env: ''
 
             }
         })
@@ -127,15 +164,13 @@ $(function () {
         })
     });
 
-    console.log($('#formInjuries\\:heatmapOpacity').val());
-
     pointsOverlay = new ol.layer.Group({
-        title: 'WMS',
+        title: 'Datos',
         layers: [points]
     });
 
     heatmapOverlay = new ol.layer.Group({
-        title: 'WMS',
+        title: 'Datos',
         layers: [heatmap]
     });
 
@@ -175,14 +210,58 @@ $(function () {
      * Controles para configuracion de capas
      * @returns {undefined}
      */
+    var neighborhoodsOpacity = $('#formInjuries\\:neighborhoodsOpacity').val();
+    var communesOpacity = $('#formInjuries\\:communesOpacity').val();
+
     var pointsOpacity = $('#formInjuries\\:pointsOpacity').val();
     var heatmapOpacity = $('#formInjuries\\:heatmapOpacity').val();
     var heatmapRadius = $('#formInjuries\\:heatmapRadius').val();
 
+    $('#neighborhoodsOpacityLabel').text(neighborhoodsOpacity);
+    $('#communesOpacityLabel').text(communesOpacity);
+
     $('#pointsOpacityLabel').text(pointsOpacity);
     $('#heatmapOpacityLabel').text(heatmapOpacity);
     $('#heatmapRadiusLabel').text(heatmapRadius);
-    
+
+
+    $("#neighborhoodsOpacity").slider({
+        max: 1,
+        min: 0,
+        step: 0.01,
+        value: neighborhoodsOpacity,
+        slide: function (event, ui) {
+            $('#neighborhoodsOpacityLabel').text(parseFloat(ui.value).toFixed(2));
+            $('#formInjuries\\:neighborhoodsOpacity').val(ui.value);
+
+            var source = neighborhoods.getSource();
+            var params = source.getParams();
+            params['env'] = 'opacity:' + ui.value;
+            source.updateParams(params);
+
+            updateLayerStyle();
+        }
+    });
+
+    $("#communesOpacity").slider({
+        max: 1,
+        min: 0,
+        step: 0.01,
+        value: communesOpacity,
+        slide: function (event, ui) {
+            $('#communesOpacityLabel').text(parseFloat(ui.value).toFixed(2));
+            $('#formInjuries\\:communesOpacity').val(ui.value);
+
+            var source = communes.getSource();
+            var params = source.getParams();
+            params['env'] = 'opacity:' + ui.value;
+            source.updateParams(params);
+
+            updateLayerStyle();
+        }
+    });
+
+
     $("#pointsOpacity").slider({
         max: 1,
         min: 0,
@@ -191,7 +270,7 @@ $(function () {
         slide: function (event, ui) {
             $('#pointsOpacityLabel').text(parseFloat(ui.value).toFixed(2));
             $('#formInjuries\\:pointsOpacity').val(ui.value);
-            
+
             var source = points.getSource();
             var params = source.getParams();
             params['env'] = 'opacity:' + ui.value;
@@ -200,8 +279,8 @@ $(function () {
             updateLayerStyle();
         }
     });
-    
-    
+
+
     $("#heatmapOpacity").slider({
         max: 1,
         min: 0,
@@ -210,41 +289,41 @@ $(function () {
         slide: function (event, ui) {
             $('#heatmapOpacityLabel').text(parseFloat(ui.value).toFixed(2));
             $('#formInjuries\\:heatmapOpacity').val(ui.value);
-            
+
             var source = heatmap.getSource();
             var params = source.getParams();
-            params['env'] = 'radius:'+ $('#formInjuries\\:heatmapRadius').val() +';opacity:' + ui.value;
+            params['env'] = 'radius:' + $('#formInjuries\\:heatmapRadius').val() + ';opacity:' + ui.value;
             source.updateParams(params);
 
             updateLayerStyle();
         }
     });
-    
+
     $("#heatmapRadius").slider({
-        max: 20,
-        min: 2,
+        max: 50,
+        min: 0,
         step: 1,
         value: heatmapRadius,
         slide: function (event, ui) {
             $('#heatmapRadiusLabel').text(ui.value);
             $('#formInjuries\\:heatmapRadius').val(ui.value);
-            
+
             var source = heatmap.getSource();
             var params = source.getParams();
-            params['env'] = 'radius:'+ ui.value +';opacity:'+ $('#formInjuries\\:heatmapOpacity').val();
+            params['env'] = 'radius:' + ui.value + ';opacity:' + $('#formInjuries\\:heatmapOpacity').val();
             source.updateParams(params);
 
             updateLayerStyle();
         }
     });
-    
+
     /*
      * Carga de capas de datos
      * @returns {undefined}
      */
 
     loadDataLayer();
-
+    loadChart();
 });
 
 /**
@@ -287,13 +366,13 @@ function loadDataLayer() {
  */
 
 function loadPoints(geoserverParams) {
-    
+
     var pointsOpacity = $('#formInjuries\\:pointsOpacity').val();
 
     var source = points.getSource();
     var params = source.getParams();
     params['viewparams'] = geoserverParams;
-    params['env'] = 'opacity:'+ pointsOpacity;
+    params['env'] = 'opacity:' + pointsOpacity;
     params.t = new Date().getMilliseconds();
     source.updateParams(params);
 
@@ -364,14 +443,14 @@ function loadHeatmap(geoserverParams) {
 
     var heatmapOpacity = $("#formInjuries\\:heatmapOpacity").val();
     var heatmapRadius = $("#formInjuries\\:heatmapRadius").val();
-    
+
     console.log(heatmapOpacity);
     console.log(heatmapRadius);
 
     var source = heatmap.getSource();
     var params = source.getParams();
     params['viewparams'] = geoserverParams;
-    params['env'] = 'opacity:'+ heatmapOpacity +';radius:'+ heatmapRadius;
+    params['env'] = 'opacity:' + heatmapOpacity + ';radius:' + heatmapRadius;
     params.t = new Date().getMilliseconds();
     source.updateParams(params);
 
@@ -504,11 +583,10 @@ function updateHeatmapStyle() {
  */
 
 function loadChart() {
-
-    var categoryAxis = $('#formInjuries\\:txtCategoryAxis').val();
-    var seriesValues = $('#formInjuries\\:txtSeries').val();
-    var graphicTitle = $('#formInjuries\\:txtGraphicTitle').val();
-    var categoyAxisLabel = $('#formInjuries\\:txtCategoryAxisLabel').val();
+    var categoryAxis = JSON.parse($('#formInjuries\\:configurationsTab\\:txtCategoryAxis').val());
+    var seriesValues = JSON.parse($('#formInjuries\\:configurationsTab\\:txtSeries').val());
+    var graphicTitle = $('#formInjuries\\:configurationsTab\\:txtGraphicTitle').val();
+    var categoyAxisLabel = $('#formInjuries\\:configurationsTab\\:txtCategoryAxisLabel').val();
 
     chart = new Highcharts.Chart({
         chart: {
@@ -516,14 +594,25 @@ function loadChart() {
             defaultSeriesType: 'column'	// Pongo que tipo de gráfica es
         },
         title: {
-            text: graphicTitle	// Titulo (Opcional)
+            text: graphicTitle, // Titulo (Opcional)
+            style: {
+                color: '#000',
+                font: '12px sans-serif'
+            }
         },
         subtitle: {
             text: ''		// Subtitulo (Opcional)
         },
         // Pongo los datos en el eje de las 'X'
+        legend: {
+            itemStyle: {
+                color: '#000000',
+                fontSize: '11px',
+                fontWeight: 'normal'
+            }
+        },
         xAxis: {
-            categories: JSON.parse(categoryAxis),
+            categories: categoryAxis,
             // Pongo el título para el eje de las 'X'
             title: {
                 text: categoyAxisLabel
@@ -537,14 +626,14 @@ function loadChart() {
         },
         // Doy formato al la "cajita" que sale al pasar el ratón por encima de la gráfica
         tooltip: {
-            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+            headerFormat: '<span style="font-size:8px">{point.key}</span><table>',
             pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
                     '<td style="padding:0"><b>{point.y} delitos</b></td></tr>',
             footerFormat: '</table>',
             shared: true,
             useHTML: true
         },
-        series: JSON.parse(seriesValues)
+        series: seriesValues
     });
 
 }
@@ -555,8 +644,7 @@ function loadChart() {
  */
 function loadInfo() {
     var info = $('#formInjuries\\:txtPopupInfo').val();
-    console.log(info);
-
+    //console.log(info);
     content.innerHTML = info;
     container.style.display = 'block';
 }
